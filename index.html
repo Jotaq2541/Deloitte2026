@@ -1,0 +1,135 @@
+
+// Azure Functions v4 (Node.js 18+)
+import fetch from "node-fetch";
+
+const OAI_ENDPOINT  = process.env.AZURE_OPENAI_ENDPOINT;   // e.g., https://<your>.openai.azure.com
+const OAI_KEY       = process.env.AZURE_OPENAI_API_KEY;
+const OAI_MODEL     = process.env.AZURE_OPENAI_DEPLOYMENT; // e.g., gpt-4o
+
+const SEARCH_ENDPOINT = process.env.AZURE_SEARCH_ENDPOINT; // e.g., https://<service>.search.windows.net
+const SEARCH_KEY      = process.env.AZURE_SEARCH_API_KEY;
+const SEARCH_INDEX    = process.env.AZURE_SEARCH_INDEX;
+
+export default async function (context, req) {
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    return context.res = cors({});
+  }
+
+  try {
+    const { question, lang = "es-ES", domains = [], session } = req.body || {};
+    if (!question) return context.res = cors({ status: 400, body: { error: "Falta 'question'" } });
+
+    // 1) Recuperación (RAG) opcional con Azure AI Search
+    let passages = [];
+    if (SEARCH_ENDPOINT && SEARCH_KEY && SEARCH_INDEX) {
+      const k = encodeURIComponent(question);
+      const url = `${SEARCH_ENDPOINT}/indexes/${SEARCH_INDEX}/docs?api-version=2023-07-01-Preview&search=${k}&top=5`;
+      const res = await fetch(url, { headers: { "api-key": SEARCH_KEY }});
+      const json = await res.json();
+      passages = (json.value || []).map(doc => ({
+        content: doc.content || doc.chunk || "",
+        title: doc.title || doc.source || "Fuente",
+        url: doc.url || doc.link || "#"
+      })).filter(x => x.content);
+    }
+
+    // 2) Construcción del prompt con políticas y disclaimers por dominio
+    const disclaimers = {
+      legal: "Esta respuesta es informativa y no constituye asesoría legal.",
+      economico: "No es asesoría financiera o de inversión.",
+      ciber: "Sigue buenas prácticas y marcos como NIST/ISO; evalúa tu contexto.",
+      deloitte: "Información general basada en materiales públicos disponibles."
+    };
+    const domainText = domains.length ? `Dominios activados: ${domains.join(", ")}.` : "Dominios: general.";
+
+    const system = [
+      "Eres un asistente de Deloitte para un congreso.",
+      "Respondes de forma breve, precisa y con tono profesional.",
+      "Si la pregunta es legal/financiera, incluye un breve disclaimer.",
+      "Si no tienes evidencia suficiente, di que no puedes responder y ofrece hablar con un asesor.",
+      "Siempre que uses contexto recuperado, cita las fuentes relevantes (título y URL).",
+      domainText
+    ].join("\n");
+
+    const contextText = passages.map((p, i) => `[[${i+1}]] ${p.content}`).join("\n\n");
+
+    const userPrompt = [
+      `Pregunta (${lang}): ${question}`,
+      contextText ? `\nContexto recuperado:\n${contextText}` : "",
+      `\nInstrucciones: Si hay contexto, apóyate en él y cita [[n]]. Si no, responde general con prudencia.`,
+    ].join("");
+
+    // 3) Llamada a Azure OpenAI Chat Completions
+    const oaiUrl = `${OAI_ENDPOINT}/openai/deployments/${OAI_MODEL}/chat/completions?api-version=2024-08-01-preview`;
+    const body = {
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: userPrompt }
+      ],
+      temperature: 0.2,
+      max_tokens: 600
+    };
+
+    let answer = "";
+    let citations = [];
+    try {
+      const oaiRes = await fetch(oaiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": OAI_KEY
+        },
+        body: JSON.stringify(body)
+      });
+      if (!oaiRes.ok) {
+        const txt = await oaiRes.text();
+        throw new Error(`OpenAI error: ${oaiRes.status} ${txt}`);
+      }
+      const oaiJson = await oaiRes.json();
+      answer = oaiJson.choices?.[0]?.message?.content?.trim() || "No pude generar respuesta.";
+    } catch (e) {
+      answer = `Hubo un problema temporal generando la respuesta. Inténtalo de nuevo.\n\nDetalle técnico: ${e.message}`;
+    }
+
+    // 4) Construcción de citas (mapeo [[n]] -> URL)
+    // Si el modelo menciona [[n]], adjuntamos las URLs recuperadas
+    const refRegex = /\[\[(\d+)\]\]/g;
+    const seen = new Set();
+    let m;
+    while ((m = refRegex.exec(answer)) !== null) {
+      const idx = parseInt(m[1], 10) - 1;
+      if (!seen.has(idx) && passages[idx]) {
+        citations.push({ url: passages[idx].url, titulo: passages[idx].title });
+        seen.add(idx);
+      }
+    }
+
+    // 5) Disclaimer agregado según dominios
+    const dList = [];
+    for (const d of domains) if (disclaimers[d]) dList.push(disclaimers[d]);
+    const disclaimer = dList.length ? Array.from(new Set(dList)).join(" ") :
+      "Contenido informativo; puede requerir validación por especialistas de Deloitte.";
+
+    return context.res = cors({
+      body: { answer, citations, disclaimer, session }
+    });
+
+  } catch (err) {
+    context.log.error(err);
+    return context.res = cors({ status: 500, body: { error: "Error interno" } });
+  }
+}
+
+function cors({ status=200, body = {} }) {
+  return {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    },
+    body
+  };
+}
