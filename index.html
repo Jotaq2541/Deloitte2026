@@ -192,13 +192,19 @@
     .card{
       background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
     }
-    /* ← Cambio aplicado: forzamos color visible a los títulos de los gráficos */
+    /* Títulos de gráficos bien visibles */
     .card h3{
       margin:0 0 8px 0;
       font-size:15px;
       color:var(--viz-text);
     }
-    .viz{width:100%; height:260px; display:block}
+    .viz{
+      width:100%; height:260px; display:block
+    }
+    /* Usamos una familia con soporte de emoji para banderas en SVG */
+    .viz text{
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    }
     .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
 
     /* Chips/leyendas legibles */
@@ -363,22 +369,22 @@
       };
       const hideTip = () => { tip.style.display='none'; tip.setAttribute('aria-hidden','true'); };
 
-      /* --- 1) BARRAS: Profesionales por país --- */
+      /* --- 1) BARRAS: Profesionales por país (con banderita) --- */
       const dataBars = [
-        {label:'Guatemala', val:242, color:'#1ea55a'},
-        {label:'Honduras', val:62,  color:'#24c06a'},
-        {label:'El Salvador', val:93, color:'#1a8a4a'},
-        {label:'Nicaragua',  val:28, color:'#2bd07a'},
-        {label:'Costa Rica', val:421, color:'#22b36a'},
-        {label:'Panamá',     val:229, color:'#1f9656'},
-        {label:'R. Dominicana', val:113, color:'#2aa868'}
+        {label:'Guatemala',       flag:'🇬🇹', val:242, color:'#1ea55a'},
+        {label:'Honduras',        flag:'🇭🇳', val:62,  color:'#24c06a'},
+        {label:'El Salvador',     flag:'🇸🇻', val:93,  color:'#1a8a4a'},
+        {label:'Nicaragua',       flag:'🇳🇮', val:28,  color:'#2bd07a'},
+        {label:'Costa Rica',      flag:'🇨🇷', val:421, color:'#22b36a'},
+        {label:'Panamá',          flag:'🇵🇦', val:229, color:'#1f9656'},
+        {label:'R. Dominicana',   flag:'🇩🇴', val:113, color:'#2aa868'}
       ];
       const svgB = document.getElementById('chartBars');
       const legend = document.getElementById('legendBars');
 
       function drawBars(){
         if(!svgB) return;
-        const w = svgB.clientWidth || 600, h = svgB.clientHeight || 260, pad = {t:10,r:16,b:30,l:90};
+        const w = svgB.clientWidth || 600, h = svgB.clientHeight || 260, pad = {t:10,r:16,b:30,l:110};
         svgB.setAttribute('viewBox', `0 0 ${w} ${h}`);
         while(svgB.firstChild) svgB.removeChild(svgB.firstChild);
 
@@ -390,14 +396,23 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
-          // etiqueta izq.
+          // etiqueta izquierda (banderita pequeña + texto)
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-          label.setAttribute('x', pad.l - 10);
+          label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
           label.setAttribute('text-anchor','end');
           label.setAttribute('fill','var(--viz-text)');
           label.setAttribute('font-size','12');
-          label.textContent = d.label;
+
+          const tFlag = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+          tFlag.setAttribute('font-size','11');
+          tFlag.textContent = d.flag + ' ';
+          label.appendChild(tFlag);
+
+          const tName = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+          tName.textContent = d.label;
+          label.appendChild(tName);
+
           g.appendChild(label);
 
           // barra
@@ -424,7 +439,7 @@
           // interacción
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
-            showTip(`<strong>${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
+            showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
             bar.setAttribute('fill', '#35d07a');
           });
           g.addEventListener('mouseleave', ()=>{
@@ -448,7 +463,7 @@
           dataBars.forEach(d=>{
             const span = document.createElement('span');
             span.className = 'badge';
-            span.innerHTML = `<span class="dot" style="background:${d.color}"></span>${d.label}: ${d.val}`;
+            span.innerHTML = `<span class="dot" style="background:${d.color}"></span>${d.flag} ${d.label}: ${d.val}`;
             legend.appendChild(span);
           });
         }
@@ -507,20 +522,20 @@
         svgD.addEventListener('mouseleave', hideTip);
       }
 
-      /* --- 3) NUEVO: Medios destacados por país --- */
+      /* --- 3) Medios destacados por país (con banderita y tooltip con ejemplos) --- */
       const dataMedia = [
-        {label:'Costa Rica', val:4, color:'#22b36a'},          // El Financiero, La Nación, La República, Noticias Repretel
-        {label:'Panamá',     val:4, color:'#1ea55a'},          // La Estrella, La Prensa, TVN, Telemetro
-        {label:'R. Dominicana', val:6, color:'#2bd07a'},       // Listín Diario, El Dinero, Hoy, El Día, Noticias SIN, El Caribe
-        {label:'Honduras',   val:2, color:'#24c06a'},          // La Tribuna, El Heraldo
-        {label:'Guatemala',  val:1, color:'#1a8a4a'}           // Prensa Libre
+        {label:'Costa Rica',    flag:'🇨🇷', val:4, medios:['El Financiero','La Nación','La República','Noticias Repretel'], color:'#22b36a'},
+        {label:'Panamá',        flag:'🇵🇦', val:4, medios:['La Estrella','La Prensa','TVN','Telemetro'], color:'#1ea55a'},
+        {label:'R. Dominicana', flag:'🇩🇴', val:6, medios:['Listín Diario','El Dinero','Hoy','El Día','Noticias SIN','El Caribe'], color:'#2bd07a'},
+        {label:'Honduras',      flag:'🇭🇳', val:2, medios:['La Tribuna','El Heraldo'], color:'#24c06a'},
+        {label:'Guatemala',     flag:'🇬🇹', val:1, medios:['Prensa Libre'], color:'#1a8a4a'}
       ];
       const svgM = document.getElementById('chartBarsMedia');
       const legendM = document.getElementById('legendBarsMedia');
 
       function drawBarsMedia(){
         if(!svgM) return;
-        const w = svgM.clientWidth || 600, h = svgM.clientHeight || 260, pad = {t:10,r:16,b:30,l:110};
+        const w = svgM.clientWidth || 600, h = svgM.clientHeight || 260, pad = {t:10,r:16,b:30,l:126};
         svgM.setAttribute('viewBox', `0 0 ${w} ${h}`);
         while(svgM.firstChild) svgM.removeChild(svgM.firstChild);
 
@@ -532,13 +547,23 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
+          // etiqueta izquierda con banderita
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
           label.setAttribute('text-anchor','end');
           label.setAttribute('fill','var(--viz-text)');
           label.setAttribute('font-size','12');
-          label.textContent = d.label;
+
+          const tFlag = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+          tFlag.setAttribute('font-size','11');
+          tFlag.textContent = d.flag + ' ';
+          label.appendChild(tFlag);
+
+          const tName = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+          tName.textContent = d.label;
+          label.appendChild(tName);
+
           g.appendChild(label);
 
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -560,8 +585,12 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
+          // Tooltip con ejemplos de medios
           g.addEventListener('mousemove', (e)=>{
-            showTip(`<strong>${d.label}</strong><br>${d.val} medios`, e.clientX, e.clientY);
+            const sample = d.medios.slice(0,4).join(', ');
+            const extra  = d.medios.length - Math.min(4, d.medios.length);
+            const extras = extra > 0 ? ` +${extra} más` : '';
+            showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} medios<br><em>Ejemplos:</em> ${sample}${extras}`, e.clientX, e.clientY);
             bar.setAttribute('fill', '#35d07a');
           });
           g.addEventListener('mouseleave', ()=>{
@@ -583,12 +612,13 @@
           dataMedia.forEach(d=>{
             const span = document.createElement('span');
             span.className = 'badge';
-            span.innerHTML = `<span class="dot" style="background:${d.color}"></span>${d.label}: ${d.val}`;
+            span.innerHTML = `<span class="dot" style="background:${d.color}"></span>${d.flag} ${d.label}: ${d.val}`;
             legendM.appendChild(span);
           });
         }
       }
 
+      // Pintar y responder a resize
       drawBars();
       drawDonut();
       drawBarsMedia();
@@ -735,7 +765,7 @@
         };
       });
 
-      // Botón Reproducir: usamos onclick (no addEventListener) para que el parche pueda envolverlo
+      // Botón Reproducir
       btnSpeak.onclick = () => {
         const text = (answerBox.textContent || '').trim();
         if (text) queueSpeak(text);
