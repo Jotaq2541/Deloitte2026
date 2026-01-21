@@ -14,6 +14,12 @@
       --text:#ffffff; --muted:#b9c0c7; --focus:#8bd8a9;
       --viz-text:#eaf7ef; --viz-muted:#b9c0c7;
       --viz-bg:#0f1216; --viz-stroke:#2e3640;
+
+      /* Chips/leyendas legibles */
+      --chip-bg:#eef6f0;         /* fondo claro */
+      --chip-text:#0b0e11;       /* texto oscuro */
+      --chip-border:rgba(0,0,0,.16);
+      --chip-bg-hover:#e4f2ea;
     }
     *{box-sizing:border-box}
     body{
@@ -182,14 +188,24 @@
       display:grid; grid-template-columns:1fr 1fr; gap:12px;
       padding:12px 14px; background:rgba(0,0,0,.14); border-top:1px solid rgba(255,255,255,.08)
     }
-    @media (max-width:900px){ .insights{grid-template-columns:1fr} }
+    @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
     .card{
       background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
     }
     .card h3{margin:0 0 8px 0; font-size:15px}
     .viz{width:100%; height:260px; display:block}
-    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; color:var(--viz-muted); margin-top:6px}
-    .badge{display:inline-flex; align-items:center; gap:6px; background:#12161b; border:1px solid rgba(255,255,255,.08); border-radius:999px; padding:4px 8px}
+    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
+
+    /* Chips/leyendas legibles (corrección: ya NO negros) */
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--chip-bg); color:var(--chip-text);
+      border:1px solid var(--chip-border);
+      border-radius:999px; padding:6px 10px;
+      transition: background .15s ease, transform .12s ease;
+    }
+    .badge:hover{ background:var(--chip-bg-hover); transform:translateY(-1px) }
+    .badge:focus-visible{ outline:2px solid var(--focus); outline-offset:2px }
     .dot{width:10px;height:10px;border-radius:50%}
 
     /* Tooltip para SVG */
@@ -207,6 +223,9 @@
         --brand:#1c8c3f; --muted:#47515a; --focus:#22b36a;
         --viz-text:#0b0e11; --viz-muted:#47515a;
         --viz-bg:#ffffff; --viz-stroke:#d7dde3;
+
+        --chip-bg:#ffffff; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
+        --chip-bg-hover:#f2f7f4;
       }
       body{ background:#f4f4f4; color:#111 }
       header{ background:#ffffff; border-bottom-color:#1c8c3f }
@@ -275,8 +294,13 @@
           <div class="legend">
             <span class="badge"><span class="dot" style="background:#22b36a"></span> Auditadas: 51</span>
             <span class="badge"><span class="dot" style="background:#2e3640"></span> Total mercado: 457</span>
-            <span class="badge">Participación: <strong>11%</strong></span>
+            <span class="badge"><strong>Participación: 11%</strong></span>
           </div>
+        </div>
+        <div class="card">
+          <h3>Medios destacados por país</h3>
+          <svg id="chartBarsMedia" class="viz" role="img" aria-label="Barras de cantidad de medios por país"></svg>
+          <div class="legend" id="legendBarsMedia"></div>
         </div>
       </div>
 
@@ -329,20 +353,12 @@
     document.addEventListener('DOMContentLoaded', () => {
       const tip = document.getElementById('vizTip');
       const showTip = (html, x, y) => {
-        if(!tip) return;
-        tip.innerHTML = html;
-        tip.style.left = (x + 12) + 'px';
-        tip.style.top  = (y + 12) + 'px';
-        tip.style.display = 'block';
-        tip.setAttribute('aria-hidden','false');
+        tip.innerHTML = html; tip.style.left = (x+12)+'px'; tip.style.top=(y+12)+'px';
+        tip.style.display='block'; tip.setAttribute('aria-hidden','false');
       };
-      const hideTip = () => {
-        if(!tip) return;
-        tip.style.display = 'none';
-        tip.setAttribute('aria-hidden','true');
-      };
+      const hideTip = () => { tip.style.display='none'; tip.setAttribute('aria-hidden','true'); };
 
-      // 1) BARRAS
+      /* --- 1) BARRAS: Profesionales por país --- */
       const dataBars = [
         {label:'Guatemala', val:242, color:'#1ea55a'},
         {label:'Honduras', val:62,  color:'#24c06a'},
@@ -369,7 +385,7 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
-          // etiqueta (izquierda)
+          // etiqueta izq.
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 10);
           label.setAttribute('y', y + barH*0.72);
@@ -421,7 +437,7 @@
           });
         });
 
-        // Leyenda
+        // Leyenda (chips claros)
         if(legend){
           legend.innerHTML = '';
           dataBars.forEach(d=>{
@@ -433,7 +449,7 @@
         }
       }
 
-      // 2) DONA
+      /* --- 2) DONA: 51/457 ≈ 11% --- */
       const svgD = document.getElementById('chartDonut');
       function drawDonut(){
         if(!svgD) return;
@@ -441,15 +457,13 @@
         svgD.setAttribute('viewBox', `0 0 ${w} ${h}`);
         while(svgD.firstChild) svgD.removeChild(svgD.firstChild);
 
-        const total = 457, audited = 51, pct = audited/total; // ≈ 11%
+        const total = 457, audited = 51, pct = audited/total;
 
-        // Fondo
         const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
         bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
         bg.setAttribute('fill','none'); bg.setAttribute('stroke','var(--viz-stroke)'); bg.setAttribute('stroke-width',sw);
         svgD.appendChild(bg);
 
-        // Arco
         const arc = document.createElementNS('http://www.w3.org/2000/svg','circle');
         arc.setAttribute('cx',cx); arc.setAttribute('cy',cy); arc.setAttribute('r',r);
         arc.setAttribute('fill','none'); arc.setAttribute('stroke', '#22b36a'); arc.setAttribute('stroke-width',sw);
@@ -460,7 +474,6 @@
         arc.setAttribute('stroke-dashoffset', C);
         svgD.appendChild(arc);
 
-        // Etiquetas centrales
         const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
         t1.setAttribute('x',cx); t1.setAttribute('y',cy-2);
         t1.setAttribute('text-anchor','middle'); t1.setAttribute('fill','var(--viz-text)'); t1.setAttribute('font-size','26');
@@ -473,10 +486,8 @@
         t2.textContent = `51 de 457`;
         svgD.appendChild(t2);
 
-        // Animación del arco
         setTimeout(()=>{ arc.setAttribute('stroke-dashoffset', C*(1-pct)); arc.style.transition='stroke-dashoffset 900ms ease' }, 180);
 
-        // Interacción
         svgD.addEventListener('mousemove', (e)=>{
           const bb = svgD.getBoundingClientRect();
           const x = e.clientX - bb.left - cx;
@@ -491,12 +502,95 @@
         svgD.addEventListener('mouseleave', hideTip);
       }
 
+      /* --- 3) NUEVO: Medios destacados por país --- */
+      const dataMedia = [
+        {label:'Costa Rica', val:4, color:'#22b36a'},          // El Financiero, La Nación, La República, Noticias Repretel
+        {label:'Panamá',     val:4, color:'#1ea55a'},          // La Estrella, La Prensa, TVN, Telemetro
+        {label:'R. Dominicana', val:6, color:'#2bd07a'},       // Listín Diario, El Dinero, Hoy, El Día, Noticias SIN, El Caribe
+        {label:'Honduras',   val:2, color:'#24c06a'},          // La Tribuna, El Heraldo
+        {label:'Guatemala',  val:1, color:'#1a8a4a'}           // Prensa Libre
+      ];
+      const svgM = document.getElementById('chartBarsMedia');
+      const legendM = document.getElementById('legendBarsMedia');
+
+      function drawBarsMedia(){
+        if(!svgM) return;
+        const w = svgM.clientWidth || 600, h = svgM.clientHeight || 260, pad = {t:10,r:16,b:30,l:110};
+        svgM.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        while(svgM.firstChild) svgM.removeChild(svgM.firstChild);
+
+        const max = Math.max(...dataMedia.map(d=>d.val));
+        const rowH = (h - pad.t - pad.b) / dataMedia.length;
+        const barH = rowH * 0.64, gap = rowH * 0.36;
+
+        dataMedia.forEach((d,i)=>{
+          const y = pad.t + i*(barH+gap);
+          const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+
+          const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+          label.setAttribute('x', pad.l - 12);
+          label.setAttribute('y', y + barH*0.72);
+          label.setAttribute('text-anchor','end');
+          label.setAttribute('fill','var(--viz-text)');
+          label.setAttribute('font-size','12');
+          label.textContent = d.label;
+          g.appendChild(label);
+
+          const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
+          bar.setAttribute('x', pad.l);
+          bar.setAttribute('y', y);
+          bar.setAttribute('width', 0);
+          bar.setAttribute('height', barH);
+          bar.setAttribute('rx', 8);
+          bar.setAttribute('fill', d.color);
+          bar.style.transition = 'width 420ms ease';
+          g.appendChild(bar);
+
+          const val = document.createElementNS('http://www.w3.org/2000/svg','text');
+          val.setAttribute('x', pad.l + 6);
+          val.setAttribute('y', y + barH/2 + 4);
+          val.setAttribute('fill','var(--viz-text)');
+          val.setAttribute('font-size','12');
+          val.textContent = d.val;
+          val.style.opacity = 0;
+          g.appendChild(val);
+
+          g.addEventListener('mousemove', (e)=>{
+            showTip(`<strong>${d.label}</strong><br>${d.val} medios`, e.clientX, e.clientY);
+            bar.setAttribute('fill', '#35d07a');
+          });
+          g.addEventListener('mouseleave', ()=>{
+            hideTip(); bar.setAttribute('fill', d.color);
+          });
+
+          svgM.appendChild(g);
+
+          requestAnimationFrame(()=>{
+            const wBar = (w - pad.l - pad.r) * (d.val/max);
+            bar.setAttribute('width', wBar);
+            val.setAttribute('x', pad.l + Math.min(wBar - 18, w - pad.r - 18));
+            val.style.opacity = 0.95;
+          });
+        });
+
+        if(legendM){
+          legendM.innerHTML = '';
+          dataMedia.forEach(d=>{
+            const span = document.createElement('span');
+            span.className = 'badge';
+            span.innerHTML = `<span class="dot" style="background:${d.color}"></span>${d.label}: ${d.val}`;
+            legendM.appendChild(span);
+          });
+        }
+      }
+
       drawBars();
       drawDonut();
-      window.addEventListener('resize', ()=>{ drawBars(); drawDonut(); });
+      drawBarsMedia();
+      window.addEventListener('resize', ()=>{ drawBars(); drawDonut(); drawBarsMedia(); });
     });
 
-    /* ====== Q&A + TTS (con typewriter CANCELABLE) ====== */
+    /* ====== Q&A + TTS (typewriter cancelable, avatar suave) ====== */
     document.addEventListener('DOMContentLoaded', () => {
       const voiceSel   = document.getElementById('voiceSel');
       const btnSpeak   = document.getElementById('btnSpeak');
@@ -522,19 +616,14 @@
           bg.play().catch(()=>{});
         }
       }, {once:true});
-      if (btnMusic && bg){
-        btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
-      }
-
-      // TYPEWRITER cancelable (evita letras duplicadas)
-      let typeSeq = 0;
+         let typeSeq = 0;
       function typeText(target, text, speed=22){
         typeSeq++;
         const mySeq = typeSeq;
         target.textContent = "";
         let i = 0;
         (function step(){
-          if(mySeq !== typeSeq) return; // cancelado por nueva llamada
+          if(mySeq !== typeSeq) return;
           if(i < text.length){
             target.textContent += text[i++];
             setTimeout(step, speed);
@@ -609,7 +698,7 @@
 
       function speakNow(text){
         try{
-          synth.cancel(); // limpia cualquier lectura anterior
+          synth.cancel();
           const u = new SpeechSynthesisUtterance(text);
           const v = getSelectedVoice();
           if (v) u.voice = v;
@@ -641,8 +730,8 @@
         btn.addEventListener('click', () => {
           const text = btn.dataset.answer || '';
           showThinking();
-          typeText(answerBox, text);     // ya no se superponen (cancelable)
-          subtitleEl.textContent = text; // subtítulo inmediato
+          typeText(answerBox, text);
+          subtitleEl.textContent = text;
           queueSpeak(text);
         });
       });
@@ -657,7 +746,7 @@
         if (k === 'm'){ if(bg){ bg.muted = !bg.muted; const b = document.getElementById('btnMusic'); if(b) b.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; } }
       });
 
-      // Exponer helpers para agregar Q&A dinámicas
+      // Exponer helpers
       window.typeText = typeText;
       window.queueSpeak = queueSpeak;
 
@@ -701,7 +790,7 @@
       window.bulkAddQA = function(list){ (list || []).forEach(item => addQA(item.q, item.a)); };
     })();
 
-    /* ====== Agregar las nuevas preguntas que me pediste ====== */
+    /* ====== Agregar las preguntas adicionales ya definidas ====== */
     (function(){
       bulkAddQA([
         {
