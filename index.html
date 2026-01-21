@@ -6,10 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Asistente Virtual – Marketplace Deloitte CA</title>
   <meta name="description" content="Asistente con voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
+
   <style>
     :root{
       --bg:#0b0e11; --panel:#111418; --card:#141a1f;
       --brand:#1c8c3f; --text:#ffffff; --muted:#b9c0c7; --focus:#8bd8a9;
+      --brand-2:#22b36a;
     }
     *{box-sizing:border-box}
     body{
@@ -19,8 +21,11 @@
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif
     }
 
+    /* === CABECERA === */
     header{
-      padding:16px 20px;border-bottom:2px solid var(--brand);background:#0f1317;
+      padding:16px 20px;
+      border-bottom:2px solid var(--brand);
+      background:#0f1317;
       display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
     }
     .brand{display:flex;align-items:center;gap:10px}
@@ -28,8 +33,29 @@
     .logo-fallback{height:24px;display:none;align-items:center;color:#cfe9d5;font-weight:700}
     header h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap}
 
+    /* === CONTROLES CABECERA (ALTO CONTRASTE) === */
+    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    label{display:flex;gap:6px;align-items:center}
+    select,button{
+      background:#f1f5f3;            /* claro, accesible */
+      color:#0b0e11;                  /* texto oscuro legible */
+      border:1px solid rgba(0,0,0,.18);
+      border-radius:8px;
+      padding:8px 10px;
+      font-size:14px;
+      box-shadow:0 1px 0 rgba(255,255,255,.15) inset;
+      cursor:pointer;
+    }
+    .btn-primary{
+      background:linear-gradient(180deg,#27ae60,#1c8c3f);
+      color:#ffffff;border:1px solid #1c8c3f
+    }
+    .btn-ghost{background:#e9efe9}
+    .controls select:hover,.controls .btn:hover{filter:brightness(1.06)}
+    .controls select:focus-visible,.controls .btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
     .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
-    @media (max-width:900px){ .wrap{grid-template-columns:1fr} }
+    @media (max-width:1100px){ .wrap{grid-template-columns:1fr} }
 
     .left,.right{
       background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 180px);
@@ -37,7 +63,7 @@
     }
     .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
 
-    /* AVATAR */
+    /* === AVATAR === */
     .avatar{
       position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
       background:#07090d;border:1px solid rgba(32,163,74,.35);
@@ -54,22 +80,12 @@
 
     .muted{color:var(--muted);font-size:12px}
 
-    .right{display:grid;grid-template-rows:auto 1fr auto; position:relative;}
+    .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
     .panel{
       padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);
       display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
     }
     .panel h2{margin:0;font-size:16px}
-
-    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    label{display:flex;gap:6px;align-items:center}
-    select,button{
-      background:#0f1216;color:var(--text);border:1px solid rgba(255,255,255,.14);
-      border-radius:8px;padding:8px 10px;font-size:14px
-    }
-    .btn{cursor:pointer}
-    .btn-primary{background:linear-gradient(180deg,#1f2937,#0f1216);border:1px solid rgba(32,163,74,.5)}
-    .btn-ghost{background:#0f1216}
 
     .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
     .qbtn{
@@ -85,97 +101,76 @@
     .qbtn:active{
       background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.4) 50%, rgba(28,140,63,.15) 100%);
     }
-    .qbtn:focus-visible,.btn:focus-visible,select:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+    .qbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
     .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
     footer{padding:10px 16px;color:var(--muted)}
     .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
 
-    /* ===========================
-       VIDA AL AVATAR MIENTRAS HABLA
-       =========================== */
-
-    /* Suaviza transformaciones del <img> dentro del avatar */
-    #avatar img{
-      will-change: transform, filter;
-      transition: transform .18s ease, filter .18s ease;
-    }
-
-    /* A) Cabeceo/zoom sutil mientras habla */
+    /* === AVATAR: VIDA MIENTRAS HABLA === */
+    #avatar img{will-change:transform,filter;transition:transform .18s ease, filter .18s ease}
     #avatar.talking img{
-      animation: headBob 1.1s ease-in-out infinite, fadeAI .25s ease forwards;
+      transform-origin:50% 28%;
+      animation: headBobSmooth 1.25s ease-in-out infinite, fadeAI .25s ease forwards;
     }
-    @keyframes headBob{
-      0%   { transform: translateY(0)      rotate(0deg)    scale(1.000); filter: brightness(1); }
-      25%  { transform: translateY(-1.2%)  rotate(-0.25deg) scale(1.006); filter: brightness(1.03); }
-      50%  { transform: translateY(0.2%)   rotate(0.15deg)  scale(1.003); filter: brightness(1.01); }
-      75%  { transform: translateY(-0.8%)  rotate(0.20deg)  scale(1.007); filter: brightness(1.02); }
-      100% { transform: translateY(0)      rotate(0deg)     scale(1.000); filter: brightness(1); }
+    @keyframes headBobSmooth{
+      0%   { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
+      25%  { transform: translateY(-0.6%)   rotate(-0.12deg)  scale(1.002); filter: brightness(1.02); }
+      50%  { transform: translateY(0.15%)   rotate(0.08deg)   scale(1.001); filter: brightness(1.01); }
+      75%  { transform: translateY(-0.4%)   rotate(0.10deg)   scale(1.003); filter: brightness(1.015); }
+      100% { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
     }
+    @keyframes fadeAI{from{opacity:.65} to{opacity:1}}
 
-    /* B1) Halo/respiración luminosa alrededor del avatar mientras habla */
+    /* Halo/respiración */
     #avatar::before{
-      content:"";
-      position:absolute; inset:-3%;
-      border-radius:12px;
-      background: radial-gradient(65% 60% at 50% 40%, rgba(32,163,74,.25), rgba(32,163,74,0) 60%),
-                  radial-gradient(60% 55% at 50% 70%, rgba(28,140,63,.18), rgba(28,140,63,0) 70%);
-      opacity:0; pointer-events:none;
-      filter: blur(6px);
-      transform: scale(1);
+      content:""; position:absolute; inset:-3%; border-radius:12px;
+      background:
+        radial-gradient(65% 60% at 50% 40%, rgba(32,163,74,.25), rgba(32,163,74,0) 60%),
+        radial-gradient(60% 55% at 50% 70%, rgba(28,140,63,.18), rgba(28,140,63,0) 70%);
+      opacity:0; pointer-events:none; filter: blur(6px); transform: scale(1);
       transition: opacity .15s ease;
     }
-    #avatar.talking::before{
-      opacity:.65;
-      animation: haloBreath 1.25s ease-in-out infinite;
-    }
-    @keyframes haloBreath{
-      0%   { transform: scale(1.00); filter: blur(6px); }
-      50%  { transform: scale(1.03); filter: blur(7px); }
-      100% { transform: scale(1.00); filter: blur(6px); }
-    }
+    #avatar.talking::before{opacity:.65; animation: haloBreath 1.25s ease-in-out infinite}
+    @keyframes haloBreath{0%{transform:scale(1); filter:blur(6px)} 50%{transform:scale(1.03); filter:blur(7px)} 100%{transform:scale(1); filter:blur(6px)}}
 
-    /* B2) Ecualizador discreto (ondas de voz estilizadas) */
+    /* Ecualizador */
     #avatar::after{
-      content:"";
-      position:absolute; left:8%; bottom:10%;
-      width:26%; height:16%;
-      pointer-events:none; opacity:0; transition: opacity .15s ease;
-
+      content:""; position:absolute; left:8%; bottom:10%;
+      width:26%; height:16%; pointer-events:none; opacity:0; transition: opacity .15s ease;
       --bar: linear-gradient(180deg, #5ff5a2 0%, #22b36a 100%);
       background: var(--bar), var(--bar), var(--bar), var(--bar), var(--bar);
-      background-repeat: no-repeat;
-      background-position: 0% 100%, 25% 100%, 50% 100%, 75% 100%, 100% 100%;
-      background-size: 10% 22%, 10% 32%, 10% 18%, 10% 28%, 10% 24%;
+      background-repeat:no-repeat;
+      background-position:0% 100%, 25% 100%, 50% 100%, 75% 100%, 100% 100%;
+      background-size:10% 22%, 10% 32%, 10% 18%, 10% 28%, 10% 24%;
       filter: drop-shadow(0 0 4px rgba(36,167,93,.35));
     }
-    #avatar.talking::after{
-      opacity:.95;
-      animation: vuDance .24s linear infinite;
-    }
+    #avatar.talking::after{opacity:.95; animation: vuDance .24s linear infinite}
+    #avatar.talking.talking-boost::after{ animation-duration:.16s }
+    #avatar.talking.talking-boost img{ animation-duration:1.05s }
     @keyframes vuDance{
-      0%{   background-size: 10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22%; }
-      25%{  background-size: 10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48%; }
-      50%{  background-size: 10% 36%, 10% 68%, 10% 52%, 10% 44%, 10% 76%; }
-      75%{  background-size: 10% 82%, 10% 46%, 10% 74%, 10% 58%, 10% 40%; }
-      100%{ background-size: 10% 28%, 10% 60%, 10% 26%, 10% 68%, 10% 32%; }
+      0%{   background-size:10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22% }
+      25%{  background-size:10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48% }
+      50%{  background-size:10% 36%, 10% 68%, 10% 52%, 10% 44%, 10% 76% }
+      75%{  background-size:10% 82%, 10% 46%, 10% 74%, 10% 58%, 10% 40% }
+      100%{ background-size:10% 28%, 10% 60%, 10% 26%, 10% 68%, 10% 32% }
     }
 
-    /* Accesibilidad: reducir movimiento si el usuario lo prefiere */
+    /* Accesibilidad: menos movimiento */
     @media (prefers-reduced-motion: reduce){
-      #avatar.talking img{ animation:none; }
-      #avatar.talking::before{ animation:none; }
-      #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6; }
+      #avatar.talking img{ animation:none }
+      #avatar.talking::before{ animation:none }
+      #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6 }
     }
 
-    /* Pequeña onda AI en el borde inferior */
+    /* Onda AI inferior */
     #aiWave{
       position:fixed;left:0;right:0;bottom:0;height:4px;z-index:9999;
       background:linear-gradient(90deg, rgba(32,163,74,.2), rgba(32,163,74,.4), rgba(32,163,74,.2));
       background-size:400% 100%;
       animation: wave 4s infinite linear;
     }
-    @keyframes wave{ from{background-position:0 0;} to{background-position:400% 0;} }
+    @keyframes wave{ from{background-position:0 0} to{background-position:400% 0} }
 
     /* Indicador “Procesando…” */
     #aiThinking{
@@ -184,43 +179,61 @@
       background:rgba(0,0,0,.35); border:1px solid rgba(139,216,169,.5); border-radius:8px;
     }
 
-    /* Modo claro automático (opcional y reversible) */
+    /* === INFOGRÁFICOS === */
+    .insights{
+      display:grid; grid-template-columns:1fr 1fr; gap:12px;
+      padding:12px 14px; background:rgba(0,0,0,.14); border-top:1px solid rgba(255,255,255,.08)
+    }
+    @media (max-width:900px){ .insights{grid-template-columns:1fr} }
+    .card{
+      background:#0f1216; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px;
+    }
+    .card h3{margin:0 0 8px 0; font-size:15px}
+    .viz{width:100%; height:240px; display:block}
+    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; color:var(--muted); margin-top:6px}
+    .badge{display:inline-flex; align-items:center; gap:6px; background:#12161b; border:1px solid rgba(255,255,255,.08); border-radius:999px; padding:4px 8px}
+    .dot{width:10px;height:10px;border-radius:50%}
+
+    /* Modo claro */
     @media (prefers-color-scheme: light){
       :root{
         --bg:#f4f4f4; --text:#111; --panel:#fff; --card:#fff; --brand:#1c8c3f; --muted:#47515a; --focus:#22b36a;
       }
-      body{ background:#f4f4f4; color:#111; }
-      header{ background:#ffffff; border-bottom-color:#1c8c3f; }
-      .left,.right{ border-color: rgba(0,0,0,.08); }
-      .qbtn{ background:#ffffff; color:#111; }
-      .answer{ background:#ffffff; }
+      body{ background:#f4f4f4; color:#111 }
+      header{ background:#ffffff; border-bottom-color:#1c8c3f }
+      .left,.right{ border-color: rgba(0,0,0,.08) }
+      .qbtn{ background:#ffffff; color:#111 }
+      .answer{ background:#ffffff }
+      .card{ background:#ffffff }
     }
   </style>
 </head>
+
 <body>
   <header>
     <div class="brand">
-      <!-- LOGO: si el PNG no existe, mostramos fallback de texto -->
+      <!-- LOGO original + fallback si no carga -->
       <img id="logoImg" class="logo" src="./Deloitte-Emblem.png" alt="Deloitte" loading="eager" decoding="async" />
       <span id="logoFallback" class="logo-fallback" aria-hidden="true">Deloitte</span>
       <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
     </div>
 
-    <div class="controls" aria-label="Controles de voz">
+    <div class="controls" aria-label="Controles de voz y música">
       <label for="voiceSel">Voz:
         <select id="voiceSel" title="Voz neutral latinoamericana" aria-label="Seleccionar voz"></select>
       </label>
       <button id="btnSpeak"  class="btn btn-primary" title="Reproducir última respuesta">🔊 Reproducir</button>
       <button id="btnPause"  class="btn btn-ghost"   title="Pausar/Reanudar audio">⏸️ Pausar</button>
       <button id="btnStop"   class="btn btn-ghost"   title="Detener audio">⏹️ Detener</button>
+      <button id="btnMusic"  class="btn btn-ghost"   title="Silenciar/activar música de fondo">🔈 Música</button>
     </div>
   </header>
 
   <main class="wrap">
-    <!-- Izquierda: AVATAR (solo imagen + subtítulo) -->
+    <!-- Izquierda: AVATAR (imagen + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <img id="avatarImg" src="./741349c8be401dbf3728fc41f925c741.jpg" alt="Avatar holográfico" loading="eager" decoding="async" />
+        <img id="avatarImg" src="./741349c8be401dbf3728fc41f925c741.jpg" alt="Avatar Deloitte" loading="eager" decoding="async" />
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
@@ -229,7 +242,7 @@
       </div>
     </section>
 
-    <!-- Derecha: Q&A -->
+    <!-- Derecha: Q&A + INSIGHTS -->
     <section class="right">
       <div class="panel">
         <h2>Preguntas frecuentes – Marketplace Deloitte CA</h2>
@@ -239,7 +252,25 @@
         <div id="aiThinking" aria-live="polite">Procesando…</div>
       </div>
 
-      <!-- Preguntas ya en HTML -->
+      <!-- INFOGRÁFICOS -->
+      <div class="insights" aria-label="Indicadores clave">
+        <div class="card">
+          <h3>Profesionales por país (muestra)</h3>
+          <svg id="chartBars" class="viz" role="img" aria-label="Barras de profesionales por país"></svg>
+          <div class="legend" id="legendBars"></div>
+        </div>
+        <div class="card">
+          <h3>Empresas públicas auditadas</h3>
+          <svg id="chartDonut" class="viz" role="img" aria-label="Dona de porcentaje de empresas públicas auditadas"></svg>
+          <div class="legend">
+            <span class="badge"><span class="dot" style="background:#22b36a"></span> Auditadas: 51</span>
+            <span class="badge"><span class="dot" style="background:#2e3640"></span> Total mercado: 457</span>
+            <span class="badge">Participación: <strong>11%</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preguntas base -->
       <div class="grid" id="faqGrid" role="list">
         <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
@@ -263,13 +294,15 @@
     </section>
   </main>
 
-  <!-- Música corporativa (opcional). Subir "musica-corporativa.mp3" a la raíz del sitio -->
-  <audio id="bgMusic" src="musica-corporativa.mp3" preload="metadata" loop></audio>
+  <!-- Música corporativa (opcional). Si no existe, la página funciona igual -->
+  <audio id="bgMusic" src="./musica-corporativa.mp3" preload="auto" loop></audio>
+
+  <div id="aiWave" aria-hidden="true"></div>
 
   <script>
     "use strict";
 
-    // ====== Fallback del logo si el PNG no existe ======
+    /* ====== Fallback del logo si el PNG no existe ====== */
     (function(){
       const img = document.getElementById('logoImg');
       const fb  = document.getElementById('logoFallback');
@@ -278,81 +311,202 @@
       if (img.complete && !img.naturalWidth){ img.style.display='none'; fb.style.display='inline-flex'; }
     })();
 
-    // ====== App ======
+    /* ====== Render infográficos (SVG sin librerías) ====== */
+    (function(){
+      // 1) Barras: Profesionales por país (datos provistos)
+      const dataBars = [
+        {label:'Guatemala', val:242, color:'#1ea55a'},
+        {label:'Honduras', val:62,  color:'#24c06a'},
+        {label:'El Salvador', val:93, color:'#1a8a4a'},
+        {label:'Nicaragua',  val:28, color:'#2bd07a'},
+        {label:'Costa Rica', val:421, color:'#22b36a'},
+        {label:'Panamá',     val:229, color:'#1f9656'},
+        {label:'R. Dominicana', val:113, color:'#2aa868'}
+      ];
+      const svgB = document.getElementById('chartBars');
+      if(svgB){
+        const w = svgB.clientWidth || 600, h = svgB.clientHeight || 240, pad = {t:10,r:16,b:30,l:80};
+        svgB.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        const max = Math.max(...dataBars.map(d=>d.val));
+        const barH = (h - pad.t - pad.b) / dataBars.length * 0.7;
+        const gap  = (h - pad.t - pad.b) / dataBars.length * 0.3;
+
+        dataBars.forEach((d,i)=>{
+          const y = pad.t + i*(barH+gap);
+          const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+
+          // etiqueta
+          const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+          label.setAttribute('x', pad.l - 10);
+          label.setAttribute('y', y + barH*0.72);
+          label.setAttribute('text-anchor','end');
+          label.setAttribute('fill','#b9c0c7');
+          label.setAttribute('font-size','12');
+          label.textContent = d.label;
+          g.appendChild(label);
+
+          // barra (animada)
+          const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
+          bar.setAttribute('x', pad.l);
+          bar.setAttribute('y', y);
+          bar.setAttribute('width', 0);
+          bar.setAttribute('height', barH);
+          bar.setAttribute('rx', 6);
+          bar.setAttribute('fill', d.color);
+          g.appendChild(bar);
+
+          // valor
+          const val = document.createElementNS('http://www.w3.org/2000/svg','text');
+          val.setAttribute('x', pad.l + 6);
+          val.setAttribute('y', y + barH/2 + 4);
+          val.setAttribute('fill','#0b0e11');
+          val.setAttribute('font-size','12');
+          val.textContent = d.val;
+          val.style.opacity = 0;
+          g.appendChild(val);
+
+          svgB.appendChild(g);
+
+          // animación suave
+          setTimeout(()=>{
+            const wBar = (w - pad.l - pad.r) * (d.val/max);
+            bar.setAttribute('width', wBar);
+            val.setAttribute('x', pad.l + Math.min(wBar - 28, w - pad.r - 28));
+            val.style.opacity = 0.9;
+          }, 120 + i*90);
+        });
+
+        // Leyenda
+        const legend = document.getElementById('legendBars');
+        if(legend){
+          dataBars.forEach(d=>{
+            const span = document.createElement('span');
+            span.className = 'badge';
+            span.innerHTML = `<span class="dot" style="background:${d.color}"></span>${d.label}: ${d.val}`;
+            legend.appendChild(span);
+          });
+        }
+      }
+
+      // 2) Dona: 51 de 457 (≈11%)
+      const svgD = document.getElementById('chartDonut');
+      if(svgD){
+        const w=svgD.clientWidth||600, h=svgD.clientHeight||240, cx=w/2, cy=h/2, r=Math.min(w,h)*0.32, sw=r*0.38;
+        svgD.setAttribute('viewBox', `0 0 ${w} ${h}`);
+
+        const total = 457, audited = 51, pct = audited/total; // 0.1116…
+
+        // Fondo
+        const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
+        bg.setAttribute('fill','none'); bg.setAttribute('stroke','#2e3640'); bg.setAttribute('stroke-width',sw);
+        svgD.appendChild(bg);
+
+        // Arco
+        const arc = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        arc.setAttribute('cx',cx); arc.setAttribute('cy',cy); arc.setAttribute('r',r);
+        arc.setAttribute('fill','none'); arc.setAttribute('stroke','#22b36a'); arc.setAttribute('stroke-width',sw);
+        arc.setAttribute('stroke-linecap','round');
+        arc.setAttribute('transform',`rotate(-90 ${cx} ${cy})`);
+        const C = 2*Math.PI*r;
+        arc.setAttribute('stroke-dasharray', `${C} ${C}`);
+        arc.setAttribute('stroke-dashoffset', C);
+        svgD.appendChild(arc);
+
+        // Etiqueta central
+        const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t1.setAttribute('x',cx); t1.setAttribute('y',cy-2);
+        t1.setAttribute('text-anchor','middle'); t1.setAttribute('fill','#ffffff'); t1.setAttribute('font-size','26');
+        t1.textContent = `${Math.round(pct*100)}%`;
+        svgD.appendChild(t1);
+
+        const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t2.setAttribute('x',cx); t2.setAttribute('y',cy+18);
+        t2.setAttribute('text-anchor','middle'); t2.setAttribute('fill','#b9c0c7'); t2.setAttribute('font-size','12');
+        t2.textContent = `51 de 457`;
+        svgD.appendChild(t2);
+
+        // Animación del arco
+        setTimeout(()=>{ arc.setAttribute('stroke-dashoffset', C*(1-pct)); arc.style.transition='stroke-dashoffset 900ms ease' }, 180);
+      }
+    })();
+
+    /* ====== Lógica Q&A + TTS ====== */
     document.addEventListener('DOMContentLoaded', () => {
-      // DOM
       const voiceSel   = document.getElementById('voiceSel');
       const btnSpeak   = document.getElementById('btnSpeak');
       const btnPause   = document.getElementById('btnPause');
       const btnStop    = document.getElementById('btnStop');
+      const btnMusic   = document.getElementById('btnMusic');
       const faqGrid    = document.getElementById('faqGrid');
       const answerBox  = document.getElementById('answerBox');
       const subtitleEl = document.getElementById('subtitle');
       const aiThinking = document.getElementById('aiThinking');
+      const bg = document.getElementById('bgMusic');
 
       if (!voiceSel || !btnSpeak || !btnPause || !btnStop || !faqGrid || !answerBox || !subtitleEl){
         if (answerBox) answerBox.textContent = 'Faltan nodos esenciales; verifica el HTML.';
         return;
       }
 
-      // ---------- UX helpers ----------
+      /* Música: click inicial para reproducir (políticas navegadores) */
+      document.addEventListener("click", ()=>{
+        if(bg && bg.paused){
+          bg.volume = 0.18;
+          bg.play().catch(()=>{});
+        }
+      }, {once:true});
+      if (btnMusic && bg){
+        btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
+      }
+
+      /* Helpers de UX */
       function typeText(target, text, speed=24){
         target.textContent = "";
         let i = 0;
-        function step(){
+        (function step(){
           if(i < text.length){
             target.textContent += text[i++];
             setTimeout(step, speed);
           }
-        }
-        step();
+        })();
       }
-      function showThinking(){ if (aiThinking) { aiThinking.style.display='block'; } }
-      function hideThinking(){ if (aiThinking) { aiThinking.style.display='none'; } }
+      function showThinking(){ if (aiThinking) aiThinking.style.display='block' }
+      function hideThinking(){ if (aiThinking) aiThinking.style.display='none' }
 
-      // Render / acciones FAQ
-      faqGrid.querySelectorAll('.qbtn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const text = btn.dataset.answer || '';
-          showThinking();
-          setAnswer(text);
-          queueSpeak(text);
-        });
+      /* Accesos directos */
+      document.addEventListener('keydown', (e) => {
+        const tag = (e.target && e.target.tagName) || '';
+        if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
+        const k = e.key.toLowerCase();
+        if (k === 'r'){ e.preventDefault(); pauseResume(); }
+        if (k === 's'){ e.preventDefault(); stopAll(); }
+        if (k === 'm'){ if(bg){ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; } }
       });
 
+      /* Pintar respuesta y subtítulo */
       function setAnswer(text){
         const t = text || 'Respuesta no disponible.';
-        // Efecto de escritura en la respuesta (manteniendo subtítulo íntegro)
         typeText(answerBox, t);
         subtitleEl.textContent = t;
       }
 
-      // ====== TTS mínimo y robusto ======
+      /* Web Speech API (TTS) */
       const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
-      let voices = [];
-      let voicesReady = false;
-      let lastUtterance = null;
-      let queuedText = null;
+      let voices = [], voicesReady = false, lastUtterance = null, queuedText = null;
 
       function loadVoices(){
         voiceSel.innerHTML = '';
         if (!synth){
           const opt = document.createElement('option');
-          opt.textContent = 'TTS no disponible';
-          opt.value = '';
-          voiceSel.appendChild(opt);
-          voiceSel.disabled = true;
-          voicesReady = false;
-          return;
+          opt.textContent = 'TTS no disponible'; opt.value = '';
+          voiceSel.appendChild(opt); voiceSel.disabled = true; voicesReady = false; return;
         }
         voices = synth.getVoices() || [];
         if (!voices.length){
           const opt = document.createElement('option');
-          opt.textContent = 'Cargando voces…';
-          opt.value = '';
-          voiceSel.appendChild(opt);
-          voicesReady = false;
-          return;
+          opt.textContent = 'Cargando voces…'; opt.value = '';
+          voiceSel.appendChild(opt); voicesReady = false; return;
         }
         voices.forEach(v => {
           const opt = document.createElement('option');
@@ -371,11 +525,7 @@
           if (match) { voiceSel.value = match.name; break; }
         }
         voicesReady = true;
-
-        if (queuedText){
-          const t = queuedText; queuedText = null;
-          speakNow(t);
-        }
+        if (queuedText){ const t = queuedText; queuedText = null; speakNow(t); }
       }
 
       loadVoices();
@@ -391,127 +541,126 @@
 
       function queueSpeak(text){
         if (!synth || !text) return;
-        if (!voicesReady){
-          queuedText = text;
-          setTimeout(loadVoices, 250);
-          return;
-        }
+        if (!voicesReady){ queuedText = text; setTimeout(loadVoices, 250); return; }
         speakNow(text);
+      }
+
+      /* Activación del avatar (.talking) y “boost” en límites de palabra */
+      const avatar = document.getElementById('avatar');
+      function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
+      let boostTimer = null;
+      function boostOnce(){
+        if(!avatar) return;
+        avatar.classList.add('talking-boost');
+        clearTimeout(boostTimer);
+        boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
       }
 
       function speakNow(text){
         try{
-          synth.cancel(); // limpiar cualquier cola previa
+          synth.cancel();
           const u = new SpeechSynthesisUtterance(text);
           const v = getSelectedVoice();
           if (v) u.voice = v;
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          // Eventos (coordinados con el indicador + avatar)
-          u.onstart = () => { hideThinking(); };
-          u.onend   = () => {};
-          u.onerror = (e) => { console.warn('Error TTS', e); hideThinking(); };
+          u.onstart   = ()=>{ hideThinking(); setTalking(true); boostOnce(); };
+          u.onboundary= ()=>{ boostOnce(); };
+          u.onend     = ()=>{ setTalking(false); };
+          u.onerror   = ()=>{ setTalking(false); hideThinking(); };
 
           lastUtterance = u;
           synth.speak(u);
-        } catch(e){
-          console.warn('speakNow()', e);
-          hideThinking();
-        }
+        } catch(e){ hideThinking(); }
       }
 
       function pauseResume(){
         if (!synth) return;
-        if (synth.speaking && !synth.paused) synth.pause();
-        else if (synth.paused) synth.resume();
-        else if (lastUtterance) synth.speak(lastUtterance);
+        if (synth.speaking && !synth.paused){ synth.pause(); setTalking(false); }
+        else if (synth.paused){ synth.resume(); setTalking(true); }
+        else if (lastUtterance){ synth.speak(lastUtterance); setTalking(true); }
       }
+      function stopAll(){ if (!synth) return; try{ synth.cancel(); setTalking(false); }catch{} hideThinking(); }
 
-      function stopAll(){
-        if (!synth) return;
-        try{ synth.cancel(); } catch{}
-        hideThinking();
-      }
-
-      // Controles
-      btnSpeak.addEventListener('click', () => {
-        const text = (answerBox.textContent || '').trim();
-        if (text) queueSpeak(text);
-      });
-      btnPause.addEventListener('click', pauseResume);
-      btnStop .addEventListener('click', stopAll);
-
-      // Atajos: R = reproducir/pausar, S = detener, M = silenciar música
-      document.addEventListener('keydown', (e) => {
-        const tag = (e.target && e.target.tagName) || '';
-        if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
-        const k = e.key.toLowerCase();
-        if (k === 'r'){ e.preventDefault(); pauseResume(); }
-        if (k === 's'){ e.preventDefault(); stopAll(); }
-        if (k === 'm'){
-          const bg = document.getElementById('bgMusic');
-          if(bg){ bg.muted = !bg.muted; }
-        }
+      // Clicks en preguntas
+      faqGrid.querySelectorAll('.qbtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.dataset.answer || '';
+          showThinking();
+          setAnswer(text);
+          queueSpeak(text);
+        });
       });
 
-      // Mensaje inicial (con escritura)
+      // Exponer helpers para añadir más preguntas
+      window.typeText = typeText;
+      window.queueSpeak = queueSpeak;
+
+      // Mensaje inicial
       const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
       typeText(answerBox, bienvenida);
       subtitleEl.textContent = bienvenida;
     });
-  </script>
 
-  <!-- ACTIVADOR NO INVASIVO DEL AVATAR (.talking) SEGÚN ESTADO DEL TTS -->
-  <script>
+    /* ====== Helpers para agregar preguntas sin tocar estructura ====== */
     (function(){
-      const avatar = document.getElementById('avatar');
-      if (!avatar || !('speechSynthesis' in window)) return;
+      const grid = document.getElementById('faqGrid');
+      if(!grid) return;
 
-      const synth      = window.speechSynthesis;
-      const origSpeak  = synth.speak.bind(synth);
-      const origPause  = synth.pause.bind(synth);
-      const origResume = synth.resume.bind(synth);
-      const origCancel = synth.cancel.bind(synth);
+      window.addQA = function(questionText, answerText){
+        const btn = document.createElement('button');
+        btn.className = 'qbtn';
+        btn.setAttribute('role','listitem');
+        btn.textContent = questionText;
+        btn.dataset.answer = answerText;
+        btn.addEventListener('click', () => {
+          const text = btn.dataset.answer || '';
+          const aiThinking = document.getElementById('aiThinking');
+          if (aiThinking) aiThinking.style.display='block';
 
-      function setTalking(on){ avatar.classList.toggle('talking', !!on); }
-
-      synth.speak = function(utter){
-        const prevStart  = utter.onstart;
-        const prevEnd    = utter.onend;
-        const prevError  = utter.onerror;
-        const prevPause  = utter.onpause;
-        const prevResume = utter.onresume;
-
-        utter.onstart = (e)=>{ setTalking(true);  prevStart  && prevStart.call(utter, e); };
-        utter.onend   = (e)=>{ setTalking(false); prevEnd    && prevEnd.call(utter, e); };
-        utter.onerror = (e)=>{ setTalking(false); prevError  && prevError.call(utter, e); };
-        utter.onpause = (e)=>{ setTalking(false); prevPause  && prevPause.call(utter, e); };
-        utter.onresume= (e)=>{ setTalking(true);  prevResume && prevResume.call(utter, e); };
-
-        return origSpeak(utter);
+          const answerBox  = document.getElementById('answerBox');
+          const subtitleEl = document.getElementById('subtitle');
+          if (answerBox && subtitleEl){
+            if (typeof window.typeText === 'function'){ window.typeText(answerBox, text); }
+            else { answerBox.textContent = text; }
+            subtitleEl.textContent = text;
+          }
+          if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
+          if (aiThinking) setTimeout(()=> aiThinking.style.display='none', 100);
+        });
+        grid.appendChild(btn);
       };
-      synth.pause  = function(){ setTalking(false); const r = origPause();  return r; };
-      synth.resume = function(){ const r = origResume(); if (synth.speaking && !synth.paused) setTalking(true); return r; };
-      synth.cancel = function(){ setTalking(false); const r = origCancel(); return r; };
-    })();
-  </script>
 
-  <!-- Música corporativa: inicia tras la primera interacción (requisito de navegadores) -->
-  <script>
+      window.bulkAddQA = function(list){ (list || []).forEach(item => addQA(item.q, item.a)); };
+    })();
+
+    /* ====== Agregar las nuevas preguntas que me pediste ====== */
     (function(){
-      const bg = document.getElementById("bgMusic");
-      if(!bg) return;
-      document.addEventListener("click", ()=>{
-        if(bg.paused){
-          bg.volume = 0.18;
-          bg.play().catch(()=>{ /* bloqueo de autoplay: se reintenta con la siguiente interacción */ });
+      bulkAddQA([
+        {
+          q: "¿Qué reconocimientos ha recibido Deloitte Costa Rica en materia de auditoría, consultoría, ESG y talento?",
+          a: "Deloitte Costa Rica ocupa la posición número 1 en los principales rankings sectoriales de Merco. Ha liderado de manera consecutiva desde 2023 el Ranking Sectorial de Auditoría y Consultoría de Merco Empresas. También encabeza el Ranking Sectorial de Responsabilidad ESG en 2023 y 2024, y el Ranking Sectorial de Talento en 2024 y 2025, todos otorgados por Merco."
+        },
+        {
+          q: "¿Qué reconocimientos han recibido Deloitte Honduras y Deloitte Panamá según los rankings sectoriales de Merco?",
+          a: "Deloitte Honduras ocupa el primer lugar en el Ranking Sectorial de Auditoría de Merco Empresas 2024 y también lidera el Ranking Sectorial de Auditoría de Merco Responsabilidad ESG 2024. Por su parte, Deloitte Panamá ocupa la posición número 1 en el Ranking Sectorial de Consultores de Merco Responsabilidad ESG en 2024 y 2025, según Merco."
+        },
+        {
+          q: "¿Qué reconocimiento recibió Deloitte Nicaragua en 2024 dentro del sector de Servicios Profesionales?",
+          a: "Deloitte Nicaragua obtuvo la séptima posición en el prestigioso ranking “Los Mejores Lugares para Trabajar” en la categoría de Servicios Profesionales 2024, destacándose por su ambiente laboral y sus prácticas organizacionales."
+        },
+        {
+          q: "¿En qué medios destacados de Centroamérica y el Caribe tiene presencia el Marketplace Deloitte CA?",
+          a: "El Marketplace Deloitte CA tiene presencia en medios líderes en Costa Rica, Panamá, República Dominicana, Honduras y Guatemala. En Costa Rica aparece en El Financiero, La Nación, La República y Noticias Repretel. En Panamá figura en La Estrella de Panamá, La Prensa, TVN y Telemetro. En República Dominicana tiene presencia en Listín Diario, El Dinero, Periódico Hoy, El Día, Noticias SIN y El Caribe. En Honduras participa en La Tribuna y El Heraldo, y en Guatemala en Prensa Libre, el principal medio impreso y digital del país."
+        },
+        {
+          q: "¿En qué revistas regionales de negocios, economía y tecnología tiene presencia el Marketplace Deloitte CA?",
+          a: "El Marketplace Deloitte CA participa en importantes revistas regionales, entre ellas: Revista Summa, líder de negocios en Centroamérica, Colombia y República Dominicana; Estrategia y Negocios, especializada en economía, tecnología y temas empresariales; Revista Vida y Éxito, una de las más prestigiosas de la región; Mercados y Tendencias, enfocada en economía y negocios para emprendedores y tomadores de decisión; Forbes Centroamérica y República Dominicana, con cobertura en países como Guatemala, El Salvador, Honduras, Nicaragua, Panamá y Costa Rica; e IT Now, revista digital especializada en tecnología."
         }
-      }, {once:true});
+      ]);
     })();
   </script>
-
-  <!-- Onda AI decorativa -->
-  <div id="aiWave" aria-hidden="true"></div>
 </body>
 </html>
+``
