@@ -5,118 +5,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Deloitte | Asistente Interactivo</title>
-  <meta name="description" content="Asistente interactivo con avatar que responde sobre Deloitte, ciberseguridad, legal y economía." />
-  <style>
-    :root {
-      --bg: #0b0c10;
-      --panel: #111317;
-      --card: #1a1d24;
-      --primary: #86c232;
-      --text: #e6e6e6;
-      --muted: #9aa0a6;
-      --danger: #ff6b6b;
-      --ok: #2ecc71;
-      --accent: #3a82f6;
-    }
-    * { box-sizing: border-box }
-    html, body { height: 100% }
-    body {
-      margin: 0;
-      color: var(--text);
-      background: radial-gradient(1200px 600px at 20% 0%, #0e1117 0%, var(--bg) 60%);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
-      display: grid; grid-template-rows: auto 1fr auto; gap: 12px;
-    }
-    header, footer { padding: 12px 16px; background: transparent }
-    header { display: flex; align-items: center; justify-content: space-between }
-    .brand { display: flex; align-items: center; gap: 12px }
-    .brand img { height: 28px }
-    .brand h1 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: .2px }
-
-    .wrap {
-      display: grid; grid-template-columns: 360px 1fr; gap: 16px; padding: 0 16px 16px; min-height: 0;
-    }
-    @media (max-width: 980px) { .wrap { grid-template-columns: 1fr } }
-
-    .left, .right {
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 180px);
-      border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; min-height: 0;
-    }
-    .left { padding: 14px; display: grid; grid-template-rows: auto auto 1fr; gap: 14px }
-    .right { display: grid; grid-template-rows: auto 1fr auto }
-
-    .card {
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px; padding: 12px;
-    }
-    .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px }
-    label { font-size: 12px; color: var(--muted) }
-    select, button, input[type="text"] {
-      background: #0f1216; color: var(--text);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 8px; padding: 8px 10px; font-size: 14px;
-    }
-    button { cursor: pointer }
-    .btn-primary {
-      background: linear-gradient(180deg, #1f2937, #0f1216);
-      border: 1px solid rgba(134,194,50,0.4);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 2px rgba(134,194,50,0.12);
-    }
-    .pill { padding: 4px 8px; border-radius: 999px; font-size: 11px; border: 1px solid rgba(255,255,255,0.12) }
-    .ok { color: var(--ok); border-color: rgba(46,204,113,0.35) }
-    .err { color: var(--danger); border-color: rgba(255,107,107,0.35) }
-
-    /* Avatar */
-    .avatar {
-      position: relative; aspect-ratio: 4/5; border-radius: 12px; overflow: hidden; background: #0f1216;
-      display: grid; place-items: center;
-    }
-    .avatar .face {
-      width: 65%; aspect-ratio: 1; border-radius: 50%;
-      background: radial-gradient(circle at 50% 38%, #2b2f3a 0%, #141821 62%);
-      position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-      display: grid; place-items: center;
-    }
-    .mouth {
-      width: 34%; height: 10px; border-radius: 10px; background: #0d1117;
-      border: 1px solid rgba(255,255,255,0.08); transition: transform .06s ease, height .06s ease;
-    }
-    .talking .mouth { height: 18px; transform: translateY(2px) }
-    .eyes { position: absolute; top: 35%; left: 50%; transform: translate(-50%,-50%); display: flex; gap: 26px }
-    .eye { width: 14px; height: 14px; border-radius: 50%; background: #c7d2fe }
-    .subtitle {
-      position: absolute; bottom: 8px; left: 8px; right: 8px; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
-      padding: 6px 8px; border-radius: 8px; font-size: 12px; color: #e9eefc; text-shadow: 0 1px 2px #000;
-      max-height: 38%; overflow: auto;
-    }
-
-    /* Chat */
-    .chat-header { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between }
-    .chat-header h2 { margin: 0; font-size: 16px }
-    .chat {
-      overflow: auto; padding: 14px; display: grid; gap: 10px; align-content: start; background: rgba(0,0,0,0.22);
-    }
-    .msg { display: grid; gap: 6px; max-width: 90% }
-    .me { justify-self: end }
-    .bubble {
-      padding: 10px 12px; border-radius: 12px; line-height: 1.35; white-space: pre-wrap;
-      border: 1px solid rgba(255,255,255,0.06); background: #12151b;
-    }
-    .me .bubble { background: #10141a; border-color: rgba(58,130,246,0.35) }
-    .ai .bubble { background: #121a12; border-color: rgba(134,194,50,0.35) }
-    .meta { font-size: 11px; color: var(--muted) }
-    .citas { font-size: 12px; margin-top: 6px; color: #b8c3b8 }
-    .composer { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; padding: 12px; border-top: 1px solid rgba(255,255,255,0.06) }
-    .disclaimer { font-size: 12px; color: var(--muted); padding: 8px 12px }
-    .switches { display: flex; gap: 8px; flex-wrap: wrap }
-    .switches label { display: flex; align-items: center; gap: 6px; background: #0f1216; padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06) }
-  </style>
+  <meta name="description" content="Asistente interactivo con avatar holográfico (mujer latina) y voz latina neutra." />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
     <div class="brand">
-      <img alt="Deloitte" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Deloitte_logo.png" />
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Deloitte_logo.png" alt="Deloitte" height="26">
       <h1>Asistente Interactivo – Congreso</h1>
     </div>
     <div class="row">
@@ -127,20 +22,21 @@
           <option value="pt-BR">Português</option>
         </select>
       </label>
+      <label>Voz:
+        <select id="voiceSel" title="Selecciona la voz"></select>
+      </label>
       <span id="sttStatus" class="pill">Voz: inactivo</span>
     </div>
   </header>
 
   <main class="wrap">
-    <!-- Panel izquierdo: avatar + controles -->
+    <!-- Izquierda: Avatar holográfico + Controles -->
     <section class="left">
       <div class="avatar card" id="avatar">
-        <div class="face" id="face">
-          <div class="eyes">
-            <div class="eye"></div><div class="eye"></div>
-          </div>
-          <div class="mouth" id="mouth"></div>
-        </div>
+        <video id="avatarVideo" autoplay muted loop playsinline preload="auto">
+          <source src="assets/avatar-holo.mp4" type="video/mp4">
+        </video>
+        <div class="scanlines"></div>
         <div class="subtitle" id="subs"></div>
       </div>
 
@@ -163,13 +59,13 @@
 
       <div class="card">
         <div class="row" style="justify-content: space-between;">
-          <span class="meta">Modo demo si no hay backend. El avatar leerá las respuestas.</span>
+          <span class="meta">Sin backend: modo demo (eco). Con backend: respuestas reales.</span>
           <button id="btnClear">🧹 Limpiar</button>
         </div>
       </div>
     </section>
 
-    <!-- Panel derecho: chat -->
+    <!-- Derecha: Chat -->
     <section class="right">
       <div class="chat-header">
         <h2>Chat con el avatar</h2>
@@ -179,7 +75,7 @@
       <div class="composer">
         <input id="input" type="text" placeholder="Escribe tu pregunta…" />
         <button id="send" class="btn-primary">Enviar</button>
-        <button id="speak">🔊</button>
+        <button id="speak" title="Repetir última respuesta">🔊</button>
       </div>
       <div class="disclaimer">
         Ejemplos: “servicios de Deloitte”, “tendencias de ciberseguridad”, “riesgos legales de IA”, “panorama económico”.
@@ -188,11 +84,12 @@
   </main>
 
   <footer>
-    <small class="meta">© Deloitte – Demo de asistente con voz y avatar para congreso.</small>
+    <small class="meta">© Deloitte – Demo de asistente con voz y avatar holográfico para congreso.</small>
   </footer>
 
+  <script src="assets/config.js"></script>
   <script>
-    // ---------- Referencias DOM ----------
+    // ---------- DOM ----------
     const chatEl = document.getElementById('chat');
     const inputEl = document.getElementById('input');
     const sendBtn = document.getElementById('send');
@@ -201,11 +98,11 @@
     const stopBtn = document.getElementById('btnStop');
     const sttStatus = document.getElementById('sttStatus');
     const statusEl = document.getElementById('status');
-    const mouth = document.getElementById('mouth');
-    const face = document.getElementById('face');
     const subs = document.getElementById('subs');
     const conn = document.getElementById('conn');
     const langSel = document.getElementById('lang');
+    const voiceSel = document.getElementById('voiceSel');
+    const avatar = document.getElementById('avatar');
 
     // ---------- Utilidades ----------
     function addMsg(role, text, citas=[]) {
@@ -222,7 +119,7 @@
       if (role === 'ai' && citas?.length) {
         const c = document.createElement('div');
         c.className = 'citas';
-        c.innerHTML = 'Fuentes: ' + citas.map(x => `<a href="${x.url}" target="_blank" rel="noopener">${x.titulo || x.url}</a>`).join(' · ');
+        c.innerHTML = 'Fuentes: ' + citas.map(x => `<a href="${x.url}" target="_blank">${x.titulo || x.url}</a>`).join(' · ');
         wrap.appendChild(c);
       }
       chatEl.appendChild(wrap);
@@ -245,27 +142,43 @@
     }
 
     // ---------- TTS (Text-to-Speech) ----------
-    let utter;
-    function setTalking(on) {
-      face.classList.toggle('talking', on);
-      if (on) {
-        if (!mouth.dataset.loop) {
-          const loop = setInterval(() => {
-            mouth.style.height = (8 + Math.round(Math.random()*12)) + 'px';
-          }, 70);
-          mouth.dataset.loop = loop;
+    let chosenVoice = null;
+    function populateVoices() {
+      if (!('speechSynthesis' in window)) return;
+      const voices = window.speechSynthesis.getVoices() || [];
+      const preferred = ['es-419', 'es-MX', 'es-CO', 'es-ES'];
+      const sorted = voices.sort((a,b)=> preferred.indexOf(a.lang) - preferred.indexOf(b.lang));
+      voiceSel.innerHTML = '';
+      sorted.forEach(v => {
+        if (v.lang?.startsWith('es')) {
+          const opt = document.createElement('option');
+          opt.value = v.name; opt.textContent = `${v.name} (${v.lang})`;
+          voiceSel.appendChild(opt);
         }
-      } else {
-        clearInterval(mouth.dataset.loop); mouth.dataset.loop = '';
-        mouth.style.height = '10px';
-        subs.textContent = '';
-      }
+      });
+      chosenVoice = sorted.find(v => preferred.includes(v.lang)) || sorted.find(v => v.lang?.startsWith('es')) || null;
+      if (chosenVoice) voiceSel.value = chosenVoice.name;
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = populateVoices;
+      populateVoices();
+    }
+    voiceSel.onchange = () => {
+      const voices = speechSynthesis.getVoices();
+      chosenVoice = voices.find(v => v.name === voiceSel.value) || null;
+    };
+
+    function setTalking(on) {
+      avatar.classList.toggle('talking', on);
+      if (!on) subs.textContent = '';
     }
     function speak(text, lang='es-ES') {
       if (!window.speechSynthesis) return;
       try { window.speechSynthesis.cancel(); } catch(e){}
-      utter = new SpeechSynthesisUtterance(text);
-      utter.lang = lang; utter.rate = 1.02; utter.pitch = 1.0;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = chosenVoice?.lang || lang;
+      if (chosenVoice) utter.voice = chosenVoice;
+      utter.rate = 1.02; utter.pitch = 1.0;
       utter.onstart = () => setTalking(true);
       utter.onend = () => setTalking(false);
       utter.onerror = () => setTalking(false);
@@ -299,7 +212,7 @@
     langSel.onchange = () => { if (recognition) recognition.lang = langSel.value; };
     initSTT();
 
-    // ---------- Llamada al backend (con fallback demo) ----------
+    // ---------- Backend (con fallback demo) ----------
     async function askLLM(question) {
       const payload = {
         question,
@@ -308,19 +221,29 @@
         session: sessionStorage.getItem('sess') || crypto.randomUUID(),
       };
       sessionStorage.setItem('sess', payload.session);
+
+      const base = (window.API_BASE || '').replace(/\/$/, '');
+      if (!base) {
+        // Sin backend → demo
+        return {
+          answer: `Demo: me preguntaste «${question}». Conectaré al backend cuando esté disponible.`,
+          citations: [],
+          disclaimer: buildDisclaimer(payload.domains)
+        };
+      }
+      const url = `${base}/api/chat`;
+
       try {
-        const res = await fetch('/api/chat', {
+        const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        return data; // { answer, citations?, disclaimer? }
+        return await res.json();
       } catch (e) {
-        // Fallback demo sin backend (GitHub Pages)
         return {
-          answer: `Demo: me preguntaste «${question}». Conectaré a tu backend /api/chat cuando esté disponible.`,
+          answer: `No pude contactar la API en este momento.\n\nDetalle: ${e.message}`,
           citations: [],
           disclaimer: buildDisclaimer(payload.domains)
         };
@@ -344,7 +267,6 @@
     sendBtn.onclick = handleSend;
     inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
 
-    // Limpiar conversación
     document.getElementById('btnClear').onclick = () => {
       chatEl.innerHTML = '';
       setStatus('Conversación reiniciada');
@@ -352,21 +274,27 @@
       setTalking(false);
     };
 
-    // Actualiza disclaimer visible según dominios seleccionados
+    // Disclaimers dinámicos
     const domDisclaimer = document.getElementById('domDisclaimer');
-    document.querySelectorAll('.domain').forEach(chk => chk.addEventListener('change', () => {
-      domDisclaimer.textContent = buildDisclaimer(getDomains());
-    }));
-    domDisclaimer.textContent = buildDisclaimer(getDomains());
+    const refreshDisclaimer = () => { domDisclaimer.textContent = buildDisclaimer(getDomains()); };
+    document.querySelectorAll('.domain').forEach(chk => chk.addEventListener('change', refreshDisclaimer));
+    refreshDisclaimer();
 
-    // Detecta si existe backend /api/chat (si no, se queda en "local")
+    // Ping de conexión
     (async () => {
+      if (!window.API_BASE) return; // sigue local
       try {
-        const pong = await fetch('/api/chat', { method: 'OPTIONS' });
+        const pong = await fetch((window.API_BASE.replace(/\/$/,'') + '/api/chat'), { method: 'OPTIONS' });
         if (pong.ok) { conn.textContent = 'Conexión: backend'; conn.className='pill ok'; }
-      } catch(e) { /* sigue local */ }
+      } catch(e) { /* se queda local */ }
     })();
+
+    // Mensaje de bienvenida personalizable (frontend)
+    window.onload = () => {
+      const welcome = "¡Hola! Bienvenido o bienvenida al asistente interactivo de Deloitte. Puedo contarte sobre nuestros servicios, el Marketplace y temas de ciberseguridad, legales y económicos.";
+      addMsg('ai', welcome);
+      speak(welcome, 'es-ES');
+    };
   </script>
 </body>
 </html>
-``
