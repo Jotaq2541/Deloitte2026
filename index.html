@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Asistente Virtual – Marketplace Deloitte CA</title>
   <meta name="description" content="Asistente con avatar y voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
-  <!-- v5.0 – FAQ visible, TTS estable, boca animada, imágenes como <img> -->
+  <!-- v6.0 – FAQ visible, TTS estable, boca animada, imágenes correctas -->
   <style>
     :root{
       --bg:#0b0e11; --panel:#111418; --card:#141a1f;
@@ -100,11 +100,12 @@
 <body>
   <header>
     <div class="brand">
-      <!-- LOGO (PNG en raíz; si subes SVG, cámbialo abajo por .svg) -->
+      <!-- LOGO (PNG en raíz). Sube Deloitte-Emblem.svg para máxima nitidez y cámbialo aquí. -->
       <img class="logo"
            src="./Deloitte-Emblem.png"
-           srcset="./Deloitte-Emblem@2x.png 2x, ./Deloitte-Emblem@3x.png 3x"
-           alt="Deloitte" />
+           alt="Deloitte"
+           height="24"
+           srcset="./Deloitte-Emblem@2x.png 2x, ./Deloitte-Emblem@3x.png 3x">
       <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
     </div>
 
@@ -124,7 +125,7 @@
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
         <img id="avatarImg"
              src="./1000_F_827852536_YuGWoMW0rpFSyAXCHqYfv2QCD2AowPaj.jpg"
-             alt="Avatar" />
+             alt="Avatar decorativo">
         <div class="scan" aria-hidden="true"></div>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
         <div id="mouth" class="mouth" aria-hidden="true"></div>
@@ -157,12 +158,10 @@
   </main>
 
   <script>
-  // ====== INICIALIZACIÓN SEGURA + DIAGNÓSTICO EN PANTALLA ======
+  // ====== DIAGNÓSTICO EN PANTALLA (si algo falla, lo verás) ======
   window.addEventListener('error', (e) => {
     const ab = document.getElementById('answerBox');
-    if (ab) {
-      ab.textContent = 'Hubo un error cargando el script: ' + (e.message || e.error);
-    }
+    if (ab) ab.textContent = 'Error JS: ' + (e.message || e.error);
   });
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -192,15 +191,3 @@
       { q: "¿Qué reconocimientos y reputación respaldan al Marketplace CA?",
         a: "Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace." },
       { q: "¿Qué certificaciones posee Deloitte en la región?",
-        a: "Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica." },
-      { q: "¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?",
-        a: "El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento." },
-      { q: "¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?",
-        a: "Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados & Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo." }
-    ];
-
-    // ----- DOM refs -----
-    const voiceSel   = document.getElementById('voiceSel');
-    const btnSpeak   = document.getElementById('btnSpeak');
-    const btnPause   = document.getElementById('btnPause');
-    const btnStop    = document.getElementById('btnStop');
