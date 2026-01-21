@@ -4,9 +4,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Asistente Deloitte – Marketplaces S‑LATAM</title>
-<meta name="description" content="Asistente con avatar femenino futurista y voz neutral latinoamericana. Preguntas y respuestas sobre Marketplaces de Deloitte S‑LATAM." />
-<!-- v3.0 – Avatar SVG femenino + 10 Q&A + Reproducir/Pausar/Detener -->
+<title>Asistente Deloitte – Marketplace CA</title>
+<meta name="description" content="Asistente con avatar y voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
+<!-- v3.1 – Avatar imagen + 10 Q&A + Reproducir/Pausar/Detener -->
 <style>
   :root{
     --bg:#0b0e11; --panel:#111418; --card:#141a1f;
@@ -33,11 +33,15 @@
   }
   .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
 
-  /* AVATAR (SVG embebido para que SIEMPRE se vea) */
+  /* AVATAR (imagen + capas) */
   .avatar{
     position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
     background:#07090d;border:1px solid rgba(32,163,74,.35);
     box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)
+  }
+  .avatar img#avatarImg{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;display:block
   }
   .scan{
     position:absolute;inset:0;pointer-events:none;
@@ -68,13 +72,14 @@
   .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
   footer{padding:10px 16px;color:var(--muted)}
   .logo{height:22px;vertical-align:middle;opacity:.95}
+  .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
 </style>
 </head>
 <body>
   <header>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <img class="logo" alt="Deloitte" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Deloitte_logo.png" />
-      <h1>Asistente Virtual – Marketplaces Deloitte S‑LATAM</h1>
+      <img class="logo" alt="Deloitte" src="Deloitte-Emblem.png" />
+      <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
     </div>
     <div class="controls">
       <label>Voz:
@@ -90,31 +95,70 @@
     <!-- Izquierda: AVATAR -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- ✅ SVG embebido: rostro femenino estilizado -->
-        <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" role="img" aria-label="Asistente femenina futurista">
-          <defs>
-            <linearGradient id="hair" x1="0" x2="1">
-              <stop offset="0%" stop-color="#29b56f"/>
-              <stop offset="100%" stop-color="#137a4a"/>
-            </linearGradient>
-            <radialGradient id="glow" cx="50%" cy="0%" r="90%">
-              <stop offset="0%" stop-color="rgba(35,181,116,0.45)"/>
-              <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-            </radialGradient>
-            <linearGradient id="lip" x1="0" x2="1">
-              <stop offset="0%" stop-color="#25a463"/><stop offset="100%" stop-color="#2ecf8d"/>
-            </linearGradient>
-          </defs>
-          <rect width="100%" height="100%" fill="#081013"/>
-          <ellipse cx="200" cy="110" rx="190" ry="110" fill="url(#glow)"/>
-          <!-- Cabello estilizado -->
-          <path d="M50,200 C80,80 320,80 350,200 C360,260 340,330 300,360 C260,390 140,390 100,360 C60,330 40,260 50,200 Z" fill="url(#hair)" opacity="0.45"/>
-          <!-- Cara -->
-          <ellipse cx="200" cy="240" rx="95" ry="120" fill="#16302a" stroke="#29b56f" stroke-width="1.6"/>
-          <!-- Nariz ligera -->
-          <path d="M200 240 q-3 10 0 18" stroke="rgba(180,240,220,.6)" stroke-width="1" fill="none"/>
-          <!-- Ojos -->
-          <ellipse cx="170" cy="230" rx="10.5" ry="7.8" fill="#e6fff5"/>
-          <ellipse cx="230" cy="230" rx="10.5" ry="7.8" fill="#e6fff5"/>
-          <!-- Cejas -->
-          <path d="M155 218 q15 -8 30 0" stroke="rgba(230,255,245,.55)" stroke-width="2" fill="none"/>
+        <img
+          id="avatarImg"
+          src="1000_F_827852536_YuGWoMW0rpFSyAXCHqYfv2QCD2AowPaj.jpg"
+          alt="Asistente virtual Deloitte"
+          loading="eager"
+        />
+        <div class="scan" aria-hidden="true"></div>
+        <div id="subtitle" class="subtitle" aria-live="polite"></div>
+      </div>
+
+      <div class="muted">
+        Sugerencia: usa <span class="kbd">R</span> para reproducir/pausar y <span class="kbd">S</span> para detener por teclado.
+      </div>
+    </section>
+
+    <!-- Derecha: Q&A -->
+    <section class="right">
+      <div class="panel">
+        <h2>Preguntas frecuentes – Marketplace Deloitte CA</h2>
+        <div class="controls">
+          <small class="muted">Haz clic en una pregunta para ver la respuesta y reproducirla.</small>
+        </div>
+      </div>
+
+      <div class="grid" id="faqGrid" role="list">
+        <!-- Botones de preguntas generados por JS -->
+      </div>
+
+      <div id="answerBox" class="answer" aria-live="polite">
+        Selecciona una pregunta para ver la respuesta aquí.
+      </div>
+
+      <footer>
+        © 2026 Deloitte & Touche, S.A. — Demostración de asistente con TTS. Recomendado: Chrome/Edge.
+      </footer>
+    </section>
+  </main>
+
+<script>
+(() => {
+  // ----- Q&A (derivadas del material de Marketplace CA) -----
+  const QA = [
+    {
+      q: "¿Qué es el Marketplace Deloitte Centroamérica?",
+      a: "Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región."
+    },
+    {
+      q: "¿Por qué se creó el Marketplace regional en 2025?",
+      a: "El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles."
+    },
+    {
+      q: "¿En qué países opera el Marketplace Deloitte Centroamérica?",
+      a: "Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región."
+    },
+    {
+      q: "¿Cuántos profesionales integran Deloitte en la región?",
+      a: "Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113)."
+    },
+    {
+      q: "¿Qué áreas de servicio están representadas dentro del Marketplace?",
+      a: "El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales."
+    },
+    {
+      q: "¿Cuál es la participación de Deloitte en empresas públicas auditadas dentro del Marketplace CA?",
+      a: "Deloitte audita el 11% de las compañías listadas en las bolsas de valores de los siete países del Marketplace, lo que representa 51 empresas auditadas de un total de 457 en 2025."
+    },
+    {
