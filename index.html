@@ -16,7 +16,7 @@
       --viz-bg:#0f1216; --viz-stroke:#2e3640;
 
       /* Chips/leyendas legibles */
-      --chip-bg:#eef6f0;         /* fondo claro */
+      --chip-bg:#eef6f0;         /* fondo claro (oscuro) */
       --chip-text:#0b0e11;       /* texto oscuro */
       --chip-border:rgba(0,0,0,.16);
       --chip-bg-hover:#e4f2ea;
@@ -196,7 +196,7 @@
     .viz{width:100%; height:260px; display:block}
     .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
 
-    /* Chips/leyendas legibles (corrección: ya NO negros) */
+    /* Chips/leyendas legibles */
     .badge{
       display:inline-flex; align-items:center; gap:6px;
       background:var(--chip-bg); color:var(--chip-text);
@@ -261,7 +261,7 @@
     <!-- Izquierda: AVATAR (imagen + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <img id="avatarImg" src="./741349c8be401dbf3728fc41f925c741.jpg" alt="Avatar holográfico" loading="eager" decoding="async" />
+        <img id="avatarImg" src="./741349c8be401dbf3728fc41f925c741.jpg" alt="Avatar" loading="eager" decoding="async" />
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
@@ -616,7 +616,12 @@
           bg.play().catch(()=>{});
         }
       }, {once:true});
-         let typeSeq = 0;
+      if (btnMusic && bg){
+        btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
+      }
+
+      // TYPEWRITER cancelable (evita duplicaciones)
+      let typeSeq = 0;
       function typeText(target, text, speed=22){
         typeSeq++;
         const mySeq = typeSeq;
@@ -631,8 +636,14 @@
         })();
       }
 
-      function showThinking(){ if (aiThinking) aiThinking.style.display='block' }
-      function hideThinking(){ if (aiThinking) aiThinking.style.display='none' }
+      function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
+      let boostTimer = null;
+      function boostOnce(){
+        if(!avatar) return;
+        avatar.classList.add('talking-boost');
+        clearTimeout(boostTimer);
+        boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
+      }
 
       // TTS
       const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
@@ -681,15 +692,6 @@
             || voices[0];
       }
 
-      function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
-      let boostTimer = null;
-      function boostOnce(){
-        if(!avatar) return;
-        avatar.classList.add('talking-boost');
-        clearTimeout(boostTimer);
-        boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
-      }
-
       function queueSpeak(text){
         if (!synth || !text) return;
         if (!voicesReady){ queuedText = text; setTimeout(loadVoices, 250); return; }
@@ -698,53 +700,41 @@
 
       function speakNow(text){
         try{
-          synth.cancel();
+          synth.cancel(); // limpia cualquier lectura anterior
           const u = new SpeechSynthesisUtterance(text);
           const v = getSelectedVoice();
           if (v) u.voice = v;
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          u.onstart   = ()=>{ hideThinking(); setTalking(true); boostOnce(); };
+          u.onstart   = ()=>{ aiThinking.style.display='none'; setTalking(true); boostOnce(); };
           u.onboundary= ()=>{ boostOnce(); };
           u.onend     = ()=>{ setTalking(false); };
-          u.onerror   = ()=>{ setTalking(false); hideThinking(); };
+          u.onerror   = ()=>{ setTalking(false); aiThinking.style.display='none'; };
 
           lastUtterance = u;
           synth.speak(u);
         } catch(e){
-          hideThinking();
+          aiThinking.style.display='none';
         }
       }
 
-      function pauseResume(){
-        if (!synth) return;
-        if (synth.speaking && !synth.paused){ synth.pause(); setTalking(false); }
-        else if (synth.paused){ synth.resume(); setTalking(true); }
-        else if (lastUtterance){ synth.speak(lastUtterance); setTalking(true); }
-      }
-      function stopAll(){ if (!synth) return; try{ synth.cancel(); setTalking(false); }catch{} hideThinking(); }
-
-      // Clicks en preguntas
+      // Clicks en preguntas (usamos onclick para permitir que el parche envuelva btnSpeak si hiciera falta)
       faqGrid.querySelectorAll('.qbtn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.onclick = () => {
           const text = btn.dataset.answer || '';
-          showThinking();
+          aiThinking.style.display='block';
           typeText(answerBox, text);
-          subtitleEl.textContent = text;
+          document.getElementById('subtitle').textContent = text;
           queueSpeak(text);
-        });
+        };
       });
 
-      // Atajos: R/S/M
-      document.addEventListener('keydown', (e) => {
-        const tag = (e.target && e.target.tagName) || '';
-        if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
-        const k = e.key.toLowerCase();
-        if (k === 'r'){ e.preventDefault(); pauseResume(); }
-        if (k === 's'){ e.preventDefault(); stopAll(); }
-        if (k === 'm'){ if(bg){ bg.muted = !bg.muted; const b = document.getElementById('btnMusic'); if(b) b.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; } }
-      });
+      // Botón Reproducir: usamos onclick (no addEventListener) para que el parche pueda envolverlo
+      btnSpeak.onclick = () => {
+        const text = (answerBox.textContent || '').trim();
+        if (text) queueSpeak(text);
+      };
 
       // Exponer helpers
       window.typeText = typeText;
@@ -753,7 +743,7 @@
       // Mensaje inicial
       const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
       typeText(answerBox, bienvenida);
-      subtitleEl.textContent = bienvenida;
+      document.getElementById('subtitle').textContent = bienvenida;
     });
 
     /* ====== Helpers para agregar preguntas sin tocar estructura ====== */
@@ -768,7 +758,7 @@
         btn.textContent = questionText;
         btn.dataset.answer = answerText;
 
-        btn.addEventListener('click', () => {
+        btn.onclick = () => {
           const text = btn.dataset.answer || '';
           const aiThinking = document.getElementById('aiThinking');
           if (aiThinking) aiThinking.style.display='block';
@@ -782,7 +772,7 @@
           }
           if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
           if (aiThinking) setTimeout(()=> aiThinking.style.display='none', 100);
-        });
+        };
 
         grid.appendChild(btn);
       };
@@ -814,6 +804,71 @@
           a: "El Marketplace Deloitte CA participa en importantes revistas regionales, entre ellas: Revista Summa, líder de negocios en Centroamérica, Colombia y República Dominicana; Estrategia y Negocios, especializada en economía, tecnología y temas empresariales; Revista Vida y Éxito, una de las más prestigiosas de la región; Mercados y Tendencias, enfocada en economía y negocios para emprendedores y tomadores de decisión; Forbes Centroamérica y República Dominicana, con cobertura en países como Guatemala, El Salvador, Honduras, Nicaragua, Panamá y Costa Rica; e IT Now, revista digital especializada en tecnología."
         }
       ]);
+    })();
+
+    /* ==== PARCHE ROBUSTO PARA PAUSAR / DETENER (Web Speech) ==== */
+    (function(){
+      if (!('speechSynthesis' in window)) return;
+
+      const synth    = window.speechSynthesis;
+      const btnPause = document.getElementById('btnPause');
+      const btnStop  = document.getElementById('btnStop');
+      const btnSpeak = document.getElementById('btnSpeak');
+      const answerBox  = document.getElementById('answerBox');
+      const avatarEl   = document.getElementById('avatar');
+
+      function setTalking(on){ avatarEl && avatarEl.classList.toggle('talking', !!on); }
+      function setBtnLabels(){
+        if (!btnPause) return;
+        if (synth.paused)       btnPause.textContent = '▶️ Reanudar';
+        else if (synth.speaking)btnPause.textContent = '⏸️ Pausar';
+        else                    btnPause.textContent = '⏸️ Pausar';
+      }
+      function hardCancel(){
+        try { synth.cancel(); } catch {}
+        setTalking(false);
+        setBtnLabels();
+      }
+      function pauseResume(e){
+        e && e.preventDefault();
+        if (!synth) return;
+        if (synth.speaking && !synth.paused){
+          try { synth.pause(); } catch {}
+          setTalking(false);
+          setBtnLabels();
+          return;
+        }
+        if (synth.paused){
+          try { synth.resume(); } catch {}
+          setTimeout(()=>{ if (synth.speaking && !synth.paused) setTalking(true); }, 30);
+          setBtnLabels();
+          return;
+        }
+        // Si no hay nada sonando, repetir la última respuesta visible
+        const last = (answerBox && (answerBox.textContent||'').trim()) || '';
+        if (last && typeof window.queueSpeak === 'function'){
+          window.queueSpeak(last);
+        }
+      }
+      function stopAll(e){
+        e && e.preventDefault();
+        if (!synth) return;
+        hardCancel();
+      }
+
+      if (btnPause){ btnPause.onclick = pauseResume; }
+      if (btnStop ){ btnStop .onclick = stopAll; }
+
+      if (btnSpeak){
+        const orig = btnSpeak.onclick;
+        btnSpeak.onclick = function(ev){
+          hardCancel();                 // limpia para evitar bloqueos
+          if (typeof orig === 'function') orig.call(this, ev);
+        };
+      }
+
+      const visInterval = setInterval(setBtnLabels, 250);
+      window.addEventListener('beforeunload', ()=> clearInterval(visInterval));
     })();
   </script>
 </body>
