@@ -2,211 +2,256 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Asistente Deloitte - Marketplace S-LATAM</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Asistente Deloitte – Marketplaces S‑LATAM</title>
+<meta name="description" content="Asistente interactivo con avatar futurista y voz neutral latinoamericana. Preguntas y respuestas oficiales de Deloitte S‑LATAM." />
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #0b0e11;
-        color: white;
-        text-align: center;
-    }
+  :root{
+    --bg:#0b0e11; --panel:#111418; --card:#141a1f;
+    --brand:#1c8c3f; --brand-2:#20a34a; --text:#ffffff; --muted:#b9c0c7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  header{padding:16px 20px;border-bottom:2px solid var(--brand);background:#0f1317;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  header h1{margin:0;font-size:18px;font-weight:700}
+  .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
+  @media (max-width: 900px){ .wrap{grid-template-columns:1fr} }
 
-    header {
-        padding: 20px;
-        font-size: 22px;
-        font-weight: bold;
-        background: #111418;
-        border-bottom: 2px solid #1c8c3f;
-    }
+  /* Avatar card */
+  .left,.right{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 180px);border:1px solid rgba(255,255,255,.08);border-radius:14px}
+  .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
+  .avatar{position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;background:#07090d;border:1px solid rgba(32,163,74,.35);box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)}
+  .scan{position:absolute;inset:0;pointer-events:none;background:
+      linear-gradient(rgba(0,255,200,.07),transparent,rgba(0,255,200,.07)),
+      repeating-linear-gradient(0deg,rgba(0,255,180,.10),rgba(0,255,180,.10) 1px,transparent 1px,transparent 3px);
+      mix-blend-mode:screen;animation:sweep 4s linear infinite}
+  @keyframes sweep{0%{background-position:0 0,0 0}100%{background-position:0 100%,0 0}}
+  .subtitle{position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto}
+  .talking{box-shadow:0 0 0 1px rgba(32,163,74,.2),0 0 25px rgba(32,163,74,.35),0 18px 60px rgba(0,0,0,.35)}
 
-    #avatar-box {
-        margin: 20px auto;
-       : hidden;
-        position: relative;
-        border: 2px solid #1c8c3f;
-        box-shadow: 0px 0px 15px #1c8c3f;
-    }
-
-    #avatar-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.9;
-        filter: hue-rotate(10deg) saturate(1.3);
-    }
-
-    /* Efecto holograma */
-    #avatar-box::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        background: linear-gradient(
-            rgba(0,255,200,0.05),
-            transparent,
-            rgba(0,255,200,0.05)
-        );
-        background-size: 100% 6px;
-        animation: scan 4s linear infinite;
-    }
-
-    @keyframes scan {
-        0% { background-position: 0 0; }
-        100% { background-position: 0 200px; }
-    }
-
-    #questions {
-        width: 90%;
-        margin: 0 auto;
-        margin-top: 20px;
-    }
-
-    .question-btn {
-        display: block;
-        width: 100%;
-        padding: 12px;
-        margin: 8px 0;
-        font-size: 16px;
-        background: #1c8c3f;
-        border: none;
-        border-radius: 6px;
-        color: white;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    .question-btn:hover {
-        background: #22a84c;
-    }
-
-    #answer-box {
-        margin-top: 25px;
-        padding: 20px;
-        background: #111418;
-        border-top: 2px solid #1c8c3f;
-        min-height: 160px;
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-        border-radius: 8px;
-        font-size: 17px;
-    }
-
-    #speak-btn {
-        margin-top: 10px;
-        padding: 10px 20px;
-        border: none;
-        background: #1c8c3f;
-        color: white;
-        font-size: 15px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+  /* Preguntas / Respuestas */
+  .right{display:grid;grid-template-rows:auto 1fr auto}
+  .panel{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .panel h2{margin:0;font-size:16px}
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  select,button{background:#0f1216;color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;font-size:14px}
+  .btn{cursor:pointer}
+  .btn-primary{background:linear-gradient(180deg,#1f2937,#0f1216);border:1px solid rgba(32,163,74,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 2px rgba(32,163,74,.12)}
+  .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
+  .qbtn{width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35}
+  .qbtn:hover{border-color:rgba(32,163,74,.45);box-shadow:0 0 0 2px rgba(32,163,74,.12) inset}
+  .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
+  .muted{color:var(--muted);font-size:12px}
+  footer{padding:10px 16px;color:var(--muted)}
+  .logo{height:22px;vertical-align:middle;opacity:.9}
 </style>
 </head>
-
 <body>
+  <header>
+    <div>
+      <img class="logo" alt="Deloitte" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Deloitte_logo.png" />
+      <h1>Asistente Virtual – Marketplaces Deloitte S‑LATAM</h1>
+    </div>
+    <div class="controls">
+      <label>Voz:
+        <select id="voiceSel" title="Voz neutral latinoamericana"></select>
+      </label>
+      <button id="btnSpeak" class="btn btn-primary" title="Reproducir última respuesta">🔊 Escuchar</button>
+    </div>
+  </header>
 
-<header>Asistente Virtual Deloitte S‑LATAM</header>
+  <main class="wrap">
+    <!-- Panel Izquierdo: Avatar -->
+    <section class="left">
+      <div id="avatar" class="avatar">
+        <!-- SVG avatar futurista mujer latina (holograma) -->
+        <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0%" stop-color="#23b574"/>
+              <stop offset="100%" stop-color="#1a7a52"/>
+            </linearGradient>
+            <radialGradient id="glow" cx="50%" cy="0%" r="80%">
+              <stop offset="0%" stop-color="rgba(35,181,116,0.45)"/>
+              <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+            </radialGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="#0a0f13"/>
+          <ellipse cx="200" cy="120" rx="180" ry="120" fill="url(#glow)"/>
+          <!-- rostro estilizado -->
+          <g transform="translate(200,240)">
+            <ellipse cx="0" cy="0" rx="95" ry="120" fill="#16302a" stroke="#29b56f" stroke-width="1.5" />
+            <circle cx="-30" cy="-10" r="8" fill="#cdeee0"/>
+            <circle cx="30" cy="-10" r="8" fill="#cdeee0"/>
+            <rect x="-22" y="30" width="44" height="8" rx="4" fill="#0b1f19" />
+            <path d="M -60 60 Q 0 95 60 60" fill="none" stroke="url(#g1)" stroke-width="2"/>
+            <path d="M -80 -60 Q 0 -120 80 -60" fill="none" stroke="rgba(41,181,111,.45)" stroke-width="1"/>
+          </g>
+          <!-- ornamentos -->
+          <g stroke="rgba(41,181,111,.25)" fill="none">
+            <circle cx="60" cy="420" r="30"/><circle cx="340" cy="420" r="30"/>
+            <path d="M15 350 H385"/>
+          </g>
+        </svg>
+        <div class="scan"></div>
+        <div id="subs" class="subtitle"></div>
+      </div>
 
-<!-- AVATAR -->
-<div id="avatar-box">
-    <img src="https://i.imgur.com/7W0qH3E.png" alt="Avatar holográfico">
-</div>
+      <div class="muted">Consejo: haz clic en una pregunta para ver y escuchar la respuesta.</div>
+    </section>
 
-<h2>Seleccioná una pregunta:</h2>
+    <!-- Panel Derecho: Preguntas y Respuestas -->
+    <section class="right">
+      <div class="panel">
+        <h2>Preguntas sobre Marketplaces Deloitte S‑LATAM</h2>
+        <small class="muted">Contenido público basado en el sitio oficial.</small>
+      </div>
 
-<!-- PREGUNTAS -->
-<div id="questions"></div>
+      <div id="list" class="grid"></div>
 
-<!-- RESPUESTA -->
-<div id="answer-box">Haz clic en una pregunta para ver la respuesta.</div>
+      <div class="answer" id="answerBox">👋 Bienvenido/a. Seleccioná una pregunta para ver la respuesta. Luego, pulsa “Escuchar”.</div>
+    </section>
+  </main>
 
-<button id="speak-btn">🔊 Reproducir voz</button>
+  <footer class="muted">
+    © Deloitte – Demo informativa. Las respuestas no son asesoría legal ni financiera.
+  </footer>
 
 <script>
-// -------------------------------
-// PREGUNTAS Y RESPUESTAS
-// -------------------------------
-
-const data = [
-{
-q: "¿Qué es Deloitte S-LATAM?",
-a: "Deloitte Spanish Latin America (S-LATAM) integra a 16 países bajo un modelo regional que unifica talento, conocimiento e innovación. Su objetivo es impulsar la transformación de organizaciones en toda Latinoamérica mediante soluciones multidisciplinarias y un enfoque colaborativo orientado al futuro."
-},
-{
-q: "¿Qué son los Marketplaces de Deloitte S-LATAM?",
-a: "Los Marketplaces son tres plataformas regionales que agrupan los servicios y capacidades de Deloitte en Latinoamérica. Estos ecosistemas permiten organizar la operación de forma estratégica, fortalecer la colaboración entre países y ofrecer soluciones integrales adaptadas a cada subregión."
-},
-{
-q: "¿Cuáles son los tres Marketplaces que conforman Deloitte S-LATAM?",
-a: "Los tres Marketplaces son: 1) México – Centroamérica, 2) Región Andina y 3) Cono Sur. Cada uno coordina la operación en sus países, potenciando el intercambio de conocimiento y consolidando la calidad del servicio."
-},
-{
-q: "¿En cuántos países tiene presencia Deloitte S-LATAM?",
-a: "Deloitte S-LATAM opera en 16 países distribuidos en tres bloques regionales. Esta presencia amplia permite una cobertura robusta y una comprensión profunda del entorno empresarial en Latinoamérica."
-},
-{
-q: "¿Qué países integran el Marketplace México – Centroamérica?",
-a: "Este Marketplace incluye Costa Rica, Honduras, Nicaragua, República Dominicana, El Salvador, Guatemala, Panamá y México. Juntos ofrecen servicios multidisciplinarios tanto a empresas como a entidades públicas."
-},
-{
-q: "¿Qué países integran la Región Andina?",
-a: "La Región Andina está conformada por Venezuela, Colombia, Perú y Ecuador. Estos países destacan por sectores como energía, recursos naturales, servicios financieros y transformación digital."
-},
-{
-q: "¿Qué países conforman el Marketplace Cono Sur?",
-a: "El Marketplace Cono Sur incluye Argentina, Bolivia, Paraguay y Uruguay. Allí Deloitte brinda servicios en auditoría, consultoría, riesgos, impuestos y servicios legales."
-},
-{
-q: "¿Qué servicios ofrece Deloitte en sus Marketplaces?",
-a: "Deloitte ofrece auditoría, consultoría, asesoría financiera, gestión de riesgos, servicios legales, impuestos y servicios financieros. La integración regional garantiza soluciones consolidadas y alineadas a las necesidades del cliente."
-},
-{
-q: "¿Qué hace diferente a Deloitte S-LATAM?",
-a: "Su enfoque colaborativo entre 16 países, su talento especializado y su compromiso con la excelencia. Además, combina presencia local con visión global, lo que le permite resolver desafíos complejos y generar impacto sostenible."
-},
-{
-q: "¿Cuántos profesionales conforman Deloitte S-LATAM?",
-a: "Deloitte S-LATAM cuenta con más de 1,200 profesionales en sus tres Marketplaces, además de equipos robustos en cada país, garantizando servicios con altos estándares globales."
-}
+/** ============================
+ *  1) PREGUNTAS Y RESPUESTAS
+ *  (Ampliadas, basadas en el sitio oficial de Deloitte S‑LATAM)
+ *  ============================ */
+const QA = [
+  { q:"¿Qué es Deloitte S‑LATAM?",
+    a:"Deloitte Spanish Latin America (S‑LATAM) integra a 16 países bajo un modelo regional que unifica talento, conocimiento e innovación. Su propósito es impulsar la transformación de organizaciones en la región, combinando experiencia multidisciplinaria y enfoque colaborativo para generar impacto sostenible."
+  },
+  { q:"¿Qué son los Marketplaces de Deloitte S‑LATAM?",
+    a:"Son tres plataformas regionales que organizan y articulan los servicios y capacidades de Deloitte en Latinoamérica. Facilitan colaboración entre países, estandarizan la calidad del servicio y permiten ofrecer soluciones integrales y consistentes ajustadas a cada subregión."
+  },
+  { q:"¿Cuáles son los tres Marketplaces?",
+    a:"Los tres Marketplaces son: 1) México–Centroamérica (incluye República Dominicana), 2) Región Andina y 3) Cono Sur. Cada bloque coordina la operación en sus países, potencia el intercambio de conocimiento y consolida la calidad del servicio."
+  },
+  { q:"¿En cuántos países tiene presencia Deloitte S‑LATAM?",
+    a:"Tiene presencia en 16 países de Latinoamérica, organizados en los tres Marketplaces. Esta cobertura amplia permite combinar alcance regional con conocimiento local específico en múltiples industrias."
+  },
+  { q:"¿Qué países integran México–Centroamérica?",
+    a:"Costa Rica, Honduras, Nicaragua, República Dominicana, El Salvador, Guatemala, Panamá y México. Sus equipos brindan servicios multidisciplinarios al sector público y privado."
+  },
+  { q:"¿Qué países integran la Región Andina?",
+    a:"Venezuela, Colombia, Perú y Ecuador. Con fuerte actividad empresarial y foco en sectores como energía, recursos naturales, servicios financieros y transformación digital."
+  },
+  { q:"¿Qué países conforman el Cono Sur?",
+    a:"Argentina, Bolivia, Paraguay y Uruguay. Se ofrece todo el portafolio de Deloitte, con énfasis en auditoría, impuestos, riesgos y consultoría, apoyando sectores como manufactura, agroindustria, energía y servicios financieros."
+  },
+  { q:"¿Qué servicios ofrece Deloitte en los Marketplaces?",
+    a:"Auditoría, consultoría, asesoría financiera, gestión de riesgos, servicios legales, impuestos y servicios financieros. La integración regional asegura soluciones consistentes y adaptadas a las necesidades del cliente."
+  },
+  { q:"¿Qué hace diferente a Deloitte S‑LATAM?",
+    a:"El enfoque colaborativo entre 16 países, el talento especializado y el compromiso con la excelencia. Combina presencia local con visión global para resolver desafíos complejos y promover crecimiento sostenible."
+  },
+  { q:"¿Cuántos profesionales conforman S‑LATAM?",
+    a:"Más de 1,200 profesionales en la región, con equipos robustos en cada país. Trabajan bajo estándares globales, garantizando calidad y consistencia."
+  }
 ];
 
-// -------------------------------
-// CREAR BOTONES
-// -------------------------------
-const questionsDiv = document.getElementById("questions");
-const answerBox = document.getElementById("answer-box");
+/** ============================
+ *  2) PINTAR BOTONES DE PREGUNTA
+ *  ============================ */
+const list = document.getElementById('list');
+const answerBox = document.getElementById('answerBox');
 let lastAnswer = "";
 
-data.forEach(item => {
-    const btn = document.createElement("button");
-    btn.className = "question-btn";
-    btn.textContent = item.q;
-    btn.onclick = () => {
-        answerBox.innerHTML = item.a;
-        lastAnswer = item.a;
-    };
-    questionsDiv.appendChild(btn);
+QA.forEach(item => {
+  const b = document.createElement('button');
+  b.className = 'qbtn';
+  b.textContent = item.q;
+  b.addEventListener('click', () => {
+    answerBox.textContent = item.a;
+    lastAnswer = item.a;
+    speak(lastAnswer); // auto-hablar al hacer clic
+  });
+  list.appendChild(b);
 });
 
-// -------------------------------
-// VOZ
-// -------------------------------
-document.getElementById("speak-btn").onclick = function() {
-    if (!lastAnswer) return;
-    const utter = new SpeechSynthesisUtterance(lastAnswer);
-    utter.lang = "es-419"; // español latino
-    utter.rate = 1.03;
-    speechSynthesis.speak(utter);
-};
-</script>
+/** ============================
+ *  3) VOZ NEUTRA LATINOAMERICANA
+ *  - Intentamos es-419 (neutral), si no, es-MX, es-CO, y por último es-ES.
+ *  - Mostramos selector por si el navegador ofrece varias.
+ *  ============================ */
+const voiceSel = document.getElementById('voiceSel');
+const speakBtn = document.getElementById('btnSpeak');
+const subs = document.getElementById('subs');
+const avatar = document.getElementById('avatar');
+let chosenVoice = null;
 
+function populateVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices() || [];
+  const preferred = ['es-419','es_MX','es-MX','es-CO','es_CO','es-ES','es_ES'];
+  // limpiar
+  voiceSel.innerHTML = '';
+  // filtrar solo español
+  const esp = voices.filter(v => (v.lang || '').toLowerCase().startsWith('es'));
+  // ordenar por preferidos
+  esp.sort((a,b)=> preferred.indexOf((a.lang||'').toLowerCase()) - preferred.indexOf((b.lang||'').toLowerCase()));
+  // poblar selector
+  esp.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = `${v.name} (${v.lang})`;
+    voiceSel.appendChild(opt);
+  });
+  // elegir una por defecto
+  chosenVoice =
+    voices.find(v => (v.lang||'').toLowerCase() === 'es-419') ||
+    voices.find(v => (v.lang||'').toLowerCase() === 'es_mx') ||
+    voices.find(v => (v.lang||'').toLowerCase() === 'es-mx') ||
+    voices.find(v => (v.lang||'').toLowerCase() === 'es-co') ||
+    voices.find(v => (v.lang||'').toLowerCase() === 'es_co') ||
+    voices.find(v => (v.lang||'').toLowerCase().startsWith('es')) || null;
+
+  if(chosenVoice){
+    const opt = Array.from(voiceSel.options).find(o => o.textContent.startsWith(chosenVoice.name));
+    if(opt) voiceSel.value = opt.value;
+  }
+}
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = populateVoices;
+  populateVoices();
+}
+voiceSel.addEventListener('change', ()=>{
+  const voices = window.speechSynthesis.getVoices() || [];
+  chosenVoice = voices.find(v => v.name === voiceSel.value) || chosenVoice;
+});
+
+function setTalking(on){
+  avatar.classList.toggle('talking', on);
+  if(!on) subs.textContent = '';
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window) || !text) return;
+  try{ window.speechSynthesis.cancel(); } catch(e){}
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = (chosenVoice && chosenVoice.lang) ? chosenVoice.lang : 'es-419';
+  if(chosenVoice) u.voice = chosenVoice;
+  u.rate = 1.03;
+  u.onstart = ()=>{ setTalking(true); subs.textContent = text; };
+  u.onend   = ()=> setTalking(false);
+  u.onerror = ()=> setTalking(false);
+  window.speechSynthesis.speak(u);
+}
+speakBtn.addEventListener('click', ()=> speak(lastAnswer || "Selecciona una pregunta para escuchar la respuesta."));
+
+/** Mensaje de bienvenida hablado (corto) */
+window.addEventListener('load', ()=>{
+  const welcome = "Hola. Soy tu asistente virtual de Deloitte. Selecciona una pregunta para conocer más sobre nuestros Marketplaces en Spanish Latin America.";
+  answerBox.textContent = "👋 " + welcome;
+  lastAnswer = welcome;
+  setTimeout(()=> speak(welcome), 400);
+});
+</script>
 </body>
 </html>
