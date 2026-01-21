@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Asistente Deloitte – Marketplace CA</title>
 <meta name="description" content="Asistente con avatar y voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
-<!-- v3.2 – FIX: <img> correctos, render Q&A, TTS robusto -->
+<!-- v3.3 – Imágenes integradas, Q&A render, TTS robusto -->
 <style>
   :root{
     --bg:#0b0e11; --panel:#111418; --card:#141a1f;
@@ -78,8 +78,8 @@
 <body>
   <header>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <!-- ✅ LOGO CORRECTO -->
-      <img class="logo" src="Deloitte-Emblem.png" alt="Deloitte" width="120" height="22" />
+      <!-- LOGO -->
+      Deloitte-Emblem.png
       <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
     </div>
     <div class="controls">
@@ -96,14 +96,7 @@
     <!-- Izquierda: AVATAR -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- ✅ AVATAR CORRECTO -->
-        <img
-          id="avatarImg"
-          src="1000_F_827852536_YuGWoMW0rpFSyAXCHqYfv2QCD2AowPaj.jpg"
-          alt="Asistente virtual Deloitte"
-          width="800" height="1000"
-          loading="eager"
-        />
+        1000_F_827852536_YuGWoMW0rpFSyAXCHqYfv2QCD2AowPaj.jpg
         <div class="scan" aria-hidden="true"></div>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
@@ -208,7 +201,7 @@ function initApp(){
   }
 
   // ----- Render de preguntas -----
-  faqGrid.innerHTML = ""; // limpio por si recarga parcial
+  faqGrid.innerHTML = "";
   QA.forEach((item, idx) => {
     const btn = document.createElement('button');
     btn.className = 'qbtn';
@@ -278,7 +271,6 @@ function initApp(){
   }
 
   function speakText(text){
-    // Requiere interacción del usuario en algunos navegadores iOS: asegúrate de haber hecho clic antes.
     stopSpeaking(true); // silencio inmediato
     if (!text || !('speechSynthesis' in window)) return;
 
