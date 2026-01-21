@@ -12,14 +12,23 @@
       --bg:#0b0e11; --panel:#111418; --card:#141a1f;
       --brand:#1c8c3f; --brand-2:#22b36a;
       --text:#ffffff; --muted:#b9c0c7; --focus:#8bd8a9;
-      --viz-text:#eaf7ef; --viz-muted:#b9c0c7;
+
+      /* Colores de visualizaciones */
+      --viz-text:#0b0e11;          /* texto de tooltips en tema oscuro (porque tooltip será claro) */
+      --viz-muted:#47515a;
       --viz-bg:#0f1216; --viz-stroke:#2e3640;
 
       /* Chips/leyendas legibles */
-      --chip-bg:#eef6f0;         /* fondo claro (oscuro) */
+      --chip-bg:#eef6f0;         /* fondo claro */
       --chip-text:#0b0e11;       /* texto oscuro */
       --chip-border:rgba(0,0,0,.16);
       --chip-bg-hover:#e4f2ea;
+
+      /* Tooltip (claro para máxima legibilidad) */
+      --tip-bg:#ffffff;
+      --tip-text:#0b0e11;
+      --tip-border:#cfd6d1;
+      --tip-shadow:0 10px 24px rgba(0,0,0,.18);
     }
     *{box-sizing:border-box}
     body{
@@ -192,7 +201,7 @@
     .card{
       background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
     }
-    .card h3{margin:0 0 8px 0; font-size:15px}
+    .card h3{margin:0 0 8px 0; font-size:15px; color:#eaf7ef}
     .viz{width:100%; height:260px; display:block}
     .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
 
@@ -208,24 +217,30 @@
     .badge:focus-visible{ outline:2px solid var(--focus); outline-offset:2px }
     .dot{width:10px;height:10px;border-radius:50%}
 
-    /* Tooltip para SVG */
+    /* Tooltip (CLARO) para SVG */
     #vizTip{
       position:fixed; z-index:99999; pointer-events:none;
-      background:#0f1216; color:#eaf7ef; border:1px solid rgba(255,255,255,.15);
-      padding:6px 8px; font-size:12px; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.35);
+      background:var(--tip-bg); color:var(--tip-text); border:1px solid var(--tip-border);
+      padding:8px 10px; font-size:12px; border-radius:10px; box-shadow:var(--tip-shadow);
       display:none; white-space:nowrap;
     }
+    #vizTip .tt-title{font-weight:700; margin-bottom:6px}
+    #vizTip ul{margin:6px 0 0; padding-left:16px}
+    #vizTip li{margin:2px 0}
 
-    /* Modo claro */
+    /* Modo claro (sólo ajustamos textos de cards/labels) */
     @media (prefers-color-scheme: light){
       :root{
         --bg:#f4f4f4; --text:#111; --panel:#fff; --card:#fff;
         --brand:#1c8c3f; --muted:#47515a; --focus:#22b36a;
-        --viz-text:#0b0e11; --viz-muted:#47515a;
         --viz-bg:#ffffff; --viz-stroke:#d7dde3;
 
         --chip-bg:#ffffff; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
         --chip-bg-hover:#f2f7f4;
+
+        --viz-text:#0b0e11; --viz-muted:#47515a;
+
+        --tip-bg:#ffffff; --tip-text:#0b0e11; --tip-border:#d7dde3;
       }
       body{ background:#f4f4f4; color:#111 }
       header{ background:#ffffff; border-bottom-color:#1c8c3f }
@@ -329,9 +344,9 @@
   </main>
 
   <!-- Música corporativa (opcional; si no existe, la página funciona igual) -->
-  <audio id="bgMusic" src="./musica-corporativa.mp3" preload="auto" loop></audio>
+  <audio id="bgMusic" src="./musica-corporativa.mp3" preload="none" loop></audio>
 
-  <!-- Tooltip global de gráficos -->
+  <!-- Tooltip global de gráficos (claro) -->
   <div id="vizTip" role="tooltip" aria-hidden="true"></div>
 
   <!-- Onda AI decorativa -->
@@ -353,12 +368,18 @@
     document.addEventListener('DOMContentLoaded', () => {
       const tip = document.getElementById('vizTip');
       const showTip = (html, x, y) => {
-        tip.innerHTML = html; tip.style.left = (x+12)+'px'; tip.style.top=(y+12)+'px';
-        tip.style.display='block'; tip.setAttribute('aria-hidden','false');
+        tip.innerHTML = html;
+        tip.style.left = (x+14)+'px';
+        tip.style.top  = (y+14)+'px';
+        tip.style.display = 'block';
+        tip.setAttribute('aria-hidden','false');
       };
-      const hideTip = () => { tip.style.display='none'; tip.setAttribute('aria-hidden','true'); };
+      const hideTip = () => {
+        tip.style.display = 'none';
+        tip.setAttribute('aria-hidden','true');
+      };
 
-      /* --- 1) BARRAS: Profesionales por país --- */
+      /* --- 1) BARRAS: Profesionales por país (con pista y gridlines) --- */
       const dataBars = [
         {label:'Guatemala', val:242, color:'#1ea55a'},
         {label:'Honduras', val:62,  color:'#24c06a'},
@@ -373,13 +394,26 @@
 
       function drawBars(){
         if(!svgB) return;
-        const w = svgB.clientWidth || 600, h = svgB.clientHeight || 260, pad = {t:10,r:16,b:30,l:90};
+        const w = svgB.clientWidth || 600, h = svgB.clientHeight || 260, pad = {t:10,r:16,b:32,l:96};
         svgB.setAttribute('viewBox', `0 0 ${w} ${h}`);
         while(svgB.firstChild) svgB.removeChild(svgB.firstChild);
 
         const max = Math.max(...dataBars.map(d=>d.val));
         const rowH = (h - pad.t - pad.b) / dataBars.length;
         const barH = rowH * 0.64, gap = rowH * 0.36;
+        const innerW = (w - pad.l - pad.r);
+
+        // Gridlines (20% steps)
+        for(let i=1;i<=4;i++){
+          const x = pad.l + innerW*(i/5);
+          const gl = document.createElementNS('http://www.w3.org/2000/svg','line');
+          gl.setAttribute('x1', x); gl.setAttribute('y1', pad.t);
+          gl.setAttribute('x2', x); gl.setAttribute('y2', h - pad.b);
+          gl.setAttribute('stroke', 'var(--viz-stroke)');
+          gl.setAttribute('stroke-width', '1');
+          gl.setAttribute('opacity', '.55');
+          svgB.appendChild(gl);
+        }
 
         dataBars.forEach((d,i)=>{
           const y = pad.t + i*(barH+gap);
@@ -387,15 +421,27 @@
 
           // etiqueta izq.
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-          label.setAttribute('x', pad.l - 10);
+          label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
           label.setAttribute('text-anchor','end');
-          label.setAttribute('fill','var(--viz-text)');
+          label.setAttribute('fill','#eaf7ef');
           label.setAttribute('font-size','12');
           label.textContent = d.label;
           g.appendChild(label);
 
-          // barra
+          // pista de fondo (track)
+          const track = document.createElementNS('http://www.w3.org/2000/svg','rect');
+          track.setAttribute('x', pad.l);
+          track.setAttribute('y', y);
+          track.setAttribute('width', innerW);
+          track.setAttribute('height', barH);
+          track.setAttribute('rx', 8);
+          track.setAttribute('fill', 'rgba(255,255,255,.06)');
+          track.setAttribute('stroke', 'var(--viz-stroke)');
+          track.setAttribute('stroke-width', '1');
+          g.appendChild(track);
+
+          // barra valor
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
           bar.setAttribute('x', pad.l);
           bar.setAttribute('y', y);
@@ -406,11 +452,11 @@
           bar.style.transition = 'width 420ms ease';
           g.appendChild(bar);
 
-          // valor
+          // valor sobre la barra
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
-          val.setAttribute('x', pad.l + 6);
+          val.setAttribute('x', pad.l + 8);
           val.setAttribute('y', y + barH/2 + 4);
-          val.setAttribute('fill','var(--viz-text)');
+          val.setAttribute('fill','#0b0e11');  // alto contraste
           val.setAttribute('font-size','12');
           val.textContent = d.val;
           val.style.opacity = 0;
@@ -419,7 +465,7 @@
           // interacción
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
-            showTip(`<strong>${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
+            showTip(`<div class="tt-title">${d.label}</div>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
             bar.setAttribute('fill', '#35d07a');
           });
           g.addEventListener('mouseleave', ()=>{
@@ -430,9 +476,9 @@
 
           // animación
           requestAnimationFrame(()=>{
-            const wBar = (w - pad.l - pad.r) * (d.val/max);
+            const wBar = innerW * (d.val/max);
             bar.setAttribute('width', wBar);
-            val.setAttribute('x', pad.l + Math.min(wBar - 28, w - pad.r - 28));
+            val.setAttribute('x', pad.l + Math.min(wBar - 28, innerW - 28));
             val.style.opacity = 0.95;
           });
         });
@@ -476,13 +522,13 @@
 
         const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
         t1.setAttribute('x',cx); t1.setAttribute('y',cy-2);
-        t1.setAttribute('text-anchor','middle'); t1.setAttribute('fill','var(--viz-text)'); t1.setAttribute('font-size','26');
+        t1.setAttribute('text-anchor','middle'); t1.setAttribute('fill','#eaf7ef'); t1.setAttribute('font-size','26');
         t1.textContent = `${Math.round(pct*100)}%`;
         svgD.appendChild(t1);
 
         const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
         t2.setAttribute('x',cx); t2.setAttribute('y',cy+18);
-        t2.setAttribute('text-anchor','middle'); t2.setAttribute('fill','var(--viz-muted)'); t2.setAttribute('font-size','12');
+        t2.setAttribute('text-anchor','middle'); t2.setAttribute('fill','#b9c0c7'); t2.setAttribute('font-size','12');
         t2.textContent = `51 de 457`;
         svgD.appendChild(t2);
 
@@ -495,47 +541,74 @@
           const ang = (Math.atan2(y, x) + Math.PI/2 + 2*Math.PI) % (2*Math.PI);
           const over = ang <= (2*Math.PI*pct);
           const html = over
-            ? `<strong>Auditadas</strong><br>51 / 457 (${Math.round(pct*100)}%)`
-            : `<strong>No auditadas</strong><br>${457-51} / 457`;
+            ? `<div class="tt-title">Auditadas</div>51 / 457 (${Math.round(pct*100)}%)`
+            : `<div class="tt-title">No auditadas</div>${457-51} / 457`;
           showTip(html, e.clientX, e.clientY);
         });
         svgD.addEventListener('mouseleave', hideTip);
       }
 
-      /* --- 3) NUEVO: Medios destacados por país --- */
+      /* --- 3) Medios destacados por país (con listado en tooltip claro) --- */
       const dataMedia = [
-        {label:'Costa Rica', val:4, color:'#22b36a'},          // El Financiero, La Nación, La República, Noticias Repretel
-        {label:'Panamá',     val:4, color:'#1ea55a'},          // La Estrella, La Prensa, TVN, Telemetro
-        {label:'R. Dominicana', val:6, color:'#2bd07a'},       // Listín Diario, El Dinero, Hoy, El Día, Noticias SIN, El Caribe
-        {label:'Honduras',   val:2, color:'#24c06a'},          // La Tribuna, El Heraldo
-        {label:'Guatemala',  val:1, color:'#1a8a4a'}           // Prensa Libre
+        {label:'Costa Rica',  val:4, color:'#22b36a', medios:['El Financiero','La Nación','La República','Noticias Repretel']},
+        {label:'Panamá',      val:4, color:'#1ea55a', medios:['La Estrella de Panamá','La Prensa','TVN','Telemetro']},
+        {label:'R. Dominicana',val:6,color:'#2bd07a', medios:['Listín Diario','El Dinero','Periódico Hoy','El Día','Noticias SIN','El Caribe']},
+        {label:'Honduras',    val:2, color:'#24c06a', medios:['La Tribuna','El Heraldo']},
+        {label:'Guatemala',   val:1, color:'#1a8a4a', medios:['Prensa Libre']}
       ];
       const svgM = document.getElementById('chartBarsMedia');
       const legendM = document.getElementById('legendBarsMedia');
 
       function drawBarsMedia(){
         if(!svgM) return;
-        const w = svgM.clientWidth || 600, h = svgM.clientHeight || 260, pad = {t:10,r:16,b:30,l:110};
+        const w = svgM.clientWidth || 600, h = svgM.clientHeight || 260, pad = {t:10,r:16,b:32,l:124};
         svgM.setAttribute('viewBox', `0 0 ${w} ${h}`);
         while(svgM.firstChild) svgM.removeChild(svgM.firstChild);
 
         const max = Math.max(...dataMedia.map(d=>d.val));
         const rowH = (h - pad.t - pad.b) / dataMedia.length;
         const barH = rowH * 0.64, gap = rowH * 0.36;
+        const innerW = (w - pad.l - pad.r);
+
+        // Gridlines
+        for(let i=1;i<=4;i++){
+          const x = pad.l + innerW*(i/5);
+          const gl = document.createElementNS('http://www.w3.org/2000/svg','line');
+          gl.setAttribute('x1', x); gl.setAttribute('y1', pad.t);
+          gl.setAttribute('x2', x); gl.setAttribute('y2', h - pad.b);
+          gl.setAttribute('stroke', 'var(--viz-stroke)');
+          gl.setAttribute('stroke-width', '1');
+          gl.setAttribute('opacity', '.55');
+          svgM.appendChild(gl);
+        }
 
         dataMedia.forEach((d,i)=>{
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
+          // etiqueta izq.
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-          label.setAttribute('x', pad.l - 12);
+          label.setAttribute('x', pad.l - 14);
           label.setAttribute('y', y + barH*0.72);
           label.setAttribute('text-anchor','end');
-          label.setAttribute('fill','var(--viz-text)');
+          label.setAttribute('fill','#eaf7ef');
           label.setAttribute('font-size','12');
           label.textContent = d.label;
           g.appendChild(label);
 
+          // pista
+          const track = document.createElementNS('http://www.w3.org/2000/svg','rect');
+          track.setAttribute('x', pad.l);
+          track.setAttribute('y', y);
+          track.setAttribute('width', innerW);
+          track.setAttribute('height', barH);
+          track.setAttribute('rx', 8);
+          track.setAttribute('fill', 'rgba(255,255,255,.06)');
+          track.setAttribute('stroke', 'var(--viz-stroke)');
+          track.setAttribute('stroke-width', '1');
+          g.appendChild(track);
+
+          // barra
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
           bar.setAttribute('x', pad.l);
           bar.setAttribute('y', y);
@@ -546,17 +619,20 @@
           bar.style.transition = 'width 420ms ease';
           g.appendChild(bar);
 
+          // valor
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
-          val.setAttribute('x', pad.l + 6);
+          val.setAttribute('x', pad.l + 8);
           val.setAttribute('y', y + barH/2 + 4);
-          val.setAttribute('fill','var(--viz-text)');
+          val.setAttribute('fill','#0b0e11');
           val.setAttribute('font-size','12');
           val.textContent = d.val;
           val.style.opacity = 0;
           g.appendChild(val);
 
+          // interacción (tooltip con lista de medios clara)
           g.addEventListener('mousemove', (e)=>{
-            showTip(`<strong>${d.label}</strong><br>${d.val} medios`, e.clientX, e.clientY);
+            const list = `<ul>${d.medios.slice(0,6).map(m=>`<li>${m}</li>`).join('')}</ul>`;
+            showTip(`<div class="tt-title">${d.label}</div>${d.val} medios${list}`, e.clientX, e.clientY);
             bar.setAttribute('fill', '#35d07a');
           });
           g.addEventListener('mouseleave', ()=>{
@@ -565,14 +641,16 @@
 
           svgM.appendChild(g);
 
+          // animación
           requestAnimationFrame(()=>{
-            const wBar = (w - pad.l - pad.r) * (d.val/max);
+            const wBar = innerW * (d.val/max);
             bar.setAttribute('width', wBar);
-            val.setAttribute('x', pad.l + Math.min(wBar - 18, w - pad.r - 18));
+            val.setAttribute('x', pad.l + Math.min(wBar - 18, innerW - 18));
             val.style.opacity = 0.95;
           });
         });
 
+        // Leyenda
         if(legendM){
           legendM.innerHTML = '';
           dataMedia.forEach(d=>{
@@ -719,31 +797,36 @@
         }
       }
 
-      // Clicks en preguntas (usamos onclick para permitir que el parche envuelva btnSpeak si hiciera falta)
+      // Clicks en preguntas
       faqGrid.querySelectorAll('.qbtn').forEach(btn => {
         btn.onclick = () => {
           const text = btn.dataset.answer || '';
           aiThinking.style.display='block';
           typeText(answerBox, text);
-          document.getElementById('subtitle').textContent = text;
+          subtitleEl.textContent = text;
           queueSpeak(text);
         };
       });
 
-      // Botón Reproducir: usamos onclick (no addEventListener) para que el parche pueda envolverlo
+      // Botón Reproducir
       btnSpeak.onclick = () => {
         const text = (answerBox.textContent || '').trim();
         if (text) queueSpeak(text);
       };
 
+      // Atajos: R/S/M
+      document.addEventListener('keydown', (e) => {
+        const tag = (e.target && e.target.tagName) || '';
+        if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
+        const k = e.key.toLowerCase();
+        if (k === 'r'){ e.preventDefault(); pauseResume(); }
+        if (k === 's'){ e.preventDefault(); stopAll(); }
+        if (k === 'm'){ if(bg){ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; } }
+      });
+
       // Exponer helpers
       window.typeText = typeText;
       window.queueSpeak = queueSpeak;
-
-      // Mensaje inicial
-      const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
-      typeText(answerBox, bienvenida);
-      document.getElementById('subtitle').textContent = bienvenida;
     });
 
     /* ====== Helpers para agregar preguntas sin tocar estructura ====== */
@@ -844,7 +927,6 @@
           setBtnLabels();
           return;
         }
-        // Si no hay nada sonando, repetir la última respuesta visible
         const last = (answerBox && (answerBox.textContent||'').trim()) || '';
         if (last && typeof window.queueSpeak === 'function'){
           window.queueSpeak(last);
@@ -862,7 +944,7 @@
       if (btnSpeak){
         const orig = btnSpeak.onclick;
         btnSpeak.onclick = function(ev){
-          hardCancel();                 // limpia para evitar bloqueos
+          hardCancel();
           if (typeof orig === 'function') orig.call(this, ev);
         };
       }
