@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Asistente Deloitte – Marketplaces S‑LATAM</title>
 <meta name="description" content="Asistente con avatar femenino futurista y voz neutral latinoamericana. Preguntas y respuestas sobre Marketplaces de Deloitte S‑LATAM." />
+<!-- v3.0 – Avatar SVG femenino + 10 Q&A + Reproducir/Pausar/Detener -->
 <style>
   :root{
     --bg:#0b0e11; --panel:#111418; --card:#141a1f;
@@ -26,7 +27,6 @@
   .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
   @media (max-width: 900px){ .wrap{grid-template-columns:1fr} }
 
-  /* Tarjetas */
   .left,.right{
     background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 180px);
     border:1px solid rgba(255,255,255,.08);border-radius:14px
@@ -67,12 +67,13 @@
   .qbtn:hover{border-color:rgba(32,163,74,.45);box-shadow:0 0 0 2px rgba(32,163,74,.12) inset}
   .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
   footer{padding:10px 16px;color:var(--muted)}
+  .logo{height:22px;vertical-align:middle;opacity:.95}
 </style>
 </head>
 <body>
   <header>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <img alt="Deloitte" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Deloitte_logo.png" style="height:22px;opacity:.9"/>
+      <img class="logo" alt="Deloitte" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Deloitte_logo.png" />
       <h1>Asistente Virtual – Marketplaces Deloitte S‑LATAM</h1>
     </div>
     <div class="controls">
@@ -108,145 +109,12 @@
           <ellipse cx="200" cy="110" rx="190" ry="110" fill="url(#glow)"/>
           <!-- Cabello estilizado -->
           <path d="M50,200 C80,80 320,80 350,200 C360,260 340,330 300,360 C260,390 140,390 100,360 C60,330 40,260 50,200 Z" fill="url(#hair)" opacity="0.45"/>
-          <!-- Cara (piel verdosa futurista) -->
+          <!-- Cara -->
           <ellipse cx="200" cy="240" rx="95" ry="120" fill="#16302a" stroke="#29b56f" stroke-width="1.6"/>
           <!-- Nariz ligera -->
           <path d="M200 240 q-3 10 0 18" stroke="rgba(180,240,220,.6)" stroke-width="1" fill="none"/>
           <!-- Ojos -->
           <ellipse cx="170" cy="230" rx="10.5" ry="7.8" fill="#e6fff5"/>
           <ellipse cx="230" cy="230" rx="10.5" ry="7.8" fill="#e6fff5"/>
-          <!-- Cejas suaves -->
-          <path d="M155 218 q15 -8 30 0" stroke="rgba(230,255,245,.5)" stroke-width="2" fill="none"/>
-          <path d="M215 218 q15 -8 30 0" stroke="rgba(230,255,245,.5)" stroke-width="2" fill="none"/>
-          <!-- Boca (más femenina) -->
-          <path d="M170 270 Q200 286 230 270" fill="none" stroke="url(#lip)" stroke-width="2.4" stroke-linecap="round"/>
-          <!-- Detalles futuristas -->
-          <path d="M110 190 Q200 120 290 190" fill="none" stroke="rgba(41,181,111,.45)" stroke-width="1.1"/>
-          <path d="M120 320 Q200 350 280 320" fill="none" stroke="rgba(41,181,111,.45)" stroke-width="1.1"/>
-          <!-- Ornamentos -->
-          <g stroke="rgba(41,181,111,.25)" fill="none">
-            <circle cx="60" cy="430" r="28"/><circle cx="340" cy="430" r="28"/>
-            <path d="M20 360 H380"/>
-          </g>
-        </svg>
-        <div class="scan"></div>
-        <div id="subs" class="subtitle"></div>
-      </div>
-      <small class="muted">Tip: hacé clic en una pregunta para ver y escuchar la respuesta.</small>
-    </section>
-
-    <!-- Derecha: Preguntas / Respuestas -->
-    <section class="right">
-      <div class="panel">
-        <h2>Preguntas sobre Marketplaces Deloitte S‑LATAM</h2>
-        <small class="muted">Basado en contenido público del sitio oficial.</small>
-      </div>
-
-      <div id="list" class="grid"></div>
-      <div class="answer" id="answerBox">👋 Bienvenido/a. Seleccioná una pregunta para ver la respuesta. Luego, pulsá “Reproducir”.</div>
-    </section>
-  </main>
-
-  <footer>© Deloitte – Demo informativa. Respuestas no constituyen asesoría legal ni financiera.</footer>
-
-<script>
-/** === 1) CONTENIDO (10 Q&A ÚNICAS) === */
-const QA = [
-  { q:"¿Qué es Deloitte S‑LATAM?",
-    a:"Deloitte Spanish Latin America (S‑LATAM) integra a 16 países bajo un modelo regional que unifica talento, conocimiento e innovación. Su propósito es impulsar la transformación de organizaciones en la región, combinando experiencia multidisciplinaria y enfoque colaborativo para generar impacto sostenible." },
-  { q:"¿Qué son los Marketplaces de Deloitte S‑LATAM?",
-    a:"Son tres plataformas regionales que organizan y articulan los servicios y capacidades de Deloitte en Latinoamérica. Facilitan la colaboración entre países, estandarizan la calidad del servicio y permiten ofrecer soluciones integrales y consistentes ajustadas a cada subregión." },
-  { q:"¿Cuáles son los tres Marketplaces?",
-    a:"Los tres Marketplaces son: 1) México–Centroamérica (incluye República Dominicana), 2) Región Andina y 3) Cono Sur. Cada bloque coordina la operación en sus países, potencia el intercambio de conocimiento y consolida la calidad del servicio." },
-  { q:"¿En cuántos países tiene presencia Deloitte S‑LATAM?",
-    a:"Tiene presencia en 16 países de Latinoamérica, organizados en los tres Marketplaces. Esta cobertura amplia permite combinar alcance regional con conocimiento local específico en múltiples industrias." },
-  { q:"¿Qué países integran México–Centroamérica?",
-    a:"Costa Rica, Honduras, Nicaragua, República Dominicana, El Salvador, Guatemala, Panamá y México. Sus equipos brindan servicios multidisciplinarios al sector público y privado." },
-  { q:"¿Qué países integran la Región Andina?",
-    a:"Venezuela, Colombia, Perú y Ecuador. Con fuerte actividad empresarial y foco en sectores como energía, recursos naturales, servicios financieros y transformación digital." },
-  { q:"¿Qué países conforman el Cono Sur?",
-    a:"Argentina, Bolivia, Paraguay y Uruguay. Se ofrece todo el portafolio de Deloitte, con énfasis en auditoría, impuestos, riesgos y consultoría, apoyando sectores como manufactura, agroindustria, energía y servicios financieros." },
-  { q:"¿Qué servicios ofrece Deloitte en los Marketplaces?",
-    a:"Auditoría, consultoría, asesoría financiera, gestión de riesgos, servicios legales, impuestos y servicios financieros. La integración regional asegura soluciones consistentes y adaptadas a las necesidades del cliente." },
-  { q:"¿Qué hace diferente a Deloitte S‑LATAM?",
-    a:"El enfoque colaborativo entre 16 países, el talento especializado y el compromiso con la excelencia. Combina presencia local con visión global para resolver desafíos complejos y promover crecimiento sostenible." },
-  { q:"¿Cuántos profesionales conforman S‑LATAM?",
-    a:"Más de 1,200 profesionales en la región, con equipos robustos en cada país. Trabajan bajo estándares globales, garantizando calidad y consistencia." }
-];
-
-/** === 2) Pintar botones === */
-const list = document.getElementById('list');
-const answerBox = document.getElementById('answerBox');
-let lastAnswer = "";
-list.innerHTML = "";  // asegura que no se duplique la lista
-
-QA.forEach(item => {
-  const b = document.createElement('button');
-  b.className = 'qbtn';
-  b.textContent = item.q;
-  b.addEventListener('click', () => {
-    answerBox.textContent = item.a;
-    lastAnswer = item.a;
-    speak(lastAnswer); // lee automáticamente al hacer clic
-  });
-  list.appendChild(b);
-});
-
-/** === 3) Voz neutral LATAM (preferencias, selector, Pausa/Stop) === */
-const voiceSel = document.getElementById('voiceSel');
-const btnSpeak = document.getElementById('btnSpeak');
-const btnPause = document.getElementById('btnPause');
-const btnStop  = document.getElementById('btnStop');
-const subs = document.getElementById('subs');
-const avatar = document.getElementById('avatar');
-let chosenVoice = null;
-
-function populateVoices(){
-  if(!('speechSynthesis' in window)) return;
-  const voices = window.speechSynthesis.getVoices() || [];
-  const esp = voices.filter(v => (v.lang||'').toLowerCase().startsWith('es'));
-  const prefOrder = ['es-419','es_419','es-mx','es_mx','es-co','es_co','es-es','es_es'];
-  esp.sort((a,b)=> prefOrder.indexOf((a.lang||'').toLowerCase()) - prefOrder.indexOf((b.lang||'').toLowerCase()));
-  voiceSel.innerHTML = '';
-  esp.forEach(v=>{
-    const opt = document.createElement('option');
-    opt.value = v.name;
-    opt.textContent = `${v.name} (${v.lang})`;
-    voiceSel.appendChild(opt);
-  });
-  chosenVoice =
-    voices.find(v => ['es-419','es_419'].includes((v.lang||'').toLowerCase())) ||
-    voices.find(v => ['es-mx','es_mx'].includes((v.lang||'').toLowerCase())) ||
-    voices.find(v => ['es-co','es_co'].includes((v.lang||'').toLowerCase())) ||
-    voices.find(v => ['es-es','es_es'].includes((v.lang||'').toLowerCase())) ||
-    esp[0] || null;
-
-  if(chosenVoice){
-    const opt = Array.from(voiceSel.options).find(o => o.textContent.startsWith(chosenVoice.name));
-    if(opt) voiceSel.value = opt.value;
-  }
-}
-if('speechSynthesis' in window){
-  window.speechSynthesis.onvoiceschanged = populateVoices;
-  populateVoices();
-}
-voiceSel.addEventListener('change', ()=>{
-  const voices = window.speechSynthesis.getVoices() || [];
-  chosenVoice = voices.find(v => v.name === voiceSel.value) || chosenVoice;
-});
-
-function setTalking(on){
-  avatar.classList.toggle('talking', on);
-  if(!on) subs.textContent = '';
-}
-
-let currentUtter = null;
-function speak(text){
-  if(!('speechSynthesis' in window) || !text) return;
-  // Si estaba pausado, reanuda
-  if (speechSynthesis.paused) { speechSynthesis.resume(); return; }
-  // Si estaba hablando, cancela y reinicia con el nuevo texto
-  try{ window.speechSynthesis.cancel(); } catch(e){}
-  currentUtter = new SpeechSynthesisUtterance(text);
-  currentUtter.lang = (chosenVoice && chosenVoice.lang) ? chosenVoice.lang : 'es-419';
-  if(chosenVoice) currentUtter.voice = chosenVoice;
+          <!-- Cejas -->
+          <path d="M155 218 q15 -8 30 0" stroke="rgba(230,255,245,.55)" stroke-width="2" fill="none"/>
