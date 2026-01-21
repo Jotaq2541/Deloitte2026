@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Asistente Virtual – Marketplace Deloitte CA</title>
   <meta name="description" content="Asistente con avatar y voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
-  <!-- v7.0 – Estable: FAQ visibles, TTS con fallback, boca animada, logo <img> -->
+  <!-- v8.0 – Estable: FAQ en HTML, TTS con fallback, boca animada, <img> correctos -->
   <style>
     :root{
       --bg:#0b0e11; --panel:#111418; --card:#141a1f;
@@ -90,3 +90,65 @@
     .btn-ghost{background:#0f1216}
     .qbtn{width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35}
     .qbtn:hover{border-color:rgba(32,163,74,.45);box-shadow:0 0 0 2px rgba(32,163,74,.12) inset}
+    .qbtn:focus-visible, .btn:focus-visible, select:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
+    .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
+    footer{padding:10px 16px;color:var(--muted)}
+    .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img class="logo" src="./Deloitte-Emblem.png" alt="Deloitte" loading="eager" decoding="sync" />
+      <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
+    </div>
+
+    <div class="controls" aria-label="Controles de voz">
+      <label for="voiceSel">Voz:
+        <select id="voiceSel" title="Voz neutral latinoamericana" aria-label="Seleccionar voz"></select>
+      </label>
+      <button id="btnSpeak"  class="btn btn-primary" title="Reproducir última respuesta">🔊 Reproducir</button>
+      <button id="btnPause"  class="btn btn-ghost"   title="Pausar/Reanudar audio">⏸️ Pausar</button>
+      <button id="btnStop"   class="btn btn-ghost"   title="Detener audio">⏹️ Detener</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Izquierda: AVATAR -->
+    <section class="left">
+      <div id="avatar" class="avatar" aria-label="Avatar holográfico">
+        <img id="avatarImg" src="./1000_F_827852536_YuGWoMW0rpFSyAXCHqYfv2QCD2AowPaj.jpg" alt="Avatar holográfico" loading="eager" decoding="async" />
+        <div class="scan" aria-hidden="true"></div>
+        <div id="subtitle" class="subtitle" aria-live="polite"></div>
+        <div id="mouth" class="mouth" aria-hidden="true"></div>
+      </div>
+
+      <div class="muted">
+        Sugerencia: usa <span class="kbd">R</span> para reproducir/pausar y <span class="kbd">S</span> para detener por teclado.
+      </div>
+    </section>
+
+    <!-- Derecha: Q&A -->
+    <section class="right">
+      <div class="panel">
+        <h2>Preguntas frecuentes – Marketplace Deloitte CA</h2>
+        <div class="controls">
+          <small class="muted">Haz clic en una pregunta para ver la respuesta y reproducirla.</small>
+        </div>
+      </div>
+
+      <!-- Preguntas ya en HTML (sin depender de JS para mostrarlas) -->
+      <div class="grid" id="faqGrid" role="list" aria-describedby="faqHelp">
+        <button class="qbtn" role="listitem" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
+        <button class="qbtn" role="listitem" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
+        <button class="qbtn" role="listitem" data-answer="Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región.">3. ¿En qué países opera el Marketplace Deloitte Centroamérica?</button>
+        <button class="qbtn" role="listitem" data-answer="Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113).">4. ¿Cuántos profesionales integran Deloitte en la región?</button>
+        <button class="qbtn" role="listitem" data-answer="El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales.">5. ¿Qué áreas de servicio están representadas dentro del Marketplace?</button>
+        <button class="qbtn" role="listitem" data-answer="Deloitte audita el 11% de las compañías listadas en las bolsas de valores de los siete países del Marketplace, lo que representa 51 empresas auditadas de un total de 457 en 2025.">6. ¿Cuál es la participación de Deloitte en empresas públicas auditadas dentro del Marketplace CA?</button>
+        <button class="qbtn" role="listitem" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
+        <button class="qbtn" role="listitem" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
+        <button class="qbtn" role="listitem" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
+        <button class="qbtn" role="listitem" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados &amp; Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
+      </div>
+
