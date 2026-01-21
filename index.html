@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Asistente Deloitte – Marketplaces S‑LATAM</title>
-<meta name="description" content="Asistente con avatar futurista y voz neutral latinoamericana. Preguntas y respuestas sobre Marketplaces de Deloitte S‑LATAM." />
+<meta name="description" content="Asistente con avatar femenino futurista y voz neutral latinoamericana. Preguntas y respuestas sobre Marketplaces de Deloitte S‑LATAM." />
 <style>
   :root{
     --bg:#0b0e11; --panel:#111418; --card:#141a1f;
@@ -42,7 +42,7 @@
   .scan{
     position:absolute;inset:0;pointer-events:none;
     background:
-      linear-gradient(rgba(0,255,200,.07),transparent,rgba(0,255,200,.07)),
+      linear-gradient(rgba(0,255,200,.08),transparent,rgba(0,255,200,.08)),
       repeating-linear-gradient(0deg,rgba(0,255,180,.10),rgba(0,255,180,.10) 1px,transparent 1px,transparent 3px);
     mix-blend-mode:screen;animation:sweep 4s linear infinite
   }
@@ -61,6 +61,7 @@
   select,button{background:#0f1216;color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;font-size:14px}
   .btn{cursor:pointer}
   .btn-primary{background:linear-gradient(180deg,#1f2937,#0f1216);border:1px solid rgba(32,163,74,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 2px rgba(32,163,74,.12)}
+  .btn-ghost{background:#0f1216}
   .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
   .qbtn{width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35}
   .qbtn:hover{border-color:rgba(32,163,74,.45);box-shadow:0 0 0 2px rgba(32,163,74,.12) inset}
@@ -71,14 +72,16 @@
 <body>
   <header>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Deloitte_logo.png" alt="Deloitte" style="height:22px;opacity:.95" />
+      <img alt="Deloitte" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Deloitte_logo.png" style="height:22px;opacity:.9"/>
       <h1>Asistente Virtual – Marketplaces Deloitte S‑LATAM</h1>
     </div>
     <div class="controls">
       <label>Voz:
         <select id="voiceSel" title="Voz neutral latinoamericana"></select>
       </label>
-      <button id="btnSpeak" class="btn btn-primary" title="Reproducir última respuesta">🔊 Escuchar</button>
+      <button id="btnSpeak"  class="btn btn-primary" title="Reproducir última respuesta">🔊 Reproducir</button>
+      <button id="btnPause"  class="btn btn-ghost"   title="Pausar/Reanudar audio">⏸️ Pausar</button>
+      <button id="btnStop"   class="btn btn-ghost"   title="Detener audio">⏹️ Detener</button>
     </div>
   </header>
 
@@ -86,7 +89,7 @@
     <!-- Izquierda: AVATAR -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- ✅ SVG embebido (rostro femenino futurista) -->
+        <!-- ✅ SVG embebido: rostro femenino estilizado -->
         <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" role="img" aria-label="Asistente femenina futurista">
           <defs>
             <linearGradient id="hair" x1="0" x2="1">
@@ -97,21 +100,29 @@
               <stop offset="0%" stop-color="rgba(35,181,116,0.45)"/>
               <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
             </radialGradient>
+            <linearGradient id="lip" x1="0" x2="1">
+              <stop offset="0%" stop-color="#25a463"/><stop offset="100%" stop-color="#2ecf8d"/>
+            </linearGradient>
           </defs>
           <rect width="100%" height="100%" fill="#081013"/>
           <ellipse cx="200" cy="110" rx="190" ry="110" fill="url(#glow)"/>
           <!-- Cabello estilizado -->
-          <path d="M50,200 C80,80 320,80 350,200 C360,260 340,330 300,360 C260,390 140,390 100,360 C60,330 40,260 50,200 Z" fill="url(#hair)" opacity="0.35"/>
-          <!-- Cara -->
-          <ellipse cx="200" cy="240" rx="95" ry="120" fill="#16302a" stroke="#29b56f" stroke-width="1.5"/>
+          <path d="M50,200 C80,80 320,80 350,200 C360,260 340,330 300,360 C260,390 140,390 100,360 C60,330 40,260 50,200 Z" fill="url(#hair)" opacity="0.45"/>
+          <!-- Cara (piel verdosa futurista) -->
+          <ellipse cx="200" cy="240" rx="95" ry="120" fill="#16302a" stroke="#29b56f" stroke-width="1.6"/>
+          <!-- Nariz ligera -->
+          <path d="M200 240 q-3 10 0 18" stroke="rgba(180,240,220,.6)" stroke-width="1" fill="none"/>
           <!-- Ojos -->
-          <ellipse cx="170" cy="230" rx="11" ry="8" fill="#d8f3e7"/>
-          <ellipse cx="230" cy="230" rx="11" ry="8" fill="#d8f3e7"/>
-          <!-- Boca -->
-          <path d="M170 270 Q200 285 230 270" fill="none" stroke="#25a463" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="170" cy="230" rx="10.5" ry="7.8" fill="#e6fff5"/>
+          <ellipse cx="230" cy="230" rx="10.5" ry="7.8" fill="#e6fff5"/>
+          <!-- Cejas suaves -->
+          <path d="M155 218 q15 -8 30 0" stroke="rgba(230,255,245,.5)" stroke-width="2" fill="none"/>
+          <path d="M215 218 q15 -8 30 0" stroke="rgba(230,255,245,.5)" stroke-width="2" fill="none"/>
+          <!-- Boca (más femenina) -->
+          <path d="M170 270 Q200 286 230 270" fill="none" stroke="url(#lip)" stroke-width="2.4" stroke-linecap="round"/>
           <!-- Detalles futuristas -->
-          <path d="M110 190 Q200 120 290 190" fill="none" stroke="rgba(41,181,111,.45)" stroke-width="1"/>
-          <path d="M120 320 Q200 350 280 320" fill="none" stroke="rgba(41,181,111,.45)" stroke-width="1"/>
+          <path d="M110 190 Q200 120 290 190" fill="none" stroke="rgba(41,181,111,.45)" stroke-width="1.1"/>
+          <path d="M120 320 Q200 350 280 320" fill="none" stroke="rgba(41,181,111,.45)" stroke-width="1.1"/>
           <!-- Ornamentos -->
           <g stroke="rgba(41,181,111,.25)" fill="none">
             <circle cx="60" cy="430" r="28"/><circle cx="340" cy="430" r="28"/>
@@ -132,14 +143,14 @@
       </div>
 
       <div id="list" class="grid"></div>
-      <div class="answer" id="answerBox">👋 Bienvenido/a. Seleccioná una pregunta para ver la respuesta. Luego, pulsá “Escuchar”.</div>
+      <div class="answer" id="answerBox">👋 Bienvenido/a. Seleccioná una pregunta para ver la respuesta. Luego, pulsá “Reproducir”.</div>
     </section>
   </main>
 
   <footer>© Deloitte – Demo informativa. Respuestas no constituyen asesoría legal ni financiera.</footer>
 
 <script>
-/** === 1) CONTENIDO (10 Q&A ÚNICAS, sin duplicados) === */
+/** === 1) CONTENIDO (10 Q&A ÚNICAS) === */
 const QA = [
   { q:"¿Qué es Deloitte S‑LATAM?",
     a:"Deloitte Spanish Latin America (S‑LATAM) integra a 16 países bajo un modelo regional que unifica talento, conocimiento e innovación. Su propósito es impulsar la transformación de organizaciones en la región, combinando experiencia multidisciplinaria y enfoque colaborativo para generar impacto sostenible." },
@@ -181,12 +192,11 @@ QA.forEach(item => {
   list.appendChild(b);
 });
 
-/** === 3) Voz neutral LATAM (preferencias y selector) ===
- * Intentamos en este orden: es‑419 → es‑MX → es‑CO → es‑ES.
- * Si el navegador cargó otra (p. ej., es‑AR), podés cambiarla manualmente.
- */
+/** === 3) Voz neutral LATAM (preferencias, selector, Pausa/Stop) === */
 const voiceSel = document.getElementById('voiceSel');
-const speakBtn = document.getElementById('btnSpeak');
+const btnSpeak = document.getElementById('btnSpeak');
+const btnPause = document.getElementById('btnPause');
+const btnStop  = document.getElementById('btnStop');
 const subs = document.getElementById('subs');
 const avatar = document.getElementById('avatar');
 let chosenVoice = null;
@@ -229,27 +239,14 @@ function setTalking(on){
   avatar.classList.toggle('talking', on);
   if(!on) subs.textContent = '';
 }
+
+let currentUtter = null;
 function speak(text){
   if(!('speechSynthesis' in window) || !text) return;
+  // Si estaba pausado, reanuda
+  if (speechSynthesis.paused) { speechSynthesis.resume(); return; }
+  // Si estaba hablando, cancela y reinicia con el nuevo texto
   try{ window.speechSynthesis.cancel(); } catch(e){}
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = (chosenVoice && chosenVoice.lang) ? chosenVoice.lang : 'es-419';
-  if(chosenVoice) u.voice = chosenVoice;
-  u.rate = 1.03;
-  u.onstart = ()=>{ setTalking(true); subs.textContent = text; };
-  u.onend   = ()=> setTalking(false);
-  u.onerror = ()=> setTalking(false);
-  window.speechSynthesis.speak(u);
-}
-speakBtn.addEventListener('click', ()=> speak(lastAnswer || "Seleccioná una pregunta para escuchar la respuesta."));
-
-/** Bienvenida hablada (suave) */
-window.addEventListener('load', ()=>{
-  const welcome = "Hola. Soy tu asistente virtual de Deloitte. Seleccioná una pregunta para conocer más sobre nuestros Marketplaces en Spanish Latin America.";
-  answerBox.textContent = "👋 " + welcome;
-  lastAnswer = welcome;
-  setTimeout(()=> speak(welcome), 600);
-});
-</script>
-</body>
-</html>
+  currentUtter = new SpeechSynthesisUtterance(text);
+  currentUtter.lang = (chosenVoice && chosenVoice.lang) ? chosenVoice.lang : 'es-419';
+  if(chosenVoice) currentUtter.voice = chosenVoice;
