@@ -12,7 +12,12 @@
       --brand:#1c8c3f; --text:#ffffff; --muted:#b9c0c7; --focus:#8bd8a9;
     }
     *{box-sizing:border-box}
-    body{margin:0;background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    body{
+      margin:0;
+      background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif
+    }
 
     header{
       padding:16px 20px;border-bottom:2px solid var(--brand);background:#0f1317;
@@ -49,125 +54,147 @@
 
     .muted{color:var(--muted);font-size:12px}
 
-    .right{display:grid;grid-template-rows:auto 1fr auto}
-    .panel{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .right{display:grid;grid-template-rows:auto 1fr auto; position:relative;}
+    .panel{
+      padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
+    }
     .panel h2{margin:0;font-size:16px}
 
     .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     label{display:flex;gap:6px;align-items:center}
-    select,button{background:#0f1216;color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;font-size:14px}
+    select,button{
+      background:#0f1216;color:var(--text);border:1px solid rgba(255,255,255,.14);
+      border-radius:8px;padding:8px 10px;font-size:14px
+    }
     .btn{cursor:pointer}
     .btn-primary{background:linear-gradient(180deg,#1f2937,#0f1216);border:1px solid rgba(32,163,74,.5)}
     .btn-ghost{background:#0f1216}
 
     .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
-    .qbtn{width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35}
-    .qbtn:hover{border-color:rgba(32,163,74,.45);box-shadow:0 0 0 2px rgba(32,163,74,.12) inset}
+    .qbtn{
+      width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);
+      background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .35s ease;
+    }
+    .qbtn:hover{
+      border-color:rgba(32,163,74,.55);
+      box-shadow:0 0 6px rgba(32,163,74,.24), 0 0 18px rgba(32,163,74,.12) inset;
+      transform: translateY(-1px);
+    }
+    .qbtn:active{
+      background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.4) 50%, rgba(28,140,63,.15) 100%);
+    }
     .qbtn:focus-visible,.btn:focus-visible,select:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
     .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
     footer{padding:10px 16px;color:var(--muted)}
     .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
-    
-/* ===========================
-   VIDA AL AVATAR MIENTRAS HABLA
-   (no requiere cambiar JS/HTML)
-   =========================== */
 
-/* Suaviza transformaciones del <img> dentro del avatar */
-#avatar img{
-  will-change: transform, filter;
-  transition: transform .18s ease, filter .18s ease;
-}
+    /* ===========================
+       VIDA AL AVATAR MIENTRAS HABLA
+       =========================== */
 
-/* A) Cabeceo/zoom sutil mientras habla */
-#avatar.talking img{
-  animation: headBob 1.1s ease-in-out infinite;
-}
-@keyframes headBob{
-  0%   { transform: translateY(0)      rotate(0deg)    scale(1.000); filter: brightness(1); }
-  25%  { transform: translateY(-1.2%)  rotate(-0.25deg) scale(1.006); filter: brightness(1.03); }
-  50%  { transform: translateY(0.2%)   rotate(0.15deg)  scale(1.003); filter: brightness(1.01); }
-  75%  { transform: translateY(-0.8%)  rotate(0.20deg)  scale(1.007); filter: brightness(1.02); }
-  100% { transform: translateY(0)      rotate(0deg)     scale(1.000); filter: brightness(1); }
-}
+    /* Suaviza transformaciones del <img> dentro del avatar */
+    #avatar img{
+      will-change: transform, filter;
+      transition: transform .18s ease, filter .18s ease;
+    }
 
-/* B1) Halo/respiración luminosa alrededor del avatar mientras habla */
-#avatar::before{
-  content:"";
-  position:absolute; inset:-3%;
-  border-radius:12px;
-  background: radial-gradient(65% 60% at 50% 40%, rgba(32,163,74,.25), rgba(32,163,74,0) 60%),
-              radial-gradient(60% 55% at 50% 70%, rgba(28,140,63,.18), rgba(28,140,63,0) 70%);
-  opacity:0; pointer-events:none;
-  filter: blur(6px);
-  transform: scale(1);
-  transition: opacity .15s ease;
-}
-#avatar.talking::before{
-  opacity:.65;
-  animation: haloBreath 1.25s ease-in-out infinite;
-}
-@keyframes haloBreath{
-  0%   { transform: scale(1.00); filter: blur(6px); }
-  50%  { transform: scale(1.03); filter: blur(7px); }
-  100% { transform: scale(1.00); filter: blur(6px); }
-}
+    /* A) Cabeceo/zoom sutil mientras habla */
+    #avatar.talking img{
+      animation: headBob 1.1s ease-in-out infinite, fadeAI .25s ease forwards;
+    }
+    @keyframes headBob{
+      0%   { transform: translateY(0)      rotate(0deg)    scale(1.000); filter: brightness(1); }
+      25%  { transform: translateY(-1.2%)  rotate(-0.25deg) scale(1.006); filter: brightness(1.03); }
+      50%  { transform: translateY(0.2%)   rotate(0.15deg)  scale(1.003); filter: brightness(1.01); }
+      75%  { transform: translateY(-0.8%)  rotate(0.20deg)  scale(1.007); filter: brightness(1.02); }
+      100% { transform: translateY(0)      rotate(0deg)     scale(1.000); filter: brightness(1); }
+    }
 
-/* B2) Ecualizador discreto (ondas de voz estilizadas) como overlay.
-   Es sutil y NO tapa el rostro: barras en la esquina inferior izquierda. */
-#avatar::after{
-  content:"";
-  position:absolute; left:8%; bottom:10%;
-  width:26%; height:16%;
-  pointer-events:none; opacity:0; transition: opacity .15s ease;
+    /* B1) Halo/respiración luminosa alrededor del avatar mientras habla */
+    #avatar::before{
+      content:"";
+      position:absolute; inset:-3%;
+      border-radius:12px;
+      background: radial-gradient(65% 60% at 50% 40%, rgba(32,163,74,.25), rgba(32,163,74,0) 60%),
+                  radial-gradient(60% 55% at 50% 70%, rgba(28,140,63,.18), rgba(28,140,63,0) 70%);
+      opacity:0; pointer-events:none;
+      filter: blur(6px);
+      transform: scale(1);
+      transition: opacity .15s ease;
+    }
+    #avatar.talking::before{
+      opacity:.65;
+      animation: haloBreath 1.25s ease-in-out infinite;
+    }
+    @keyframes haloBreath{
+      0%   { transform: scale(1.00); filter: blur(6px); }
+      50%  { transform: scale(1.03); filter: blur(7px); }
+      100% { transform: scale(1.00); filter: blur(6px); }
+    }
 
-  /* 5 barras: usamos gradient + mask para “simular” variación vertical */
-  --bar: linear-gradient(180deg, #5ff5a2 0%, #22b36a 100%);
-  background:
-    var(--bar), var(--bar), var(--bar), var(--bar), var(--bar);
-  background-repeat: no-repeat;
-  /* posiciones de 5 barras (X%) */
-  background-position:
-    0%   100%,  25%  100%,  50%  100%,  75%  100%,  100% 100%;
-  /* ancho de cada barra y altura inicial (se anima) */
-  background-size:
-    10% 22%, 10% 32%, 10% 18%, 10% 28%, 10% 24%;
+    /* B2) Ecualizador discreto (ondas de voz estilizadas) */
+    #avatar::after{
+      content:"";
+      position:absolute; left:8%; bottom:10%;
+      width:26%; height:16%;
+      pointer-events:none; opacity:0; transition: opacity .15s ease;
 
-  /* separa visualmente las barras con un blur suave */
-  filter: drop-shadow(0 0 4px rgba(36,167,93,.35));
-}
-#avatar.talking::after{
-  opacity:.95;
-  animation: vuDance .24s linear infinite;
-}
+      --bar: linear-gradient(180deg, #5ff5a2 0%, #22b36a 100%);
+      background: var(--bar), var(--bar), var(--bar), var(--bar), var(--bar);
+      background-repeat: no-repeat;
+      background-position: 0% 100%, 25% 100%, 50% 100%, 75% 100%, 100% 100%;
+      background-size: 10% 22%, 10% 32%, 10% 18%, 10% 28%, 10% 24%;
+      filter: drop-shadow(0 0 4px rgba(36,167,93,.35));
+    }
+    #avatar.talking::after{
+      opacity:.95;
+      animation: vuDance .24s linear infinite;
+    }
+    @keyframes vuDance{
+      0%{   background-size: 10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22%; }
+      25%{  background-size: 10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48%; }
+      50%{  background-size: 10% 36%, 10% 68%, 10% 52%, 10% 44%, 10% 76%; }
+      75%{  background-size: 10% 82%, 10% 46%, 10% 74%, 10% 58%, 10% 40%; }
+      100%{ background-size: 10% 28%, 10% 60%, 10% 26%, 10% 68%, 10% 32%; }
+    }
 
-/* “Danza” del VU: cambiamos altos de las barras con pasos rápidos.
-   Nota: no es audio real, pero acompaña muy bien la locución. */
-@keyframes vuDance{
-  0%{
-    background-size: 10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22%;
-  }
-  25%{
-    background-size: 10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48%;
-  }
-  50%{
-    background-size: 10% 36%, 10% 68%, 10% 52%, 10% 44%, 10% 76%;
-  }
-  75%{
-    background-size: 10% 82%, 10% 46%, 10% 74%, 10% 58%, 10% 40%;
-  }
-  100%{
-    background-size: 10% 28%, 10% 60%, 10% 26%, 10% 68%, 10% 32%;
-  }
-}
+    /* Accesibilidad: reducir movimiento si el usuario lo prefiere */
+    @media (prefers-reduced-motion: reduce){
+      #avatar.talking img{ animation:none; }
+      #avatar.talking::before{ animation:none; }
+      #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6; }
+    }
 
-/* Detalle: si alguien prefiere menos movimiento (accesibilidad) */
-@media (prefers-reduced-motion: reduce){
-  #avatar.talking img{ animation:none; }
-  #avatar.talking::before{ animation:none; }
-  #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6; }
-}
+    /* Pequeña onda AI en el borde inferior */
+    #aiWave{
+      position:fixed;left:0;right:0;bottom:0;height:4px;z-index:9999;
+      background:linear-gradient(90deg, rgba(32,163,74,.2), rgba(32,163,74,.4), rgba(32,163,74,.2));
+      background-size:400% 100%;
+      animation: wave 4s infinite linear;
+    }
+    @keyframes wave{ from{background-position:0 0;} to{background-position:400% 0;} }
+
+    /* Indicador “Procesando…” */
+    #aiThinking{
+      position:absolute; top:10px; right:12px; display:none;
+      font-size:12px; color:#8bd8a9; opacity:.85; padding:4px 8px;
+      background:rgba(0,0,0,.35); border:1px solid rgba(139,216,169,.5); border-radius:8px;
+    }
+
+    /* Modo claro automático (opcional y reversible) */
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f4f4f4; --text:#111; --panel:#fff; --card:#fff; --brand:#1c8c3f; --muted:#47515a; --focus:#22b36a;
+      }
+      body{ background:#f4f4f4; color:#111; }
+      header{ background:#ffffff; border-bottom-color:#1c8c3f; }
+      .left,.right{ border-color: rgba(0,0,0,.08); }
+      .qbtn{ background:#ffffff; color:#111; }
+      .answer{ background:#ffffff; }
+    }
   </style>
 </head>
 <body>
@@ -198,7 +225,7 @@
       </div>
 
       <div class="muted">
-        Sugerencia: usa <span class="kbd">R</span> para reproducir/pausar y <span class="kbd">S</span> para detener por teclado.
+        Sugerencia: usa <span class="kbd">R</span> para reproducir/pausar, <span class="kbd">S</span> para detener y <span class="kbd">M</span> para silenciar música.
       </div>
     </section>
 
@@ -209,6 +236,7 @@
         <div class="controls">
           <small class="muted">Haz clic en una pregunta para ver la respuesta y reproducirla.</small>
         </div>
+        <div id="aiThinking" aria-live="polite">Procesando…</div>
       </div>
 
       <!-- Preguntas ya en HTML -->
@@ -226,7 +254,7 @@
       </div>
 
       <div id="answerBox" class="answer" aria-live="polite">
-        Selecciona una pregunta para ver la respuesta aquí.
+        Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.
       </div>
 
       <footer>
@@ -234,6 +262,9 @@
       </footer>
     </section>
   </main>
+
+  <!-- Música corporativa (opcional). Subir "musica-corporativa.mp3" a la raíz del sitio -->
+  <audio id="bgMusic" src="musica-corporativa.mp3" preload="metadata" loop></audio>
 
   <script>
     "use strict";
@@ -257,16 +288,33 @@
       const faqGrid    = document.getElementById('faqGrid');
       const answerBox  = document.getElementById('answerBox');
       const subtitleEl = document.getElementById('subtitle');
+      const aiThinking = document.getElementById('aiThinking');
 
       if (!voiceSel || !btnSpeak || !btnPause || !btnStop || !faqGrid || !answerBox || !subtitleEl){
-        answerBox.textContent = 'Faltan nodos esenciales; verifica el HTML.';
+        if (answerBox) answerBox.textContent = 'Faltan nodos esenciales; verifica el HTML.';
         return;
       }
+
+      // ---------- UX helpers ----------
+      function typeText(target, text, speed=24){
+        target.textContent = "";
+        let i = 0;
+        function step(){
+          if(i < text.length){
+            target.textContent += text[i++];
+            setTimeout(step, speed);
+          }
+        }
+        step();
+      }
+      function showThinking(){ if (aiThinking) { aiThinking.style.display='block'; } }
+      function hideThinking(){ if (aiThinking) { aiThinking.style.display='none'; } }
 
       // Render / acciones FAQ
       faqGrid.querySelectorAll('.qbtn').forEach(btn => {
         btn.addEventListener('click', () => {
           const text = btn.dataset.answer || '';
+          showThinking();
           setAnswer(text);
           queueSpeak(text);
         });
@@ -274,7 +322,8 @@
 
       function setAnswer(text){
         const t = text || 'Respuesta no disponible.';
-        answerBox.textContent = t;
+        // Efecto de escritura en la respuesta (manteniendo subtítulo íntegro)
+        typeText(answerBox, t);
         subtitleEl.textContent = t;
       }
 
@@ -344,7 +393,6 @@
         if (!synth || !text) return;
         if (!voicesReady){
           queuedText = text;
-          // forzar reintento por si el navegador tarda
           setTimeout(loadVoices, 250);
           return;
         }
@@ -360,14 +408,16 @@
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          // Eventos (sin animaciones extra)
+          // Eventos (coordinados con el indicador + avatar)
+          u.onstart = () => { hideThinking(); };
           u.onend   = () => {};
-          u.onerror = (e) => { console.warn('Error TTS', e); };
+          u.onerror = (e) => { console.warn('Error TTS', e); hideThinking(); };
 
           lastUtterance = u;
           synth.speak(u);
         } catch(e){
           console.warn('speakNow()', e);
+          hideThinking();
         }
       }
 
@@ -381,6 +431,7 @@
       function stopAll(){
         if (!synth) return;
         try{ synth.cancel(); } catch{}
+        hideThinking();
       }
 
       // Controles
@@ -391,20 +442,76 @@
       btnPause.addEventListener('click', pauseResume);
       btnStop .addEventListener('click', stopAll);
 
-      // Atajos: R = reproducir/pausar, S = detener
+      // Atajos: R = reproducir/pausar, S = detener, M = silenciar música
       document.addEventListener('keydown', (e) => {
         const tag = (e.target && e.target.tagName) || '';
         if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
         const k = e.key.toLowerCase();
         if (k === 'r'){ e.preventDefault(); pauseResume(); }
         if (k === 's'){ e.preventDefault(); stopAll(); }
+        if (k === 'm'){
+          const bg = document.getElementById('bgMusic');
+          if(bg){ bg.muted = !bg.muted; }
+        }
       });
 
-      // Mensaje inicial
-      setAnswer('Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.');
+      // Mensaje inicial (con escritura)
+      const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
+      typeText(answerBox, bienvenida);
+      subtitleEl.textContent = bienvenida;
     });
   </script>
+
+  <!-- ACTIVADOR NO INVASIVO DEL AVATAR (.talking) SEGÚN ESTADO DEL TTS -->
+  <script>
+    (function(){
+      const avatar = document.getElementById('avatar');
+      if (!avatar || !('speechSynthesis' in window)) return;
+
+      const synth      = window.speechSynthesis;
+      const origSpeak  = synth.speak.bind(synth);
+      const origPause  = synth.pause.bind(synth);
+      const origResume = synth.resume.bind(synth);
+      const origCancel = synth.cancel.bind(synth);
+
+      function setTalking(on){ avatar.classList.toggle('talking', !!on); }
+
+      synth.speak = function(utter){
+        const prevStart  = utter.onstart;
+        const prevEnd    = utter.onend;
+        const prevError  = utter.onerror;
+        const prevPause  = utter.onpause;
+        const prevResume = utter.onresume;
+
+        utter.onstart = (e)=>{ setTalking(true);  prevStart  && prevStart.call(utter, e); };
+        utter.onend   = (e)=>{ setTalking(false); prevEnd    && prevEnd.call(utter, e); };
+        utter.onerror = (e)=>{ setTalking(false); prevError  && prevError.call(utter, e); };
+        utter.onpause = (e)=>{ setTalking(false); prevPause  && prevPause.call(utter, e); };
+        utter.onresume= (e)=>{ setTalking(true);  prevResume && prevResume.call(utter, e); };
+
+        return origSpeak(utter);
+      };
+      synth.pause  = function(){ setTalking(false); const r = origPause();  return r; };
+      synth.resume = function(){ const r = origResume(); if (synth.speaking && !synth.paused) setTalking(true); return r; };
+      synth.cancel = function(){ setTalking(false); const r = origCancel(); return r; };
+    })();
+  </script>
+
+  <!-- Música corporativa: inicia tras la primera interacción (requisito de navegadores) -->
+  <script>
+    (function(){
+      const bg = document.getElementById("bgMusic");
+      if(!bg) return;
+      document.addEventListener("click", ()=>{
+        if(bg.paused){
+          bg.volume = 0.18;
+          bg.play().catch(()=>{ /* bloqueo de autoplay: se reintenta con la siguiente interacción */ });
+        }
+      }, {once:true});
+    })();
+  </script>
+
+  <!-- Onda AI decorativa -->
+  <div id="aiWave" aria-hidden="true"></div>
 </body>
 </html>
-
-
