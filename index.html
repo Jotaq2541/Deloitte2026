@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Asistente Virtual – Marketplace Deloitte CA</title>
   <meta name="description" content="Asistente con avatar y voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
-  <!-- v8.0 – Estable: FAQ en HTML, TTS con fallback, boca animada, <img> correctos -->
+  <!-- v8.1 – Estable: FAQ en HTML, TTS, boca animada, <img> correctos -->
   <style>
     :root{
       --bg:#0b0e11; --panel:#111418; --card:#141a1f;
@@ -100,7 +100,8 @@
 <body>
   <header>
     <div class="brand">
-      <img class="logo" src="./Deloitte-Emblem.png" alt="Deloitte" loading="eager" decoding="sync" />
+      <!-- LOGO: asegúrate que el archivo se llame exactamente Deloitte-Emblem.png en la RAÍZ -->
+      <img class="logo" src="./Deloitte-Emblem.png" alt="Deloitte" loading="eager" decoding="async" />
       <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
     </div>
 
@@ -138,7 +139,7 @@
         </div>
       </div>
 
-      <!-- Preguntas ya en HTML (sin depender de JS para mostrarlas) -->
+      <!-- Preguntas ya en HTML (no dependemos de JS para mostrarlas) -->
       <div class="grid" id="faqGrid" role="list" aria-describedby="faqHelp">
         <button class="qbtn" role="listitem" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" role="listitem" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
@@ -149,6 +150,198 @@
         <button class="qbtn" role="listitem" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
         <button class="qbtn" role="listitem" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
         <button class="qbtn" role="listitem" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
-        <button class="qbtn" role="listitem" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados &amp; Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
+        <button class="qbtn" role="listitem" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados & Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
       </div>
+
+      <div id="answerBox" class="answer" aria-live="polite">
+        Selecciona una pregunta para ver la respuesta aquí.
+      </div>
+
+      <footer>
+        © 2026 Deloitte &amp; Touche, S.A. — Demostración de asistente con TTS. Recomendado: Chrome/Edge.
+      </footer>
+    </section>
+  </main>
+
+  <!-- ========= LÓGICA ========= -->
+  <script>
+  // Si algo rompe, lo mostramos en pantalla
+  window.addEventListener('error', (e) => {
+    const ab = document.getElementById('answerBox');
+    if (ab) ab.textContent = 'Error JS: ' + (e.message || e.error);
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    try { initApp(); } 
+    catch (err) {
+      const ab = document.getElementById('answerBox');
+      if (ab) ab.textContent = 'Error inicializando: ' + err.message;
+      console.error(err);
+    }
+  });
+
+  function initApp(){
+    // --- DOM refs ---
+    const voiceSel   = document.getElementById('voiceSel');
+    const btnSpeak   = document.getElementById('btnSpeak');
+    const btnPause   = document.getElementById('btnPause');
+    const btnStop    = document.getElementById('btnStop');
+    const faqGrid    = document.getElementById('faqGrid');
+    const answerBox  = document.getElementById('answerBox');
+    const subtitleEl = document.getElementById('subtitle');
+    const avatar     = document.getElementById('avatar');
+    const mouthEl    = document.getElementById('mouth');
+
+    if (!faqGrid || !answerBox || !subtitleEl || !avatar || !mouthEl) {
+      throw new Error('Faltan nodos esenciales en el DOM.');
+    }
+
+    // --- Click en preguntas (FAQ ya visibles en HTML) ---
+    faqGrid.querySelectorAll('.qbtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.answer || '';
+        setAnswer(text);
+        speakText(text);
+      });
+    });
+
+    function setAnswer(text){
+      answerBox.textContent = text || 'Respuesta no disponible.';
+      subtitleEl.textContent = text || '';
+    }
+
+    // --- TTS (Speech Synthesis) ---
+    const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
+    let voices = [];
+    let lastUtterance = null;     // para reanudar
+    let mouthTimer = null;        // fallback
+    let mouthCloseT = null;       // tiempo de cierre
+
+    function populateVoiceSelect(){
+      try{
+        voiceSel.innerHTML = '';
+        if (!synth){
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'TTS no disponible';
+          voiceSel.appendChild(opt);
+          voiceSel.disabled = true;
+          return;
+        }
+        voices = synth.getVoices() || [];
+        if (!voices.length){
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'Haz clic y espera voces…';
+          voiceSel.appendChild(opt);
+          return;
+        }
+        voices.forEach((v) => {
+          const opt = document.createElement('option');
+          opt.value = v.name;
+          opt.textContent = `${v.name} — ${v.lang}${v.default ? ' (predeterminada)' : ''}`;
+          voiceSel.appendChild(opt);
+        });
+        const preferred = [
+          /spanish.*(mexico|latin|latino)/i,
+          /esmx|ar|cl|co|pe|uy|bo|py|ec|ve/i,
+          /spanish.*(united states)/i,
+          /spanish|es/i
+        ];
+        for (const rx of preferred) {
+          const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
+          if (match) { voiceSel.value = match.name; break; }
+        }
+      } catch(e){ console.warn('Error cargando voces', e); }
+    }
+    populateVoiceSelect();
+    if (synth && 'onvoiceschanged' in synth) { synth.onvoiceschanged = populateVoiceSelect; }
+
+    function getSelectedVoice(){
+      if (!voices || !voices.length) return null;
+      const name = voiceSel.value;
+      return voices.find(v => v.name === name)
+          || voices.find(v => /spanish|es/i.test(v.lang))
+          || voices[0];
+    }
+
+    // --- Boca: utilidades ---
+    function mouthReset(){
+      mouthEl.classList.remove('open');
+      mouthEl.style.transform = 'translateX(-50%) scaleY(.18)';
+    }
+    function mouthStartFallback(){
+      mouthStopFallback();
+      mouthTimer = setInterval(() => {
+        const r = (Math.random()*0.7)+0.35; // 0.35–1.05
+        mouthEl.style.transform = `translateX(-50%) scaleY(${r.toFixed(2)})`;
+      }, 110);
+    }
+    function mouthStopFallback(){
+      if (mouthTimer){ clearInterval(mouthTimer); mouthTimer = null; }
+      mouthReset();
+    }
+    function mouthPulse(){
+      const r = (Math.random()*0.6)+0.55; // 0.55–1.15
+      mouthEl.classList.add('open');
+      mouthEl.style.transform = `translateX(-50%) scaleY(${r.toFixed(2)})`;
+      if (mouthCloseT) clearTimeout(mouthCloseT);
+      mouthCloseT = setTimeout(() => mouthEl.classList.remove('open'), 90);
+    }
+
+    function speakText(text){
+      stopSpeaking(true);               // silencio inmediato
+      if (!text || !synth) return;
+
+      const u = new SpeechSynthesisUtterance(text);
+      const v = getSelectedVoice();
+      if (v) u.voice = v;
+      u.lang = (v && v.lang) ? v.lang : 'es-ES';
+      u.rate = 1; u.pitch = 1; u.volume = 1;
+
+      u.onstart = () => {
+        avatar.classList.add('talking');
+        if (!('onboundary' in u)) mouthStartFallback(); // fallback si no hay eventos de palabra
+      };
+      u.onboundary = () => { mouthPulse(); };
+      u.onend = () => { avatar.classList.remove('talking'); mouthStopFallback(); };
+      u.onerror = (e) => { console.warn('Error TTS', e); avatar.classList.remove('talking'); mouthStopFallback(); };
+
+      lastUtterance = u;
+      synth.speak(u);
+    }
+
+    function pauseResume(){
+      if (!synth) return;
+      if (synth.speaking && !synth.paused) {
+        synth.pause();
+        avatar.classList.remove('talking');
+        mouthStopFallback();
+      } else if (synth.paused) {
+        synth.resume();
+        avatar.classList.add('talking');
+        if (lastUtterance && !('onboundary' in lastUtterance)) mouthStartFallback();
+      } else if (lastUtterance) {
+        synth.speak(lastUtterance);
+      }
+    }
+
+    function stopSpeaking(immediate=false){
+      if (!synth) return;
+      try{
+        if (immediate) synth.cancel();
+        else { synth.pause(); synth.cancel(); synth.resume(); }
+      } finally{
+        avatar.classList.remove('talking');
+        mouthStopFallback();
+      }
+    }
+
+    // Controles
+    btnSpeak.addEventListener('click', () => {
+      const text = (answerBox.textContent || '').trim();
+      if (text) speakText(text);
+    });
+    btnPause.addEventListener('click', pauseResume);
+    btnStop.addEventListener('click', () => stopSpeaking(true));
 
