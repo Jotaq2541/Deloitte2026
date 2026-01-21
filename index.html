@@ -10,8 +10,10 @@
   <style>
     :root{
       --bg:#0b0e11; --panel:#111418; --card:#141a1f;
-      --brand:#1c8c3f; --text:#ffffff; --muted:#b9c0c7; --focus:#8bd8a9;
-      --brand-2:#22b36a;
+      --brand:#1c8c3f; --brand-2:#22b36a;
+      --text:#ffffff; --muted:#b9c0c7; --focus:#8bd8a9;
+      --viz-text:#eaf7ef; --viz-muted:#b9c0c7;
+      --viz-bg:#0f1216; --viz-stroke:#2e3640;
     }
     *{box-sizing:border-box}
     body{
@@ -37,14 +39,10 @@
     .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     label{display:flex;gap:6px;align-items:center}
     select,button{
-      background:#f1f5f3;            /* claro, accesible */
-      color:#0b0e11;                  /* texto oscuro legible */
+      background:#f1f5f3; color:#0b0e11;
       border:1px solid rgba(0,0,0,.18);
-      border-radius:8px;
-      padding:8px 10px;
-      font-size:14px;
-      box-shadow:0 1px 0 rgba(255,255,255,.15) inset;
-      cursor:pointer;
+      border-radius:8px; padding:8px 10px; font-size:14px;
+      box-shadow:0 1px 0 rgba(255,255,255,.15) inset; cursor:pointer;
     }
     .btn-primary{
       background:linear-gradient(180deg,#27ae60,#1c8c3f);
@@ -186,18 +184,29 @@
     }
     @media (max-width:900px){ .insights{grid-template-columns:1fr} }
     .card{
-      background:#0f1216; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px;
+      background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
     }
     .card h3{margin:0 0 8px 0; font-size:15px}
-    .viz{width:100%; height:240px; display:block}
-    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; color:var(--muted); margin-top:6px}
+    .viz{width:100%; height:260px; display:block}
+    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; color:var(--viz-muted); margin-top:6px}
     .badge{display:inline-flex; align-items:center; gap:6px; background:#12161b; border:1px solid rgba(255,255,255,.08); border-radius:999px; padding:4px 8px}
     .dot{width:10px;height:10px;border-radius:50%}
+
+    /* Tooltip para SVG */
+    #vizTip{
+      position:fixed; z-index:99999; pointer-events:none;
+      background:#0f1216; color:#eaf7ef; border:1px solid rgba(255,255,255,.15);
+      padding:6px 8px; font-size:12px; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.35);
+      display:none; white-space:nowrap;
+    }
 
     /* Modo claro */
     @media (prefers-color-scheme: light){
       :root{
-        --bg:#f4f4f4; --text:#111; --panel:#fff; --card:#fff; --brand:#1c8c3f; --muted:#47515a; --focus:#22b36a;
+        --bg:#f4f4f4; --text:#111; --panel:#fff; --card:#fff;
+        --brand:#1c8c3f; --muted:#47515a; --focus:#22b36a;
+        --viz-text:#0b0e11; --viz-muted:#47515a;
+        --viz-bg:#ffffff; --viz-stroke:#d7dde3;
       }
       body{ background:#f4f4f4; color:#111 }
       header{ background:#ffffff; border-bottom-color:#1c8c3f }
@@ -233,12 +242,13 @@
     <!-- Izquierda: AVATAR (imagen + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <img id="avatarImg" src="./741349c8be401dbf3728fc41f925c741.jpg" alt="Avatar Deloitte" loading="eager" decoding="async" />
+        <img id="avatarImg" src="./741349c8be401dbf3728fc41f925c741.jpg" alt="Avatar holográfico" loading="eager" decoding="async" />
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
       <div class="muted">
-        Sugerencia: usa <span class="kbd">R</span> para reproducir/pausar, <span class="kbd">S</span> para detener y <span class="kbd">M</span> para silenciar música.
+        Sugerencia: usa <span class="kbd">R</span> para reproducir/pausar,
+        <span class="kbd">S</span> para detener y <span class="kbd">M</span> para silenciar música.
       </div>
     </section>
 
@@ -294,9 +304,13 @@
     </section>
   </main>
 
-  <!-- Música corporativa (opcional). Si no existe, la página funciona igual -->
+  <!-- Música corporativa (opcional; si no existe, la página funciona igual) -->
   <audio id="bgMusic" src="./musica-corporativa.mp3" preload="auto" loop></audio>
 
+  <!-- Tooltip global de gráficos -->
+  <div id="vizTip" role="tooltip" aria-hidden="true"></div>
+
+  <!-- Onda AI decorativa -->
   <div id="aiWave" aria-hidden="true"></div>
 
   <script>
@@ -311,9 +325,24 @@
       if (img.complete && !img.naturalWidth){ img.style.display='none'; fb.style.display='inline-flex'; }
     })();
 
-    /* ====== Render infográficos (SVG sin librerías) ====== */
-    (function(){
-      // 1) Barras: Profesionales por país (datos provistos)
+    /* ====== INFOGRÁFICOS (SVG + interacción/tooltip) ====== */
+    document.addEventListener('DOMContentLoaded', () => {
+      const tip = document.getElementById('vizTip');
+      const showTip = (html, x, y) => {
+        if(!tip) return;
+        tip.innerHTML = html;
+        tip.style.left = (x + 12) + 'px';
+        tip.style.top  = (y + 12) + 'px';
+        tip.style.display = 'block';
+        tip.setAttribute('aria-hidden','false');
+      };
+      const hideTip = () => {
+        if(!tip) return;
+        tip.style.display = 'none';
+        tip.setAttribute('aria-hidden','true');
+      };
+
+      // 1) BARRAS
       const dataBars = [
         {label:'Guatemala', val:242, color:'#1ea55a'},
         {label:'Honduras', val:62,  color:'#24c06a'},
@@ -324,61 +353,77 @@
         {label:'R. Dominicana', val:113, color:'#2aa868'}
       ];
       const svgB = document.getElementById('chartBars');
-      if(svgB){
-        const w = svgB.clientWidth || 600, h = svgB.clientHeight || 240, pad = {t:10,r:16,b:30,l:80};
+      const legend = document.getElementById('legendBars');
+
+      function drawBars(){
+        if(!svgB) return;
+        const w = svgB.clientWidth || 600, h = svgB.clientHeight || 260, pad = {t:10,r:16,b:30,l:90};
         svgB.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        while(svgB.firstChild) svgB.removeChild(svgB.firstChild);
+
         const max = Math.max(...dataBars.map(d=>d.val));
-        const barH = (h - pad.t - pad.b) / dataBars.length * 0.7;
-        const gap  = (h - pad.t - pad.b) / dataBars.length * 0.3;
+        const rowH = (h - pad.t - pad.b) / dataBars.length;
+        const barH = rowH * 0.64, gap = rowH * 0.36;
 
         dataBars.forEach((d,i)=>{
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
-          // etiqueta
+          // etiqueta (izquierda)
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 10);
           label.setAttribute('y', y + barH*0.72);
           label.setAttribute('text-anchor','end');
-          label.setAttribute('fill','#b9c0c7');
+          label.setAttribute('fill','var(--viz-text)');
           label.setAttribute('font-size','12');
           label.textContent = d.label;
           g.appendChild(label);
 
-          // barra (animada)
+          // barra
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
           bar.setAttribute('x', pad.l);
           bar.setAttribute('y', y);
           bar.setAttribute('width', 0);
           bar.setAttribute('height', barH);
-          bar.setAttribute('rx', 6);
+          bar.setAttribute('rx', 8);
           bar.setAttribute('fill', d.color);
+          bar.style.transition = 'width 420ms ease';
           g.appendChild(bar);
 
           // valor
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
           val.setAttribute('x', pad.l + 6);
           val.setAttribute('y', y + barH/2 + 4);
-          val.setAttribute('fill','#0b0e11');
+          val.setAttribute('fill','var(--viz-text)');
           val.setAttribute('font-size','12');
           val.textContent = d.val;
           val.style.opacity = 0;
           g.appendChild(val);
 
+          // interacción
+          g.addEventListener('mousemove', (e)=>{
+            const pct = Math.round(d.val/max*100);
+            showTip(`<strong>${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
+            bar.setAttribute('fill', '#35d07a');
+          });
+          g.addEventListener('mouseleave', ()=>{
+            hideTip(); bar.setAttribute('fill', d.color);
+          });
+
           svgB.appendChild(g);
 
-          // animación suave
-          setTimeout(()=>{
+          // animación
+          requestAnimationFrame(()=>{
             const wBar = (w - pad.l - pad.r) * (d.val/max);
             bar.setAttribute('width', wBar);
             val.setAttribute('x', pad.l + Math.min(wBar - 28, w - pad.r - 28));
-            val.style.opacity = 0.9;
-          }, 120 + i*90);
+            val.style.opacity = 0.95;
+          });
         });
 
         // Leyenda
-        const legend = document.getElementById('legendBars');
         if(legend){
+          legend.innerHTML = '';
           dataBars.forEach(d=>{
             const span = document.createElement('span');
             span.className = 'badge';
@@ -388,24 +433,26 @@
         }
       }
 
-      // 2) Dona: 51 de 457 (≈11%)
+      // 2) DONA
       const svgD = document.getElementById('chartDonut');
-      if(svgD){
-        const w=svgD.clientWidth||600, h=svgD.clientHeight||240, cx=w/2, cy=h/2, r=Math.min(w,h)*0.32, sw=r*0.38;
+      function drawDonut(){
+        if(!svgD) return;
+        const w=svgD.clientWidth||600, h=svgD.clientHeight||260, cx=w/2, cy=h/2, r=Math.min(w,h)*0.32, sw=r*0.38;
         svgD.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        while(svgD.firstChild) svgD.removeChild(svgD.firstChild);
 
-        const total = 457, audited = 51, pct = audited/total; // 0.1116…
+        const total = 457, audited = 51, pct = audited/total; // ≈ 11%
 
         // Fondo
         const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
         bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
-        bg.setAttribute('fill','none'); bg.setAttribute('stroke','#2e3640'); bg.setAttribute('stroke-width',sw);
+        bg.setAttribute('fill','none'); bg.setAttribute('stroke','var(--viz-stroke)'); bg.setAttribute('stroke-width',sw);
         svgD.appendChild(bg);
 
         // Arco
         const arc = document.createElementNS('http://www.w3.org/2000/svg','circle');
         arc.setAttribute('cx',cx); arc.setAttribute('cy',cy); arc.setAttribute('r',r);
-        arc.setAttribute('fill','none'); arc.setAttribute('stroke','#22b36a'); arc.setAttribute('stroke-width',sw);
+        arc.setAttribute('fill','none'); arc.setAttribute('stroke', '#22b36a'); arc.setAttribute('stroke-width',sw);
         arc.setAttribute('stroke-linecap','round');
         arc.setAttribute('transform',`rotate(-90 ${cx} ${cy})`);
         const C = 2*Math.PI*r;
@@ -413,25 +460,43 @@
         arc.setAttribute('stroke-dashoffset', C);
         svgD.appendChild(arc);
 
-        // Etiqueta central
+        // Etiquetas centrales
         const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
         t1.setAttribute('x',cx); t1.setAttribute('y',cy-2);
-        t1.setAttribute('text-anchor','middle'); t1.setAttribute('fill','#ffffff'); t1.setAttribute('font-size','26');
+        t1.setAttribute('text-anchor','middle'); t1.setAttribute('fill','var(--viz-text)'); t1.setAttribute('font-size','26');
         t1.textContent = `${Math.round(pct*100)}%`;
         svgD.appendChild(t1);
 
         const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
         t2.setAttribute('x',cx); t2.setAttribute('y',cy+18);
-        t2.setAttribute('text-anchor','middle'); t2.setAttribute('fill','#b9c0c7'); t2.setAttribute('font-size','12');
+        t2.setAttribute('text-anchor','middle'); t2.setAttribute('fill','var(--viz-muted)'); t2.setAttribute('font-size','12');
         t2.textContent = `51 de 457`;
         svgD.appendChild(t2);
 
         // Animación del arco
         setTimeout(()=>{ arc.setAttribute('stroke-dashoffset', C*(1-pct)); arc.style.transition='stroke-dashoffset 900ms ease' }, 180);
-      }
-    })();
 
-    /* ====== Lógica Q&A + TTS ====== */
+        // Interacción
+        svgD.addEventListener('mousemove', (e)=>{
+          const bb = svgD.getBoundingClientRect();
+          const x = e.clientX - bb.left - cx;
+          const y = e.clientY - bb.top  - cy;
+          const ang = (Math.atan2(y, x) + Math.PI/2 + 2*Math.PI) % (2*Math.PI);
+          const over = ang <= (2*Math.PI*pct);
+          const html = over
+            ? `<strong>Auditadas</strong><br>51 / 457 (${Math.round(pct*100)}%)`
+            : `<strong>No auditadas</strong><br>${457-51} / 457`;
+          showTip(html, e.clientX, e.clientY);
+        });
+        svgD.addEventListener('mouseleave', hideTip);
+      }
+
+      drawBars();
+      drawDonut();
+      window.addEventListener('resize', ()=>{ drawBars(); drawDonut(); });
+    });
+
+    /* ====== Q&A + TTS (con typewriter CANCELABLE) ====== */
     document.addEventListener('DOMContentLoaded', () => {
       const voiceSel   = document.getElementById('voiceSel');
       const btnSpeak   = document.getElementById('btnSpeak');
@@ -442,14 +507,15 @@
       const answerBox  = document.getElementById('answerBox');
       const subtitleEl = document.getElementById('subtitle');
       const aiThinking = document.getElementById('aiThinking');
-      const bg = document.getElementById('bgMusic');
+      const bg         = document.getElementById('bgMusic');
+      const avatar     = document.getElementById('avatar');
 
       if (!voiceSel || !btnSpeak || !btnPause || !btnStop || !faqGrid || !answerBox || !subtitleEl){
         if (answerBox) answerBox.textContent = 'Faltan nodos esenciales; verifica el HTML.';
         return;
       }
 
-      /* Música: click inicial para reproducir (políticas navegadores) */
+      // Música: primer clic para iniciar (política de navegadores)
       document.addEventListener("click", ()=>{
         if(bg && bg.paused){
           bg.volume = 0.18;
@@ -460,38 +526,26 @@
         btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
       }
 
-      /* Helpers de UX */
-      function typeText(target, text, speed=24){
+      // TYPEWRITER cancelable (evita letras duplicadas)
+      let typeSeq = 0;
+      function typeText(target, text, speed=22){
+        typeSeq++;
+        const mySeq = typeSeq;
         target.textContent = "";
         let i = 0;
         (function step(){
+          if(mySeq !== typeSeq) return; // cancelado por nueva llamada
           if(i < text.length){
             target.textContent += text[i++];
             setTimeout(step, speed);
           }
         })();
       }
+
       function showThinking(){ if (aiThinking) aiThinking.style.display='block' }
       function hideThinking(){ if (aiThinking) aiThinking.style.display='none' }
 
-      /* Accesos directos */
-      document.addEventListener('keydown', (e) => {
-        const tag = (e.target && e.target.tagName) || '';
-        if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
-        const k = e.key.toLowerCase();
-        if (k === 'r'){ e.preventDefault(); pauseResume(); }
-        if (k === 's'){ e.preventDefault(); stopAll(); }
-        if (k === 'm'){ if(bg){ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; } }
-      });
-
-      /* Pintar respuesta y subtítulo */
-      function setAnswer(text){
-        const t = text || 'Respuesta no disponible.';
-        typeText(answerBox, t);
-        subtitleEl.textContent = t;
-      }
-
-      /* Web Speech API (TTS) */
+      // TTS
       const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
       let voices = [], voicesReady = false, lastUtterance = null, queuedText = null;
 
@@ -527,7 +581,6 @@
         voicesReady = true;
         if (queuedText){ const t = queuedText; queuedText = null; speakNow(t); }
       }
-
       loadVoices();
       if (synth && 'onvoiceschanged' in synth) synth.onvoiceschanged = loadVoices;
 
@@ -539,14 +592,6 @@
             || voices[0];
       }
 
-      function queueSpeak(text){
-        if (!synth || !text) return;
-        if (!voicesReady){ queuedText = text; setTimeout(loadVoices, 250); return; }
-        speakNow(text);
-      }
-
-      /* Activación del avatar (.talking) y “boost” en límites de palabra */
-      const avatar = document.getElementById('avatar');
       function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
       let boostTimer = null;
       function boostOnce(){
@@ -556,9 +601,15 @@
         boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
       }
 
+      function queueSpeak(text){
+        if (!synth || !text) return;
+        if (!voicesReady){ queuedText = text; setTimeout(loadVoices, 250); return; }
+        speakNow(text);
+      }
+
       function speakNow(text){
         try{
-          synth.cancel();
+          synth.cancel(); // limpia cualquier lectura anterior
           const u = new SpeechSynthesisUtterance(text);
           const v = getSelectedVoice();
           if (v) u.voice = v;
@@ -572,7 +623,9 @@
 
           lastUtterance = u;
           synth.speak(u);
-        } catch(e){ hideThinking(); }
+        } catch(e){
+          hideThinking();
+        }
       }
 
       function pauseResume(){
@@ -588,12 +641,23 @@
         btn.addEventListener('click', () => {
           const text = btn.dataset.answer || '';
           showThinking();
-          setAnswer(text);
+          typeText(answerBox, text);     // ya no se superponen (cancelable)
+          subtitleEl.textContent = text; // subtítulo inmediato
           queueSpeak(text);
         });
       });
 
-      // Exponer helpers para añadir más preguntas
+      // Atajos: R/S/M
+      document.addEventListener('keydown', (e) => {
+        const tag = (e.target && e.target.tagName) || '';
+        if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
+        const k = e.key.toLowerCase();
+        if (k === 'r'){ e.preventDefault(); pauseResume(); }
+        if (k === 's'){ e.preventDefault(); stopAll(); }
+        if (k === 'm'){ if(bg){ bg.muted = !bg.muted; const b = document.getElementById('btnMusic'); if(b) b.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; } }
+      });
+
+      // Exponer helpers para agregar Q&A dinámicas
       window.typeText = typeText;
       window.queueSpeak = queueSpeak;
 
@@ -614,6 +678,7 @@
         btn.setAttribute('role','listitem');
         btn.textContent = questionText;
         btn.dataset.answer = answerText;
+
         btn.addEventListener('click', () => {
           const text = btn.dataset.answer || '';
           const aiThinking = document.getElementById('aiThinking');
@@ -629,6 +694,7 @@
           if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
           if (aiThinking) setTimeout(()=> aiThinking.style.display='none', 100);
         });
+
         grid.appendChild(btn);
       };
 
@@ -663,4 +729,3 @@
   </script>
 </body>
 </html>
-``
