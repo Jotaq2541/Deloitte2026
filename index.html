@@ -2,94 +2,124 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Asistente Deloitte – Marketplace CA</title>
-<meta name="description" content="Asistente con avatar y voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
-<!-- v3.3 base + fix imágenes -->
-<style>
-  :root{
-    --bg:#0b0e11; --panel:#111418; --card:#141a1f;
-    --brand:#1c8c3f; --brand-2:#20a34a; --text:#ffffff; --muted:#b9c0c7;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
-    color:var(--text);
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif
-  }
-  header{
-    padding:16px 20px;border-bottom:2px solid var(--brand);background:#0f1317;
-    display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
-  }
-  header h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap}
-  .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
-  @media (max-width: 900px){ .wrap{grid-template-columns:1fr} }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Asistente Virtual – Marketplace Deloitte CA</title>
+  <meta name="description" content="Asistente con avatar y voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
+  <!-- v4.0 – Fix de JS (FAQ), boca animada, logo nítido (@2x/@3x/SVG opcional) -->
+  <style>
+    :root{
+      --bg:#0b0e11; --panel:#111418; --card:#141a1f;
+      --brand:#1c8c3f; --text:#ffffff; --muted:#b9c0c7; --focus:#8bd8a9;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
 
-  .left,.right{
-    background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 180px);
-    border:1px solid rgba(255,255,255,.08);border-radius:14px
-  }
-  .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
+    header{
+      padding:16px 20px;border-bottom:2px solid var(--brand);background:#0f1317;
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
+    }
+    .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    header h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap}
+    .logo{
+      height:24px; width:auto; display:block;
+      image-rendering:auto; /* evita pixelado forzado */
+    }
 
-  /* AVATAR (imagen + capas) */
-  .avatar{
-    position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
-    background:#07090d;border:1px solid rgba(32,163,74,.35);
-    box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)
-  }
-  .avatar img#avatarImg{
-    position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;object-position:center;display:block
-  }
-  .scan{
-    position:absolute;inset:0;pointer-events:none;
-    background:
-      linear-gradient(rgba(0,255,200,.08),transparent,rgba(0,255,200,.08)),
-      repeating-linear-gradient(0deg,rgba(0,255,180,.10),rgba(0,255,180,.10) 1px,transparent 1px,transparent 3px);
-    mix-blend-mode:screen;animation:sweep 4s linear infinite
-  }
-  @keyframes sweep{0%{background-position:0 0,0 0}100%{background-position:0 100%,0 0}}
-  .subtitle{
-    position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
-    backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
-  }
-  .talking{box-shadow:0 0 0 1px rgba(32,163,74,.2),0 0 25px rgba(32,163,74,.35),0 18px 60px rgba(0,0,0,.35)}
+    .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
+    @media (max-width: 900px){ .wrap{grid-template-columns:1fr} }
 
-  .muted{color:var(--muted);font-size:12px}
-  .right{display:grid;grid-template-rows:auto 1fr auto}
-  .panel{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-  .panel h2{margin:0;font-size:16px}
-  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  select,button{background:#0f1216;color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;font-size:14px}
-  .btn{cursor:pointer}
-  .btn-primary{background:linear-gradient(180deg,#1f2937,#0f1216);border:1px solid rgba(32,163,74,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 2px rgba(32,163,74,.12)}
-  .btn-ghost{background:#0f1216}
-  .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
-  .qbtn{width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35}
-  .qbtn:hover{border-color:rgba(32,163,74,.45);box-shadow:0 0 0 2px rgba(32,163,74,.12) inset}
-  .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
-  footer{padding:10px 16px;color:var(--muted)}
-  .logo{height:22px;vertical-align:middle;opacity:.95}
-  .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
-</style>
+    .left,.right{
+      background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 180px);
+      border:1px solid rgba(255,255,255,.08);border-radius:14px
+    }
+    .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
+
+    /* AVATAR */
+    .avatar{
+      position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
+      background:#07090d;border:1px solid rgba(32,163,74,.35);
+      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)
+    }
+    .avatar img#avatarImg{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;object-position:center;display:block
+    }
+    .scan{
+      position:absolute;inset:0;pointer-events:none;
+      background:
+        linear-gradient(rgba(0,255,200,.08),transparent,rgba(0,255,200,.08)),
+        repeating-linear-gradient(0deg,rgba(0,255,180,.10),rgba(0,255,180,.10) 1px,transparent 1px,transparent 3px);
+      mix-blend-mode:screen;animation:sweep 4s linear infinite
+    }
+    @keyframes sweep{0%{background-position:0 0,0 0}100%{background-position:0 100%,0 0}}
+    @media (prefers-reduced-motion: reduce){ .scan{animation:none} }
+
+    .subtitle{
+      position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
+      backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
+    }
+    .talking{box-shadow:0 0 0 1px rgba(32,163,74,.2),0 0 25px rgba(32,163,74,.35),0 18px 60px rgba(0,0,0,.35)}
+
+    /* BOCA (animación) */
+    .mouth{
+      position:absolute; left:50%; bottom:18%;
+      width:18%; height:5.5%;
+      transform:translateX(-50%) scaleY(.18);
+      transform-origin:center;
+      background:radial-gradient(ellipse at 50% 55%, #ff8a8a 0%, #b23b3b 55%, #3a1212 100%);
+      border-radius:50%/80%;
+      box-shadow:inset 0 2px 6px rgba(0,0,0,.35);
+      transition:transform .06s ease;
+      opacity:.95;
+    }
+    .mouth.open{ transform:translateX(-50%) scaleY(1); }
+
+    .muted{color:var(--muted);font-size:12px}
+
+    .right{display:grid;grid-template-rows:auto 1fr auto}
+    .panel{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .panel h2{margin:0;font-size:16px}
+    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    label{display:flex;gap:6px;align-items:center}
+    select,button{background:#0f1216;color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;font-size:14px}
+    .btn{cursor:pointer}
+    .btn-primary{background:linear-gradient(180deg,#1f2937,#0f1216);border:1px solid rgba(32,163,74,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 2px rgba(32,163,74,.12)}
+    .btn-ghost{background:#0f1216}
+    .qbtn{width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35}
+    .qbtn:hover{border-color:rgba(32,163,74,.45);box-shadow:0 0 0 2px rgba(32,163,74,.12) inset}
+    .qbtn:focus-visible, .btn:focus-visible, select:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
+    .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
+    footer{padding:10px 16px;color:var(--muted)}
+    .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
+  </style>
 </head>
 <body>
   <header>
     <div class="brand">
-      <!-- LOGO (ahora sí con <img>) -->
-      <img class="logo" src="./Deloitte-Emblem.png" alt="Deloitte" width="120" height="24" loading="eager" decoding="async" />
+      <!-- LOGO: si subes Deloitte-Emblem.svg, cambia el src abajo por el .svg -->
+      <img
+        src="./Deloitte-Emblem.png"
+        srcset="./Deloitte-Emblem.png 1x, ./Deloitte-Emblem@2x.png 2x, ./Deloitte-Emblem@3x.png 3x"
+        alt="Deloitte"
+        class="logo"
+        loading="eager" decoding="async" />
       <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
     </div>
-    <div class="controls">
-      <label>Voz:
+
+    <div class="controls" aria-label="Controles de voz">
+      <label for="voiceSel">Voz:
         <select id="voiceSel" title="Voz neutral latinoamericana" aria-label="Seleccionar voz"></select>
       </label>
-      <button id="btnSpeak"  class="btn btn-primary" title="Reproducir última respuesta" aria-label="Reproducir">🔊 Reproducir</button>
-      <button id="btnPause"  class="btn btn-ghost"   title="Pausar/Reanudar audio"     aria-label="Pausar o reanudar">⏸️ Pausar</button>
-      <button id="btnStop"   class="btn btn-ghost"   title="Detener audio"             aria-label="Detener">⏹️ Detener</button>
+      <button id="btnSpeak"  class="btn btn-primary" title="Reproducir última respuesta">🔊 Reproducir</button>
+      <button id="btnPause"  class="btn btn-ghost"   title="Pausar/Reanudar audio">⏸️ Pausar</button>
+      <button id="btnStop"   class="btn btn-ghost"   title="Detener audio">⏹️ Detener</button>
     </div>
   </header>
 
@@ -97,10 +127,10 @@
     <!-- Izquierda: AVATAR -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- AVATAR (ahora sí con <img>) -->
-        <img id="avatarImg" src="./1000_F_827852536_YuGWoMW0rpFSyAXCHqYfv2QCD2AowPaj.jpg" alt="Avatar holográfico" loading="eager" decoding="async" />
+        <img id="avatarImg" src="./1000_F_827852536_YuGWoMW0rpFSyAXCHqYfv2QCD2AowPaj.jpg" alt="Avatar" />
         <div class="scan" aria-hidden="true"></div>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
+        <div id="mouth" class="mouth" aria-hidden="true"></div>
       </div>
 
       <div class="muted">
@@ -117,9 +147,7 @@
         </div>
       </div>
 
-      <div class="grid" id="faqGrid" role="list">
-        <!-- Botones de preguntas generados por JS -->
-      </div>
+      <div class="grid" id="faqGrid" role="list"></div>
 
       <div id="answerBox" class="answer" aria-live="polite">
         Selecciona una pregunta para ver la respuesta aquí.
@@ -131,219 +159,148 @@
     </section>
   </main>
 
-<script>
-/* ====== INICIALIZACIÓN SEGURA ====== */
-document.addEventListener('DOMContentLoaded', () => {
-  try {
-    initApp();
-  } catch (err) {
-    console.error('Fallo en initApp:', err);
-    alert('Ocurrió un problema inicializando la app. Revisa la consola.');
-  }
-});
-
-function initApp(){
-  // ----- Q&A (Marketplace CA) -----
-  const QA = [
-    {
-      q: "¿Qué es el Marketplace Deloitte Centroamérica?",
-      a: "Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región."
-    },
-    {
-      q: "¿Por qué se creó el Marketplace regional en 2025?",
-      a: "El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles."
-    },
-    {
-      q: "¿En qué países opera el Marketplace Deloitte Centroamérica?",
-      a: "Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región."
-    },
-    {
-      q: "¿Cuántos profesionales integran Deloitte en la región?",
-      a: "Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113)."
-    },
-    {
-      q: "¿Qué áreas de servicio están representadas dentro del Marketplace?",
-      a: "El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales."
-    },
-    {
-      q: "¿Cuál es la participación de Deloitte en empresas públicas auditadas dentro del Marketplace CA?",
-      a: "Deloitte audita el 11% de las compañías listadas en las bolsas de valores de los siete países del Marketplace, lo que representa 51 empresas auditadas de un total de 457 en 2025."
-    },
-    {
-      q: "¿Qué reconocimientos y reputación respaldan al Marketplace CA?",
-      a: "Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace."
-    },
-    {
-      q: "¿Qué certificaciones posee Deloitte en la región?",
-      a: "Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica."
-    },
-    {
-      q: "¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?",
-      a: "El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento."
-    },
-    {
-      q: "¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?",
-      a: "Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados & Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo."
-    }
-  ];
-
-  // ----- DOM refs -----
-  const voiceSel   = document.getElementById('voiceSel');
-  const btnSpeak   = document.getElementById('btnSpeak');
-  const btnPause   = document.getElementById('btnPause');
-  const btnStop    = document.getElementById('btnStop');
-  const faqGrid    = document.getElementById('faqGrid');
-  const answerBox  = document.getElementById('answerBox');
-  const subtitleEl = document.getElementById('subtitle');
-  const avatar     = document.getElementById('avatar');
-
-  // Sanidad básica de nodos
-  if (!faqGrid || !answerBox || !subtitleEl || !avatar) {
-    throw new Error('Faltan nodos esenciales en el DOM.');
-  }
-
-  // ----- Render de preguntas -----
-  faqGrid.innerHTML = "";
-  QA.forEach((item, idx) => {
-    const btn = document.createElement('button');
-    btn.className = 'qbtn';
-    btn.setAttribute('role','listitem');
-    btn.textContent = (idx+1) + ". " + item.q;
-    btn.addEventListener('click', () => {
-      setAnswer(item.a);
-      speakText(item.a);
+  <script>
+    // ====== INICIALIZACIÓN SEGURA ======
+    document.addEventListener('DOMContentLoaded', () => {
+      try { initApp(); }
+      catch (err) {
+        console.error('Fallo en initApp:', err);
+        alert('Ocurrió un problema inicializando la app. Revisa la consola.');
+      }
     });
-    faqGrid.appendChild(btn);
-  });
 
-  function setAnswer(text){
-    answerBox.textContent = text;
-    subtitleEl.textContent = text;
-  }
-
-  // ----- Speech Synthesis -----
-  const synth = window.speechSynthesis;
-  let voices = [];
-  let lastUtterance = null;
-
-  function loadVoices(){
-    try{
-      voices = synth.getVoices();
-      voiceSel.innerHTML = "";
-      const preferred = [
-        /spanish.*(mexico|latin|latino)/i,
-        /esmx|ar|cl|co|pe|uy|bo|py|ec|ve/i,
-        /spanish.*(united states)/i,
-        /spanish/i
+    function initApp(){
+      // ----- Q&A (Marketplace CA) -----
+      const QA = [
+        { q: "¿Qué es el Marketplace Deloitte Centroamérica?",
+          a: "Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región." },
+        { q: "¿Por qué se creó el Marketplace regional en 2025?",
+          a: "El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles." },
+        { q: "¿En qué países opera el Marketplace Deloitte Centroamérica?",
+          a: "Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región." },
+        { q: "¿Cuántos profesionales integran Deloitte en la región?",
+          a: "Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113)." },
+        { q: "¿Qué áreas de servicio están representadas dentro del Marketplace?",
+          a: "El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales." },
+        { q: "¿Cuál es la participación de Deloitte en empresas públicas auditadas dentro del Marketplace CA?",
+          a: "Deloitte audita el 11% de las compañías listadas en las bolsas de valores de los siete países del Marketplace, lo que representa 51 empresas auditadas de un total de 457 en 2025." },
+        { q: "¿Qué reconocimientos y reputación respaldan al Marketplace CA?",
+          a: "Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace." },
+        { q: "¿Qué certificaciones posee Deloitte en la región?",
+          a: "Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica." },
+        { q: "¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?",
+          a: "El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento." },
+        { q: "¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?",
+          a: "Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados & Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo." }
       ];
 
-      if (!voices || voices.length === 0) {
-        const opt = document.createElement('option');
-        opt.value = "";
-        opt.textContent = "Sin voces disponibles (haz clic en la página e intenta de nuevo)";
-        voiceSel.appendChild(opt);
-        return;
+      // ----- DOM refs -----
+      const voiceSel   = document.getElementById('voiceSel');
+      const btnSpeak   = document.getElementById('btnSpeak');
+      const btnPause   = document.getElementById('btnPause');
+      const btnStop    = document.getElementById('btnStop');
+      const faqGrid    = document.getElementById('faqGrid');
+      const answerBox  = document.getElementById('answerBox');
+      const subtitleEl = document.getElementById('subtitle');
+      const avatar     = document.getElementById('avatar');
+      const mouthEl    = document.getElementById('mouth');
+
+      if (!faqGrid || !answerBox || !subtitleEl || !avatar || !mouthEl) {
+        throw new Error('Faltan nodos esenciales en el DOM.');
       }
 
-      voices.forEach((v) => {
-        const opt = document.createElement('option');
-        opt.value = v.name;
-        opt.textContent = `${v.name} — ${v.lang}${v.default ? " (default)" : ""}`;
-        voiceSel.appendChild(opt);
+      // ----- Render de preguntas (botones) -----
+      faqGrid.innerHTML = "";
+      QA.forEach((item, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'qbtn';
+        btn.setAttribute('role','listitem');
+        btn.textContent = (idx+1) + ". " + item.q;
+        btn.addEventListener('click', () => {
+          setAnswer(item.a);
+          speakText(item.a);
+        });
+        faqGrid.appendChild(btn);
       });
 
-      for (const rx of preferred) {
-        const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
-        if (match) { voiceSel.value = match.name; break; }
+      function setAnswer(text){
+        answerBox.textContent = text;
+        subtitleEl.textContent = text;
       }
-    } catch(e){
-      console.warn('Error cargando voces', e);
-    }
-  }
 
-  // Carga inicial + evento del navegador
-  loadVoices();
-  if (typeof speechSynthesis !== 'undefined' && 'onvoiceschanged' in speechSynthesis) {
-    speechSynthesis.onvoiceschanged = loadVoices;
-  }
+      // ----- TTS -----
+      const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
+      let voices = [];
+      let lastUtterance = null;
+      let mouthTimer = null;
+      let mouthCloseT = null;
 
-  function getSelectedVoice(){
-    const name = voiceSel.value;
-    return voices.find(v => v.name === name) || voices.find(v => /spanish/i.test(v.lang)) || voices[0] || null;
-  }
-
-  function speakText(text){
-    stopSpeaking(true); // silencio inmediato
-    if (!text || !('speechSynthesis' in window)) return;
-
-    const u = new SpeechSynthesisUtterance(text);
-    const v = getSelectedVoice();
-    if (v) u.voice = v;
-    u.lang = (v && v.lang) ? v.lang : 'es-ES';
-    u.rate = 1;
-    u.pitch = 1;
-    u.volume = 1;
-
-    u.onstart = () => avatar.classList.add('talking'));
-    u.onend   = () => avatar.classList.remove('talking'));
-    u.onerror = (e) => { console.warn('Error TTS', e); avatar.classList.remove('talking'); };
-
-    lastUtterance = u;
-    synth.speak(u);
-  }
-
-  function pauseResume(){
-    if (!('speechSynthesis' in window)) return;
-    if (synth.speaking && !synth.paused) {
-      synth.pause();
-      avatar.classList.remove('talking');
-    } else if (synth.paused) {
-      synth.resume();
-      avatar.classList.add('talking');
-    } else if (lastUtterance) {
-      synth.speak(lastUtterance);
-    }
-  }
-
-  function stopSpeaking(immediate=false){
-    if (!('speechSynthesis' in window)) return;
-    if (immediate) {
-      synth.cancel();
-    } else {
-      synth.pause(); synth.cancel(); synth.resume();
-    }
-    avatar.classList.remove('talking');
-  }
-
-  // Controles UI
-  document.getElementById('btnSpeak').addEventListener('click', () => {
-    const text = answerBox.textContent?.trim();
-    if (text) speakText(text);
-  });
-  document.getElementById('btnPause').addEventListener('click', pauseResume);
-  document.getElementById('btnStop').addEventListener('click', () => stopSpeaking(true));
-
-  // Atajos: R = reproducir/pausar, S = detener
-  document.addEventListener('keydown', (e) => {
-    const tag = (e.target && e.target.tagName) || "";
-    if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
-    if (e.key.toLowerCase() === 'r') {
-      e.preventDefault();
-      if (speechSynthesis.paused) {
-        pauseResume();
-      } else {
-        const text = answerBox.textContent?.trim();
-        if (text) speakText(text);
+      function populateVoiceSelect(){
+        try{
+          voiceSel.innerHTML = "";
+          if (!synth){
+            const opt = document.createElement('option');
+            opt.value = "";
+            opt.textContent = "TTS no disponible";
+            voiceSel.appendChild(opt);
+            voiceSel.disabled = true;
+            return;
+          }
+          voices = synth.getVoices() || [];
+          if (!voices.length){
+            const opt = document.createElement('option');
+            opt.value = "";
+            opt.textContent = "Clic/espera voces…";
+            voiceSel.appendChild(opt);
+            return;
+          }
+          voices.forEach((v) => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = `${v.name} — ${v.lang}${v.default ? " (predeterminada)" : ""}`;
+            voiceSel.appendChild(opt);
+          });
+          const preferred = [
+            /spanish.*(mexico|latin|latino)/i,
+            /esmx|ar|cl|co|pe|uy|bo|py|ec|ve/i,
+            /spanish.*(united states)/i,
+            /spanish|es/i
+          ];
+          for (const rx of preferred) {
+            const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
+            if (match) { voiceSel.value = match.name; break; }
+          }
+        } catch(e){ console.warn('Error cargando voces', e); }
       }
-    } else if (e.key.toLowerCase() === 's') {
-      e.preventDefault();
-      stopSpeaking(true);
-    }
-  });
+      populateVoiceSelect();
+      if (synth && 'onvoiceschanged' in synth) { synth.onvoiceschanged = populateVoiceSelect; }
 
-  // Mensaje inicial
-  setAnswer("Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.");
-}
-</script>
-</body>
-</html>
+      function getSelectedVoice(){
+        if (!voices || !voices.length) return null;
+        const name = voiceSel.value;
+        return voices.find(v => v.name === name)
+            || voices.find(v => /spanish|es/i.test(v.lang))
+            || voices[0];
+      }
+
+      // ---- Boca: helpers
+      function mouthReset(){
+        mouthEl.classList.remove('open');
+        mouthEl.style.transform = 'translateX(-50%) scaleY(.18)';
+      }
+      function mouthStartFallback(){
+        // Si el navegador no emite 'onboundary', animamos aleatoriamente
+        mouthStopFallback();
+        mouthTimer = setInterval(() => {
+          const r = (Math.random()*0.7)+0.35; // 0.35–1.05
+          mouthEl.style.transform = `translateX(-50%) scaleY(${r.toFixed(2)})`;
+        }, 110);
+      }
+      function mouthStopFallback(){
+        if (mouthTimer){ clearInterval(mouthTimer); mouthTimer = null; }
+        mouthReset();
+      }
+      function mouthPulse(){
+        // Pulso en cada palabra (usando onboundary)
+        const r = (Math.random()*0.6)+0.55; // 0.55–1.15
+        mouthEl.classList.add('open');
