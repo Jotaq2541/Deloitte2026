@@ -1,300 +1,212 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Deloitte | Asistente Interactivo</title>
-  <meta name="description" content="Asistente interactivo con avatar holográfico (mujer latina) y voz latina neutra." />
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Asistente Deloitte - Marketplace S-LATAM</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0b0e11;
+        color: white;
+        text-align: center;
+    }
+
+    header {
+        padding: 20px;
+        font-size: 22px;
+        font-weight: bold;
+        background: #111418;
+        border-bottom: 2px solid #1c8c3f;
+    }
+
+    #avatar-box {
+        margin: 20px auto;
+       : hidden;
+        position: relative;
+        border: 2px solid #1c8c3f;
+        box-shadow: 0px 0px 15px #1c8c3f;
+    }
+
+    #avatar-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.9;
+        filter: hue-rotate(10deg) saturate(1.3);
+    }
+
+    /* Efecto holograma */
+    #avatar-box::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(
+            rgba(0,255,200,0.05),
+            transparent,
+            rgba(0,255,200,0.05)
+        );
+        background-size: 100% 6px;
+        animation: scan 4s linear infinite;
+    }
+
+    @keyframes scan {
+        0% { background-position: 0 0; }
+        100% { background-position: 0 200px; }
+    }
+
+    #questions {
+        width: 90%;
+        margin: 0 auto;
+        margin-top: 20px;
+    }
+
+    .question-btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        font-size: 16px;
+        background: #1c8c3f;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .question-btn:hover {
+        background: #22a84c;
+    }
+
+    #answer-box {
+        margin-top: 25px;
+        padding: 20px;
+        background: #111418;
+        border-top: 2px solid #1c8c3f;
+        min-height: 160px;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 8px;
+        font-size: 17px;
+    }
+
+    #speak-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        border: none;
+        background: #1c8c3f;
+        color: white;
+        font-size: 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
 </head>
+
 <body>
-  <header>
-    <div class="brand">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Deloitte_logo.png" alt="Deloitte" height="26">
-      <h1>Asistente Interactivo – Congreso</h1>
-    </div>
-    <div class="row">
-      <label>Idioma:
-        <select id="lang">
-          <option value="es-ES" selected>Español</option>
-          <option value="en-US">English</option>
-          <option value="pt-BR">Português</option>
-        </select>
-      </label>
-      <label>Voz:
-        <select id="voiceSel" title="Selecciona la voz"></select>
-      </label>
-      <span id="sttStatus" class="pill">Voz: inactivo</span>
-    </div>
-  </header>
 
-  <main class="wrap">
-    <!-- Izquierda: Avatar holográfico + Controles -->
-    <section class="left">
-      <div class="avatar card" id="avatar">
-        <video id="avatarVideo" autoplay muted loop playsinline preload="auto">
-          <source src="assets/avatar-holo.mp4" type="video/mp4">
-        </video>
-        <div class="scanlines"></div>
-        <div class="subtitle" id="subs"></div>
-      </div>
+<header>Asistente Virtual Deloitte S‑LATAM</header>
 
-      <div class="card">
-        <div class="switches">
-          <label><input type="checkbox" class="domain" value="deloitte" checked /> Deloitte</label>
-          <label><input type="checkbox" class="domain" value="ciber" checked /> Ciberseguridad</label>
-          <label><input type="checkbox" class="domain" value="legal" checked /> Legal</label>
-          <label><input type="checkbox" class="domain" value="economico" checked /> Económico</label>
-        </div>
-        <div class="row" style="margin-top:8px">
-          <button id="btnMic" class="btn-primary">🎤 Pulsar para hablar</button>
-          <button id="btnStop">⏹️ Parar voz</button>
-          <span class="pill" id="conn">Conexión: local</span>
-        </div>
-        <div class="disclaimer" id="domDisclaimer" style="margin-top:8px">
-          <strong>Aviso:</strong> Respuestas con fines informativos; no constituyen asesoría legal, financiera o técnica.
-        </div>
-      </div>
+<!-- AVATAR -->
+<div id="avatar-box">
+    <img src="https://i.imgur.com/7W0qH3E.png" alt="Avatar holográfico">
+</div>
 
-      <div class="card">
-        <div class="row" style="justify-content: space-between;">
-          <span class="meta">Sin backend: modo demo (eco). Con backend: respuestas reales.</span>
-          <button id="btnClear">🧹 Limpiar</button>
-        </div>
-      </div>
-    </section>
+<h2>Seleccioná una pregunta:</h2>
 
-    <!-- Derecha: Chat -->
-    <section class="right">
-      <div class="chat-header">
-        <h2>Chat con el avatar</h2>
-        <span id="status" class="meta">Listo</span>
-      </div>
-      <div id="chat" class="chat" aria-live="polite"></div>
-      <div class="composer">
-        <input id="input" type="text" placeholder="Escribe tu pregunta…" />
-        <button id="send" class="btn-primary">Enviar</button>
-        <button id="speak" title="Repetir última respuesta">🔊</button>
-      </div>
-      <div class="disclaimer">
-        Ejemplos: “servicios de Deloitte”, “tendencias de ciberseguridad”, “riesgos legales de IA”, “panorama económico”.
-      </div>
-    </section>
-  </main>
+<!-- PREGUNTAS -->
+<div id="questions"></div>
 
-  <footer>
-    <small class="meta">© Deloitte – Demo de asistente con voz y avatar holográfico para congreso.</small>
-  </footer>
+<!-- RESPUESTA -->
+<div id="answer-box">Haz clic en una pregunta para ver la respuesta.</div>
 
-  <script src="assets/config.js"></script>
-  <script>
-    // ---------- DOM ----------
-    const chatEl = document.getElementById('chat');
-    const inputEl = document.getElementById('input');
-    const sendBtn = document.getElementById('send');
-    const speakBtn = document.getElementById('speak');
-    const micBtn = document.getElementById('btnMic');
-    const stopBtn = document.getElementById('btnStop');
-    const sttStatus = document.getElementById('sttStatus');
-    const statusEl = document.getElementById('status');
-    const subs = document.getElementById('subs');
-    const conn = document.getElementById('conn');
-    const langSel = document.getElementById('lang');
-    const voiceSel = document.getElementById('voiceSel');
-    const avatar = document.getElementById('avatar');
+<button id="speak-btn">🔊 Reproducir voz</button>
 
-    // ---------- Utilidades ----------
-    function addMsg(role, text, citas=[]) {
-      const wrap = document.createElement('div');
-      wrap.className = `msg ${role}`;
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-      bubble.textContent = text;
-      const meta = document.createElement('div');
-      meta.className = 'meta';
-      meta.textContent = role === 'me' ? 'Tú' : 'Asistente';
-      wrap.appendChild(bubble); wrap.appendChild(meta);
+<script>
+// -------------------------------
+// PREGUNTAS Y RESPUESTAS
+// -------------------------------
 
-      if (role === 'ai' && citas?.length) {
-        const c = document.createElement('div');
-        c.className = 'citas';
-        c.innerHTML = 'Fuentes: ' + citas.map(x => `<a href="${x.url}" target="_blank">${x.titulo || x.url}</a>`).join(' · ');
-        wrap.appendChild(c);
-      }
-      chatEl.appendChild(wrap);
-      chatEl.scrollTop = chatEl.scrollHeight;
-    }
-    function setStatus(t) { statusEl.textContent = t }
+const data = [
+{
+q: "¿Qué es Deloitte S-LATAM?",
+a: "Deloitte Spanish Latin America (S-LATAM) integra a 16 países bajo un modelo regional que unifica talento, conocimiento e innovación. Su objetivo es impulsar la transformación de organizaciones en toda Latinoamérica mediante soluciones multidisciplinarias y un enfoque colaborativo orientado al futuro."
+},
+{
+q: "¿Qué son los Marketplaces de Deloitte S-LATAM?",
+a: "Los Marketplaces son tres plataformas regionales que agrupan los servicios y capacidades de Deloitte en Latinoamérica. Estos ecosistemas permiten organizar la operación de forma estratégica, fortalecer la colaboración entre países y ofrecer soluciones integrales adaptadas a cada subregión."
+},
+{
+q: "¿Cuáles son los tres Marketplaces que conforman Deloitte S-LATAM?",
+a: "Los tres Marketplaces son: 1) México – Centroamérica, 2) Región Andina y 3) Cono Sur. Cada uno coordina la operación en sus países, potenciando el intercambio de conocimiento y consolidando la calidad del servicio."
+},
+{
+q: "¿En cuántos países tiene presencia Deloitte S-LATAM?",
+a: "Deloitte S-LATAM opera en 16 países distribuidos en tres bloques regionales. Esta presencia amplia permite una cobertura robusta y una comprensión profunda del entorno empresarial en Latinoamérica."
+},
+{
+q: "¿Qué países integran el Marketplace México – Centroamérica?",
+a: "Este Marketplace incluye Costa Rica, Honduras, Nicaragua, República Dominicana, El Salvador, Guatemala, Panamá y México. Juntos ofrecen servicios multidisciplinarios tanto a empresas como a entidades públicas."
+},
+{
+q: "¿Qué países integran la Región Andina?",
+a: "La Región Andina está conformada por Venezuela, Colombia, Perú y Ecuador. Estos países destacan por sectores como energía, recursos naturales, servicios financieros y transformación digital."
+},
+{
+q: "¿Qué países conforman el Marketplace Cono Sur?",
+a: "El Marketplace Cono Sur incluye Argentina, Bolivia, Paraguay y Uruguay. Allí Deloitte brinda servicios en auditoría, consultoría, riesgos, impuestos y servicios legales."
+},
+{
+q: "¿Qué servicios ofrece Deloitte en sus Marketplaces?",
+a: "Deloitte ofrece auditoría, consultoría, asesoría financiera, gestión de riesgos, servicios legales, impuestos y servicios financieros. La integración regional garantiza soluciones consolidadas y alineadas a las necesidades del cliente."
+},
+{
+q: "¿Qué hace diferente a Deloitte S-LATAM?",
+a: "Su enfoque colaborativo entre 16 países, su talento especializado y su compromiso con la excelencia. Además, combina presencia local con visión global, lo que le permite resolver desafíos complejos y generar impacto sostenible."
+},
+{
+q: "¿Cuántos profesionales conforman Deloitte S-LATAM?",
+a: "Deloitte S-LATAM cuenta con más de 1,200 profesionales en sus tres Marketplaces, además de equipos robustos en cada país, garantizando servicios con altos estándares globales."
+}
+];
 
-    function getDomains() {
-      return Array.from(document.querySelectorAll('.domain:checked')).map(x => x.value);
-    }
-    function buildDisclaimer(domains) {
-      const map = {
-        legal: "Esta respuesta es informativa y no constituye asesoría legal.",
-        economico: "No es asesoría financiera o de inversión.",
-        ciber: "Sigue buenas prácticas (NIST/ISO); evalúa tu contexto.",
-        deloitte: "Información general basada en materiales públicos."
-      };
-      const msgs = Array.from(new Set(domains.map(d => map[d]).filter(Boolean)));
-      return msgs.length ? msgs.join(' ') : "Contenido informativo; puede requerir validación por especialistas de Deloitte.";
-    }
+// -------------------------------
+// CREAR BOTONES
+// -------------------------------
+const questionsDiv = document.getElementById("questions");
+const answerBox = document.getElementById("answer-box");
+let lastAnswer = "";
 
-    // ---------- TTS (Text-to-Speech) ----------
-    let chosenVoice = null;
-    function populateVoices() {
-      if (!('speechSynthesis' in window)) return;
-      const voices = window.speechSynthesis.getVoices() || [];
-      const preferred = ['es-419', 'es-MX', 'es-CO', 'es-ES'];
-      const sorted = voices.sort((a,b)=> preferred.indexOf(a.lang) - preferred.indexOf(b.lang));
-      voiceSel.innerHTML = '';
-      sorted.forEach(v => {
-        if (v.lang?.startsWith('es')) {
-          const opt = document.createElement('option');
-          opt.value = v.name; opt.textContent = `${v.name} (${v.lang})`;
-          voiceSel.appendChild(opt);
-        }
-      });
-      chosenVoice = sorted.find(v => preferred.includes(v.lang)) || sorted.find(v => v.lang?.startsWith('es')) || null;
-      if (chosenVoice) voiceSel.value = chosenVoice.name;
-    }
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = populateVoices;
-      populateVoices();
-    }
-    voiceSel.onchange = () => {
-      const voices = speechSynthesis.getVoices();
-      chosenVoice = voices.find(v => v.name === voiceSel.value) || null;
+data.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "question-btn";
+    btn.textContent = item.q;
+    btn.onclick = () => {
+        answerBox.innerHTML = item.a;
+        lastAnswer = item.a;
     };
+    questionsDiv.appendChild(btn);
+});
 
-    function setTalking(on) {
-      avatar.classList.toggle('talking', on);
-      if (!on) subs.textContent = '';
-    }
-    function speak(text, lang='es-ES') {
-      if (!window.speechSynthesis) return;
-      try { window.speechSynthesis.cancel(); } catch(e){}
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = chosenVoice?.lang || lang;
-      if (chosenVoice) utter.voice = chosenVoice;
-      utter.rate = 1.02; utter.pitch = 1.0;
-      utter.onstart = () => setTalking(true);
-      utter.onend = () => setTalking(false);
-      utter.onerror = () => setTalking(false);
-      subs.textContent = text;
-      window.speechSynthesis.speak(utter);
-    }
-    stopBtn.onclick = () => { if (window.speechSynthesis) window.speechSynthesis.cancel(); setTalking(false); };
-    speakBtn.onclick = () => {
-      const aiNodes = Array.from(document.querySelectorAll('.msg.ai .bubble'));
-      if (aiNodes.length) speak(aiNodes[aiNodes.length-1].textContent, langSel.value);
-    };
+// -------------------------------
+// VOZ
+// -------------------------------
+document.getElementById("speak-btn").onclick = function() {
+    if (!lastAnswer) return;
+    const utter = new SpeechSynthesisUtterance(lastAnswer);
+    utter.lang = "es-419"; // español latino
+    utter.rate = 1.03;
+    speechSynthesis.speak(utter);
+};
+</script>
 
-    // ---------- STT (Speech-to-Text) ----------
-    let recognizing = false, recognition;
-    function initSTT() {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) { sttStatus.textContent = 'Voz: no disponible'; sttStatus.className='pill err'; return; }
-      recognition = new SR();
-      recognition.lang = langSel.value || 'es-ES';
-      recognition.interimResults = true; recognition.continuous = false;
-      recognition.onstart = () => { recognizing = true; sttStatus.textContent = 'Voz: escuchando…'; sttStatus.className='pill ok'; };
-      recognition.onend = () => { recognizing = false; sttStatus.textContent = 'Voz: inactivo'; sttStatus.className='pill'; };
-      recognition.onerror = () => { recognizing = false; sttStatus.textContent = 'Voz: error'; sttStatus.className='pill err'; };
-      recognition.onresult = (ev) => {
-        let final = '';
-        for (const res of ev.results) if (res.isFinal) final += res[0].transcript;
-        if (final) { inputEl.value = final.trim(); sendBtn.click(); }
-      };
-    }
-    micBtn.onclick = () => { if (recognition && !recognizing) recognition.start(); };
-    langSel.onchange = () => { if (recognition) recognition.lang = langSel.value; };
-    initSTT();
-
-    // ---------- Backend (con fallback demo) ----------
-    async function askLLM(question) {
-      const payload = {
-        question,
-        lang: langSel.value,
-        domains: getDomains(),
-        session: sessionStorage.getItem('sess') || crypto.randomUUID(),
-      };
-      sessionStorage.setItem('sess', payload.session);
-
-      const base = (window.API_BASE || '').replace(/\/$/, '');
-      if (!base) {
-        // Sin backend → demo
-        return {
-          answer: `Demo: me preguntaste «${question}». Conectaré al backend cuando esté disponible.`,
-          citations: [],
-          disclaimer: buildDisclaimer(payload.domains)
-        };
-      }
-      const url = `${base}/api/chat`;
-
-      try {
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return await res.json();
-      } catch (e) {
-        return {
-          answer: `No pude contactar la API en este momento.\n\nDetalle: ${e.message}`,
-          citations: [],
-          disclaimer: buildDisclaimer(payload.domains)
-        };
-      }
-    }
-
-    async function handleSend() {
-      const q = (inputEl.value || '').trim();
-      if (!q) return;
-      inputEl.value = '';
-      addMsg('me', q);
-      setStatus('Pensando…');
-
-      const res = await askLLM(q);
-      const text = [res.answer, res.disclaimer ? `\n\n— ${res.disclaimer}` : ''].join('');
-      addMsg('ai', text, res.citations || []);
-      setStatus('Listo');
-      speak(text, langSel.value);
-    }
-
-    sendBtn.onclick = handleSend;
-    inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
-
-    document.getElementById('btnClear').onclick = () => {
-      chatEl.innerHTML = '';
-      setStatus('Conversación reiniciada');
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      setTalking(false);
-    };
-
-    // Disclaimers dinámicos
-    const domDisclaimer = document.getElementById('domDisclaimer');
-    const refreshDisclaimer = () => { domDisclaimer.textContent = buildDisclaimer(getDomains()); };
-    document.querySelectorAll('.domain').forEach(chk => chk.addEventListener('change', refreshDisclaimer));
-    refreshDisclaimer();
-
-    // Ping de conexión
-    (async () => {
-      if (!window.API_BASE) return; // sigue local
-      try {
-        const pong = await fetch((window.API_BASE.replace(/\/$/,'') + '/api/chat'), { method: 'OPTIONS' });
-        if (pong.ok) { conn.textContent = 'Conexión: backend'; conn.className='pill ok'; }
-      } catch(e) { /* se queda local */ }
-    })();
-
-    // Mensaje de bienvenida personalizable (frontend)
-    window.onload = () => {
-      const welcome = "¡Hola! Bienvenido o bienvenida al asistente interactivo de Deloitte. Puedo contarte sobre nuestros servicios, el Marketplace y temas de ciberseguridad, legales y económicos.";
-      addMsg('ai', welcome);
-      speak(welcome, 'es-ES');
-    };
-  </script>
 </body>
 </html>
