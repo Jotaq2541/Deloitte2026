@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Asistente Deloitte – Marketplace CA</title>
 <meta name="description" content="Asistente con avatar y voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
-<!-- v3.1 – Avatar imagen + 10 Q&A + Reproducir/Pausar/Detener -->
+<!-- v3.2 – FIX: <img> correctos, render Q&A, TTS robusto -->
 <style>
   :root{
     --bg:#0b0e11; --panel:#111418; --card:#141a1f;
@@ -23,7 +23,7 @@
     padding:16px 20px;border-bottom:2px solid var(--brand);background:#0f1317;
     display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
   }
-  header h1{margin:0;font-size:18px;font-weight:700}
+  header h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap}
   .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
   @media (max-width: 900px){ .wrap{grid-template-columns:1fr} }
 
@@ -78,16 +78,17 @@
 <body>
   <header>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <img class="logo" alt="Deloitte" src="Deloitte-Emblem.png" />
+      <!-- ✅ LOGO CORRECTO -->
+      <img class="logo" src="Deloitte-Emblem.png" alt="Deloitte" width="120" height="22" />
       <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
     </div>
     <div class="controls">
       <label>Voz:
-        <select id="voiceSel" title="Voz neutral latinoamericana"></select>
+        <select id="voiceSel" title="Voz neutral latinoamericana" aria-label="Seleccionar voz"></select>
       </label>
-      <button id="btnSpeak"  class="btn btn-primary" title="Reproducir última respuesta">🔊 Reproducir</button>
-      <button id="btnPause"  class="btn btn-ghost"   title="Pausar/Reanudar audio">⏸️ Pausar</button>
-      <button id="btnStop"   class="btn btn-ghost"   title="Detener audio">⏹️ Detener</button>
+      <button id="btnSpeak"  class="btn btn-primary" title="Reproducir última respuesta" aria-label="Reproducir">🔊 Reproducir</button>
+      <button id="btnPause"  class="btn btn-ghost"   title="Pausar/Reanudar audio"     aria-label="Pausar o reanudar">⏸️ Pausar</button>
+      <button id="btnStop"   class="btn btn-ghost"   title="Detener audio"             aria-label="Detener">⏹️ Detener</button>
     </div>
   </header>
 
@@ -95,10 +96,12 @@
     <!-- Izquierda: AVATAR -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
+        <!-- ✅ AVATAR CORRECTO -->
         <img
           id="avatarImg"
           src="1000_F_827852536_YuGWoMW0rpFSyAXCHqYfv2QCD2AowPaj.jpg"
           alt="Asistente virtual Deloitte"
+          width="800" height="1000"
           loading="eager"
         />
         <div class="scan" aria-hidden="true"></div>
@@ -134,8 +137,18 @@
   </main>
 
 <script>
-(() => {
-  // ----- Q&A (derivadas del material de Marketplace CA) -----
+/* ====== INICIALIZACIÓN SEGURA ====== */
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    initApp();
+  } catch (err) {
+    console.error('Fallo en initApp:', err);
+    alert('Ocurrió un problema inicializando la app. Revisa la consola.');
+  }
+});
+
+function initApp(){
+  // ----- Q&A (Marketplace CA) -----
   const QA = [
     {
       q: "¿Qué es el Marketplace Deloitte Centroamérica?",
@@ -162,3 +175,181 @@
       a: "Deloitte audita el 11% de las compañías listadas en las bolsas de valores de los siete países del Marketplace, lo que representa 51 empresas auditadas de un total de 457 en 2025."
     },
     {
+      q: "¿Qué reconocimientos y reputación respaldan al Marketplace CA?",
+      a: "Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace."
+    },
+    {
+      q: "¿Qué certificaciones posee Deloitte en la región?",
+      a: "Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica."
+    },
+    {
+      q: "¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?",
+      a: "El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento."
+    },
+    {
+      q: "¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?",
+      a: "Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados & Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo."
+    }
+  ];
+
+  // ----- DOM refs -----
+  const voiceSel   = document.getElementById('voiceSel');
+  const btnSpeak   = document.getElementById('btnSpeak');
+  const btnPause   = document.getElementById('btnPause');
+  const btnStop    = document.getElementById('btnStop');
+  const faqGrid    = document.getElementById('faqGrid');
+  const answerBox  = document.getElementById('answerBox');
+  const subtitleEl = document.getElementById('subtitle');
+  const avatar     = document.getElementById('avatar');
+
+  // Sanidad básica de nodos
+  if (!faqGrid || !answerBox || !subtitleEl || !avatar) {
+    throw new Error('Faltan nodos esenciales en el DOM.');
+  }
+
+  // ----- Render de preguntas -----
+  faqGrid.innerHTML = ""; // limpio por si recarga parcial
+  QA.forEach((item, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'qbtn';
+    btn.setAttribute('role','listitem');
+    btn.textContent = (idx+1) + ". " + item.q;
+    btn.addEventListener('click', () => {
+      setAnswer(item.a);
+      speakText(item.a);
+    });
+    faqGrid.appendChild(btn);
+  });
+
+  function setAnswer(text){
+    answerBox.textContent = text;
+    subtitleEl.textContent = text;
+  }
+
+  // ----- Speech Synthesis -----
+  const synth = window.speechSynthesis;
+  let voices = [];
+  let lastUtterance = null;
+
+  function loadVoices(){
+    try{
+      voices = synth.getVoices();
+      voiceSel.innerHTML = "";
+      const preferred = [
+        /spanish.*(mexico|latin|latino)/i,
+        /esmx|ar|cl|co|pe|uy|bo|py|ec|ve/i,
+        /spanish.*(united states)/i,
+        /spanish/i
+      ];
+
+      if (!voices || voices.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = "";
+        opt.textContent = "Sin voces disponibles (haz clic en la página e intenta de nuevo)";
+        voiceSel.appendChild(opt);
+        return;
+      }
+
+      voices.forEach((v) => {
+        const opt = document.createElement('option');
+        opt.value = v.name;
+        opt.textContent = `${v.name} — ${v.lang}${v.default ? " (default)" : ""}`;
+        voiceSel.appendChild(opt);
+      });
+
+      for (const rx of preferred) {
+        const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
+        if (match) { voiceSel.value = match.name; break; }
+      }
+    } catch(e){
+      console.warn('Error cargando voces', e);
+    }
+  }
+
+  // Carga inicial + evento del navegador
+  loadVoices();
+  if (typeof speechSynthesis !== 'undefined' && 'onvoiceschanged' in speechSynthesis) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  function getSelectedVoice(){
+    const name = voiceSel.value;
+    return voices.find(v => v.name === name) || voices.find(v => /spanish/i.test(v.lang)) || voices[0] || null;
+  }
+
+  function speakText(text){
+    // Requiere interacción del usuario en algunos navegadores iOS: asegúrate de haber hecho clic antes.
+    stopSpeaking(true); // silencio inmediato
+    if (!text || !('speechSynthesis' in window)) return;
+
+    const u = new SpeechSynthesisUtterance(text);
+    const v = getSelectedVoice();
+    if (v) u.voice = v;
+    u.lang = (v && v.lang) ? v.lang : 'es-ES';
+    u.rate = 1;
+    u.pitch = 1;
+    u.volume = 1;
+
+    u.onstart = () => avatar.classList.add('talking');
+    u.onend   = () => avatar.classList.remove('talking');
+    u.onerror = (e) => { console.warn('Error TTS', e); avatar.classList.remove('talking'); };
+
+    lastUtterance = u;
+    synth.speak(u);
+  }
+
+  function pauseResume(){
+    if (!('speechSynthesis' in window)) return;
+    if (synth.speaking && !synth.paused) {
+      synth.pause();
+      avatar.classList.remove('talking');
+    } else if (synth.paused) {
+      synth.resume();
+      avatar.classList.add('talking');
+    } else if (lastUtterance) {
+      synth.speak(lastUtterance);
+    }
+  }
+
+  function stopSpeaking(immediate=false){
+    if (!('speechSynthesis' in window)) return;
+    if (immediate) {
+      synth.cancel();
+    } else {
+      synth.pause(); synth.cancel(); synth.resume();
+    }
+    avatar.classList.remove('talking');
+  }
+
+  // Controles UI
+  document.getElementById('btnSpeak').addEventListener('click', () => {
+    const text = answerBox.textContent?.trim();
+    if (text) speakText(text);
+  });
+  document.getElementById('btnPause').addEventListener('click', pauseResume);
+  document.getElementById('btnStop').addEventListener('click', () => stopSpeaking(true));
+
+  // Atajos: R = reproducir/pausar, S = detener
+  document.addEventListener('keydown', (e) => {
+    const tag = (e.target && e.target.tagName) || "";
+    if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
+    if (e.key.toLowerCase() === 'r') {
+      e.preventDefault();
+      if (speechSynthesis.paused) {
+        pauseResume();
+      } else {
+        const text = answerBox.textContent?.trim();
+        if (text) speakText(text);
+      }
+    } else if (e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      stopSpeaking(true);
+    }
+  });
+
+  // Mensaje inicial
+  setAnswer("Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.");
+}
+</script>
+</body>
+</html>
