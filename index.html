@@ -76,7 +76,9 @@
       background:#07090d;border:1px solid rgba(32,163,74,.35);
       box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)
     }
-    .avatar img{
+    /* ⬇️ Extiendo selectores a video para mantener el comportamiento original */
+    .avatar img,
+    .avatar video{
       position:absolute;inset:0;width:100%;height:100%;
       object-fit:cover;object-position:center;display:block
     }
@@ -115,8 +117,10 @@
     .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
 
     /* === AVATAR: VIDA MIENTRAS HABLA === */
-    #avatar img{will-change:transform,filter;transition:transform .18s ease, filter .18s ease}
-    #avatar.talking img{
+    #avatar img,
+    #avatar video{will-change:transform,filter;transition:transform .18s ease, filter .18s ease}
+    #avatar.talking img,
+    #avatar.talking video{
       transform-origin:50% 28%;
       animation: headBobSmooth 1.25s ease-in-out infinite, fadeAI .25s ease forwards;
     }
@@ -154,7 +158,8 @@
     }
     #avatar.talking::after{opacity:.95; animation: vuDance .24s linear infinite}
     #avatar.talking.talking-boost::after{ animation-duration:.16s }
-    #avatar.talking.talking-boost img{ animation-duration:1.05s }
+    #avatar.talking.talking-boost img,
+    #avatar.talking.talking-boost video{ animation-duration:1.05s }
     @keyframes vuDance{
       0%{   background-size:10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22% }
       25%{  background-size:10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48% }
@@ -165,7 +170,8 @@
 
     /* Accesibilidad: menos movimiento */
     @media (prefers-reduced-motion: reduce){
-      #avatar.talking img{ animation:none }
+      #avatar.talking img,
+      #avatar.talking video{ animation:none }
       #avatar.talking::before{ animation:none }
       #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6 }
     }
@@ -275,10 +281,11 @@
   </header>
 
   <main class="wrap">
-    <!-- Izquierda: AVATAR (imagen + subtítulo) -->
+    <!-- Izquierda: AVATAR (video + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <img id="avatarImg" src="./741349c8be401dbf3728fc41f925c741.jpg" alt="Avatar" loading="eager" decoding="async" />
+        <!-- ⬇️ Cambio ÚNICO: IMG → VIDEO con tu archivo -->
+        <video id="avatarVideo" src="./Diseño sin título (5).mp4" autoplay muted loop playsinline preload="auto"></video>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
@@ -332,7 +339,7 @@
         <button class="qbtn" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
         <button class="qbtn" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
         <button class="qbtn" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
-        <button class="qbtn" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados & Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
+        <button class="qbtn" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados &amp; Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
       </div>
 
       <div id="answerBox" class="answer" aria-live="polite">
@@ -1038,16 +1045,7 @@
   window.addEventListener('keydown', unlock, { once:true });
 
   // Toggle desde botón Música (y guarda preferencia)
-  if (btn){
-    btn.addEventListener('click', async () => {
-      bg.muted = !bg.muted;
-      localStorage.setItem(LS_KEY, String(bg.muted));
-      syncBtn();
-      if (!bg.muted && bg.paused) await tryPlay();
-    });
-
-    // Salvavidas: Shift+clic limpia preferencia si quedó pegado en silencio
-    btn.addEventListener('click', (e) => {
+ ventListener('click', (e) => {
       if (e.shiftKey){
         localStorage.removeItem(LS_KEY);
         bg.muted = false;
@@ -1070,10 +1068,3 @@
   
 </body>
 </html>
-
-
-
-
-
-
-
