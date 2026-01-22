@@ -6,107 +6,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Asistente Virtual – Marketplace Deloitte CA</title>
   <meta name="description" content="Asistente con voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
-  <!-- Tema: prioriza claro; respeta oscuro SOLO si el usuario lo pide en el SO -->
-  <meta name="color-scheme" content="light dark">
+  <!-- Forzamos esquema claro -->
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#ffffff" />
 
   <style>
+    html{ color-scheme: light !important; }
     :root{
-      /* === PALETA BASE: CLARO (universal) === */
+      /* PALETA CLARA (FIJA) */
       --bg:#f4f6f8; --panel:#ffffff; --card:#ffffff;
       --brand:#1c8c3f; --brand-2:#22b36a;
       --text:#0b0e11; --muted:#47515a; --focus:#1e9f58;
       --viz-text:#0b0e11; --viz-muted:#47515a;
       --viz-bg:#ffffff; --viz-stroke:#d7dde3;
 
-      /* Chips/leyendas legibles */
       --chip-bg:#ffffff; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
       --chip-bg-hover:#f2f7f4;
-
-      /* Glow sutil */
-      --glow: rgba(34,179,106,.25);
-      --glow-soft: rgba(34,179,106,.10);
     }
-
-    /* Si el usuario realmente usa modo oscuro del sistema, conservamos legibilidad */
-    @media (prefers-color-scheme: dark){
-      :root{
-        --bg:#0b0e11; --panel:#111418; --card:#141a1f;
-        --brand:#1c8c3f; --brand-2:#22b36a;
-        --text:#ffffff; --muted:#b9c0c7; --focus:#8bd8a9;
-        --viz-text:#eaf7ef; --viz-muted:#b9c0c7;
-        --viz-bg:#0f1216; --viz-stroke:#2e3640;
-
-        --chip-bg:#eef6f0; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
-        --chip-bg-hover:#e4f2ea;
-
-        --glow: rgba(34,179,106,.55);
-        --glow-soft: rgba(34,179,106,.18);
-      }
-    }
-
     *{box-sizing:border-box}
-
     body{
       margin:0;
       background: var(--bg);
-      /* Fondo radial solo como acento, sin bajar contraste */
-      background:
-        radial-gradient(1200px 600px at 20% 0%, rgba(28,140,63,.08), transparent 60%),
-        var(--bg);
       color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       position:relative; min-height:100dvh; overflow-x:hidden;
     }
 
-    /* ====== FONDO TECNOLÓGICO (capas no intrusivas) ====== */
+    /* Fondos decorativos (sin mezcla que afecte contraste) */
     .fx-grid{
       position:fixed; inset:0; z-index:-2; pointer-events:none;
       background:
-        radial-gradient(1200px 600px at 15% 0%, var(--glow-soft), transparent 60%),
+        radial-gradient(1200px 600px at 15% 0%, rgba(34,179,106,.08), transparent 60%),
         repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
-      /* Mezcla normal para no lavar texto en ciertos dispositivos */
-      mix-blend-mode: normal;
       animation: bgShift 36s linear infinite;
     }
     .fx-glow{
       position:fixed; inset:0; z-index:-1; pointer-events:none;
       background:
-        radial-gradient(800px 400px at 80% 20%, var(--glow-soft), transparent 60%),
-        radial-gradient(700px 380px at 20% 80%, var(--glow-soft), transparent 60%);
+        radial-gradient(800px 400px at 80% 20%, rgba(34,179,106,.08), transparent 60%),
+        radial-gradient(700px 380px at 20% 80%, rgba(28,140,63,.07), transparent 60%);
       filter: blur(10px);
     }
     @keyframes bgShift{ 0%{background-position:0 0,0 0} 100%{background-position:0 0,480px 280px} }
 
-    /* === CABECERA === */
+    /* CABECERA */
     header{
       padding:16px 20px;
       border-bottom:2px solid var(--brand);
       background: var(--panel);
-      backdrop-filter: blur(6px);
       display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-      box-shadow: 0 10px 24px rgba(0,0,0,.08);
+      box-shadow: 0 10px 24px rgba(0,0,0,.06);
     }
     .brand{display:flex;align-items:center;gap:10px}
     .logo{height:24px;width:auto;display:block}
     .logo-fallback{height:24px;display:none;align-items:center;color:#0b0e11;font-weight:700}
-    header h1{
-      margin:0;font-size:18px;font-weight:700;white-space:nowrap;
-      color:var(--text);
-    }
+    header h1{ margin:0;font-size:18px;font-weight:700;white-space:nowrap;color:var(--text) }
 
-    /* === CONTROLES CABECERA === */
     .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     label{display:flex;gap:6px;align-items:center}
     select,button{
       background:#f1f5f3; color:#0b0e11;
       border:1px solid rgba(0,0,0,.18);
       border-radius:10px; padding:8px 10px; font-size:14px;
-      box-shadow:0 1px 0 rgba(255,255,255,.15) inset, 0 6px 14px rgba(0,0,0,.10);
+      box-shadow:0 1px 0 rgba(255,255,255,.15) inset, 0 6px 14px rgba(0,0,0,.08);
       cursor:pointer; transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
     }
     select:hover,button:hover{
       border-color: rgba(28,140,63,.35);
-      box-shadow: 0 0 0 1px rgba(34,179,106,.25), 0 10px 22px rgba(0,0,0,.12);
+      box-shadow: 0 0 0 1px rgba(34,179,106,.25), 0 10px 22px rgba(0,0,0,.10);
       transform: translateY(-1px);
     }
     .btn-primary{
@@ -119,27 +86,23 @@
     .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
     @media (max-width:1100px){ .wrap{grid-template-columns:1fr} }
 
-    /* ====== CONTENEDORES ====== */
+    /* CONTENEDORES */
     .left,.right{
       background: var(--panel);
       border:1px solid rgba(0,0,0,.08);
       border-radius:14px;
-      box-shadow: 0 14px 32px rgba(0,0,0,.08);
+      box-shadow: 0 14px 32px rgba(0,0,0,.06);
       position:relative; overflow:clip;
     }
     .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
 
-    /* === AVATAR === */
+    /* AVATAR */
     .avatar{
       position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
-      background:#07090d;border:1px solid rgba(32,163,74,.25);
-      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 40px rgba(0,0,0,.15)
+      background:#07090d;border:1px solid rgba(32,163,74,.20);
+      box-shadow:0 0 0 1px rgba(32,163,74,.10),0 18px 40px rgba(0,0,0,.12)
     }
-    .avatar img,
-    .avatar video{
-      position:absolute;inset:0;width:100%;height:100%;
-      object-fit:cover;object-position:center;display:block
-    }
+    .avatar video{ position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block }
     .subtitle{
       position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
       backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto;color:#fff
@@ -154,29 +117,43 @@
     }
     .panel h2{margin:0;font-size:16px;color:var(--text)}
 
-    /* ====== Grids ====== */
+    /* TARJETAS e INSIGHTS */
+    .insights{
+      display:grid; grid-template-columns:1fr 1fr; gap:12px;
+      padding:12px 14px; background:rgba(0,0,0,.03); border-top:1px solid rgba(0,0,0,.08)
+    }
+    @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
+    .card{
+      background:var(--viz-bg); border:1px solid rgba(0,0,0,.08); border-radius:12px; padding:12px; position:relative;
+      box-shadow: 0 18px 40px rgba(0,0,0,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 24px 56px rgba(0,0,0,.10);
+      border-color: rgba(34,179,106,.28);
+    }
+    .card h3{ margin:0 0 8px 0; font-size:15px; color:var(--viz-text) }
+    .viz{ width:100%; height:260px; display:block }
+    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--chip-bg); color:var(--chip-text);
+      border:1px solid var(--chip-border);
+      border-radius:999px; padding:6px 10px;
+      transition: background .15s ease, transform .12s ease;
+    }
+
+    /* FAQ en DOS COLUMNAS */
     .grid{
       display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columnas FAQ */
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap:12px;
       padding:14px;
       background:rgba(0,0,0,.03);
       align-items:start;
     }
-    @media (max-width:980px){
-      .grid{ grid-template-columns: 1fr; }
-    }
-
-    .card{
-      background:var(--viz-bg); border:1px solid rgba(0,0,0,.08); border-radius:12px; padding:12px; position:relative;
-      box-shadow: 0 18px 40px rgba(0,0,0,.08);
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-    }
-    .card:hover{
-      transform: translateY(-2px);
-      box-shadow: 0 24px 56px rgba(0,0,0,.12);
-      border-color: rgba(34,179,106,.28);
-    }
+    @media (max-width:980px){ .grid{ grid-template-columns: 1fr; } }
 
     .qbtn{
       width:100%;text-align:left;padding:12px;border:1px solid rgba(0,0,0,.10);
@@ -186,63 +163,18 @@
     }
     .qbtn:hover{
       border-color:rgba(32,163,74,.45);
-      box-shadow:0 0 6px rgba(32,163,74,.14), 0 0 18px rgba(32,163,74,.08) inset, 0 10px 20px rgba(0,0,0,.10);
+      box-shadow:0 0 6px rgba(32,163,74,.14), 0 0 18px rgba(32,163,74,.08) inset, 0 10px 20px rgba(0,0,0,.08);
       transform: translateY(-1px);
       background:#f9fffb;
-    }
-    .qbtn:active{
-      background: linear-gradient(90deg, rgba(28,140,63,.08) 0%, rgba(32,163,74,.20) 50%, rgba(28,140,63,.08) 100%);
-      transform: translateY(0);
     }
     .qbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
     .answer{padding:16px;border-top:1px solid rgba(0,0,0,.08);background:#ffffff;min-height:160px;color:#0b0e11}
     footer{padding:10px 16px;color:var(--muted);background:transparent}
-    .kbd{border:1px solid rgba(0,0,0,.2);padding:0 6px;border-radius:6px;background:#eef3ef;color:#0b0e11}
 
-    /* === AVATAR: VIDA MIENTRAS HABLA === */
-    #avatar img,
-    #avatar video{will-change:transform,filter;transition:transform .18s ease, filter .18s ease}
-    #avatar.talking img,
-    #avatar.talking video{
-      transform-origin:50% 28%;
-      animation: headBobSmooth 1.25s ease-in-out infinite, fadeAI .25s ease forwards;
-    }
-    @keyframes headBobSmooth{
-      0%   { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
-      25%  { transform: translateY(-0.6%)   rotate(-0.12deg)  scale(1.002); filter: brightness(1.02); }
-      50%  { transform: translateY(0.15%)   rotate(0.08deg)   scale(1.001); filter: brightness(1.01); }
-      75%  { transform: translateY(-0.4%)   rotate(0.10deg)   scale(1.003); filter: brightness(1.015); }
-      100% { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
-    }
-    @keyframes fadeAI{from{opacity:.85} to{opacity:1}}
-
-    /* Ecualizador (sutil, compatible) */
-    #avatar::after{
-      content:""; position:absolute; left:8%; bottom:10%;
-      width:26%; height:16%; pointer-events:none; opacity:0; transition: opacity .15s ease;
-      --bar: linear-gradient(180deg, #5ff5a2 0%, #22b36a 100%);
-      background: var(--bar), var(--bar), var(--bar), var(--bar), var(--bar);
-      background-repeat:no-repeat;
-      background-position:0% 100%, 25% 100%, 50% 100%, 75% 100%, 100% 100%;
-      background-size:10% 22%, 10% 32%, 10% 18%, 10% 28%, 10% 24%;
-      filter: drop-shadow(0 0 4px rgba(36,167,93,.25));
-    }
-    #avatar.talking::after{opacity:.9; animation: vuDance .28s linear infinite}
-    @keyframes vuDance{
-      0%{   background-size:10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22% }
-      25%{  background-size:10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48% }
-      50%{  background-size:10% 36%, 10% 68%, 10% 52%, 10% 44%, 10% 76% }
-      75%{  background-size:10% 82%, 10% 46%, 10% 74%, 10% 58%, 10% 40% }
-      100%{ background-size:10% 28%, 10% 60%, 10% 26%, 10% 68%, 10% 32% }
-    }
-
-    /* Accesibilidad: menos movimiento */
-    @media (prefers-reduced-motion: reduce){
-      #avatar.talking img,
-      #avatar.talking video{ animation:none }
-      #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6 }
-    }
+    /* AVATAR animación suave */
+    #avatar video{ will-change:auto; transform:none; transition:filter .18s ease; }
+    #avatar.talking video{ animation:none !important; transform:none !important; }
 
     /* Onda AI inferior */
     #aiWave{
@@ -259,40 +191,11 @@
       font-size:12px; color:#1c8c3f; opacity:.9; padding:4px 8px;
       background:rgba(28,140,63,.08); border:1px solid rgba(28,140,63,.25); border-radius:8px;
     }
-
-    /* === INFOGRÁFICOS === */
-    .insights{
-      display:grid; grid-template-columns:1fr 1fr; gap:12px;
-      padding:12px 14px; background:rgba(0,0,0,.03); border-top:1px solid rgba(0,0,0,.08)
-    }
-    @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
-    .card h3{
-      margin:0 0 8px 0; font-size:15px; color:var(--viz-text);
-    }
-    .viz{ width:100%; height:260px; display:block }
-    .viz text{ font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
-    #chartBarsMedia{ cursor:pointer; }
-
-    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
-    .badge{
-      display:inline-flex; align-items:center; gap:6px;
-      background:var(--chip-bg); color:var(--chip-text);
-      border:1px solid var(--chip-border);
-      border-radius:999px; padding:6px 10px;
-      transition: background .15s ease, transform .12s ease;
-    }
-    .badge:hover{ background:var(--chip-bg-hover); transform:translateY(-1px) }
-    .badge:focus-visible{ outline:2px solid var(--focus); outline-offset:2px }
-    .dot{width:10px;height:10px;border-radius:50%}
-
-    /* ====== OVERRIDES de fluidez del AVATAR (no animar el <video>) ====== */
-    #avatar video{ will-change:auto; transform:none; transition:filter .18s ease; }
-    #avatar.talking video{ animation:none !important; transform:none !important; }
   </style>
 </head>
 
 <body>
-  <!-- Fondos tecnológicos (decorativos, no funcionales) -->
+  <!-- Fondos decorativos -->
   <div class="fx-grid" aria-hidden="true"></div>
   <div class="fx-glow" aria-hidden="true"></div>
 
@@ -305,7 +208,7 @@
 
     <div class="controls" aria-label="Controles de voz y música">
       <label for="voiceSel">Voz:
-        <select id="voiceSel" title="Voz neutral latinoamericana" aria-label="Seleccionar voz"></select>
+        <select id="voiceSel" title="Voz español (Latam)" aria-label="Seleccionar voz"></select>
       </label>
       <button id="btnSpeak"  class="btn btn-primary" title="Reproducir última respuesta">🔊 Reproducir</button>
       <button id="btnPause"  class="btn btn-ghost"   title="Pausar/Reanudar audio">⏸️ Pausar</button>
@@ -315,9 +218,10 @@
   </header>
 
   <main class="wrap">
-    <!-- Izquierda: AVATAR (VIDEO + subtítulo) -->
+    <!-- Izquierda: AVATAR -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
+        <!-- Recomendado: renombrar a video-avatar.mp4 sin espacios/acentos -->
         <video id="avatarVideo"
                src="./Diseño sin título (5).mp4"
                muted
@@ -343,7 +247,6 @@
         <div id="aiThinking" aria-live="polite">Procesando…</div>
       </div>
 
-      <!-- INFOGRÁFICOS -->
       <div class="insights" aria-label="Indicadores clave">
         <div class="card">
           <h3>Profesionales por país (muestra)</h3>
@@ -358,7 +261,7 @@
         </div>
       </div>
 
-      <!-- Preguntas base -->
+      <!-- FAQ -->
       <div class="grid" id="faqGrid" role="list">
         <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
@@ -393,7 +296,7 @@
   <script>
     "use strict";
 
-    /* ====== Fallback del logo si el PNG no existe ====== */
+    /* ==== Logo fallback ==== */
     (function(){
       const img = document.getElementById('logoImg');
       const fb  = document.getElementById('logoFallback');
@@ -402,7 +305,7 @@
       if (img.complete && !img.naturalWidth){ img.style.display='none'; fb.style.display='inline-flex'; }
     })();
 
-    /* ====== INFOGRÁFICOS (SVG + interacción/tooltip) ====== */
+    /* ==== Gráficos con tooltip ==== */
     document.addEventListener('DOMContentLoaded', () => {
       const tip = document.getElementById('vizTip');
       const showTip = (html, x, y) => {
@@ -411,7 +314,6 @@
       };
       const hideTip = () => { tip.style.display='none'; tip.setAttribute('aria-hidden','true'); };
 
-      /* --- 1) BARRAS: Profesionales por país --- */
       const dataBars = [
         {label:'Guatemala',       flag:'🇬🇹', val:242, color:'#1ea55a'},
         {label:'Honduras',        flag:'🇭🇳', val:62,  color:'#24c06a'},
@@ -438,7 +340,6 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
-          // etiqueta izq.: banderita + nombre
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
@@ -457,7 +358,6 @@
 
           g.appendChild(label);
 
-          // barra
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
           bar.setAttribute('x', pad.l);
           bar.setAttribute('y', y);
@@ -468,7 +368,6 @@
           bar.style.transition = 'width 420ms ease';
           g.appendChild(bar);
 
-          // valor
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
           val.setAttribute('x', pad.l + 6);
           val.setAttribute('y', y + barH/2 + 4);
@@ -478,7 +377,6 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
-          // interacción hover
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
             showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
@@ -490,7 +388,6 @@
 
           svgB.appendChild(g);
 
-          // animación
           requestAnimationFrame(()=>{
             const wBar = (w - pad.l - pad.r) * (d.val/max);
             bar.setAttribute('width', wBar);
@@ -499,7 +396,6 @@
           });
         });
 
-        // Leyenda
         if(legend){
           legend.innerHTML = '';
           dataBars.forEach(d=>{
@@ -511,7 +407,7 @@
         }
       }
 
-      /* --- 2) Medios destacados por país (tooltip por CLIC) --- */
+      /* Medios destacados */
       const dataMedia = [
         {label:'Costa Rica',    flag:'🇨🇷', val:4, medios:['El Financiero','La Nación','La República','Noticias Repretel'], color:'#22b36a'},
         {label:'Panamá',        flag:'🇵🇦', val:4, medios:['La Estrella','La Prensa','TVN','Telemetro'], color:'#1ea55a'},
@@ -523,7 +419,7 @@
       const legendM = document.getElementById('legendBarsMedia');
 
       let openKeyMedia = null;
-
+      function hideTip(){ const t=document.getElementById('vizTip'); if(!t) return; t.style.display='none'; t.setAttribute('aria-hidden','true'); }
       function hideTipMedia(){
         hideTip();
         openKeyMedia = null;
@@ -534,14 +430,8 @@
           });
         }
       }
-
-      document.addEventListener('click', (e)=>{
-        if (!svgM) return;
-        if (!svgM.contains(e.target)) hideTipMedia();
-      });
-      document.addEventListener('keydown', (e)=>{
-        if (e.key === 'Escape') hideTipMedia();
-      });
+      document.addEventListener('click', (e)=>{ if (svgM && !svgM.contains(e.target)) hideTipMedia(); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') hideTipMedia(); });
 
       function drawBarsMedia(){
         if(!svgM) return;
@@ -596,6 +486,7 @@
           g.appendChild(val);
 
           function showTipAt(clientX, clientY){
+            const tip = document.getElementById('vizTip');
             const sample = d.medios.slice(0,4).join(', ');
             const extra  = d.medios.length - Math.min(4, d.medios.length);
             const extras = extra > 0 ? ` +${extra} más` : '';
@@ -617,17 +508,11 @@
           }
 
           function handleClick(ev){
-            if (openKeyMedia === i){
-              hideTipMedia();
-            } else {
-              activate(ev);
-            }
+            if (openKeyMedia === i){ hideTipMedia(); } else { activate(ev); }
           }
 
           g.setAttribute('tabindex', '0');
-          g.addEventListener('keydown', (e)=>{
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }
-          });
+          g.addEventListener('keydown', (e)=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); } });
           g.addEventListener('click', handleClick);
 
           svgM.appendChild(g);
@@ -651,16 +536,12 @@
         }
       }
 
-      function redrawAll(){
-        hideTipMedia();
-        drawBars();
-        drawBarsMedia();
-      }
+      function redrawAll(){ hideTipMedia(); drawBars(); drawBarsMedia(); }
       redrawAll();
       window.addEventListener('resize', redrawAll);
     });
 
-    /* ====== Q&A + TTS (typewriter + avatar) ====== */
+    /* ==== Q&A + TTS ==== */
     document.addEventListener('DOMContentLoaded', () => {
       const voiceSel   = document.getElementById('voiceSel');
       const btnSpeak   = document.getElementById('btnSpeak');
@@ -680,7 +561,7 @@
         return;
       }
 
-      // Música: primer clic para iniciar (política de navegadores)
+      // Música: desbloqueo por primer gesto
       document.addEventListener("click", ()=>{
         if(bg && bg.paused){
           bg.volume = 0.18;
@@ -691,7 +572,7 @@
         btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
       }
 
-      // TYPEWRITER cancelable
+      // Typewriter
       let typeSeq = 0;
       function typeText(target, text, speed=22){
         typeSeq++;
@@ -707,30 +588,25 @@
         })();
       }
 
-      // Clase visual de "hablando"
       function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
       function playAvatarVideo(){ if (avatarVideo) avatarVideo.play().catch(()=>{}); }
       function pauseAvatarVideo(){ if (avatarVideo) avatarVideo.pause(); }
       function stopAvatarVideo(){ if (avatarVideo){ try { avatarVideo.pause(); avatarVideo.currentTime = 0; } catch {} } }
 
-      // ==== TTS ROBUSTO ENTRE EQUIPOS ====
+      // ====== TTS robusto (ES Centroamérica preferido) ======
       const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
       let voices = [], voicesReady = false, lastUtterance = null, queuedText = null;
       const VOICE_LS_KEY = 'preferredVoiceName';
+      const PREF_LOCALES = ['es-CR','es-419','es-MX','es-ES','es']; // prioridad
 
-      function getSpanishVoices(list){
-        return (list || []).filter(v => /^es[-_]/i.test(v.lang) || /spanish/i.test(`${v.name} ${v.lang}`));
+      function isSpanish(v){
+        const tag = (v.lang || '').toLowerCase();
+        return tag.startsWith('es') || /spanish/.test(`${v.name} ${v.lang}`.toLowerCase());
       }
-
-      function getSelectedVoice(){
-        if (!voices.length) return null;
-        const saved = localStorage.getItem(VOICE_LS_KEY);
-        if (saved){
-          const matchSaved = voices.find(v => v.name === saved);
-          if (matchSaved) return matchSaved;
-        }
-        const esVoices = getSpanishVoices(voices);
-        return esVoices[0] || voices[0];
+      function scoreVoice(v){
+        const tag = (v.lang || '').toLowerCase();
+        const idx = PREF_LOCALES.findIndex(loc => tag.startsWith(loc.toLowerCase()));
+        return idx === -1 ? 999 : idx; // menor es mejor
       }
 
       function loadVoices(){
@@ -742,25 +618,26 @@
         }
         voices = synth.getVoices() || [];
 
-        // Si aún no cargaron, mostrarmos estado
         if (!voices.length){
           const opt = document.createElement('option');
           opt.textContent = 'Cargando voces…'; opt.value = '';
           voiceSel.appendChild(opt); voicesReady = false; return;
         }
 
-        // Poblar opciones
-        const esVoices = getSpanishVoices(voices);
-        const saved = localStorage.getItem(VOICE_LS_KEY);
-        voices.forEach(v => {
+        const esVoices = voices.filter(isSpanish).sort((a,b)=> scoreVoice(a)-scoreVoice(b));
+
+        // Poblar select: si hay voces ES, mostramos solo ES; si no, mostramos todas
+        const listToShow = esVoices.length ? esVoices : voices;
+        listToShow.forEach(v => {
           const opt = document.createElement('option');
           opt.value = v.name;
-          const isES = /^es[-_]/i.test(v.lang) || /spanish/i.test(`${v.name} ${v.lang}`);
-          const note = (!esVoices.length && !isES) ? ' (no ES)' : '';
+          const note = esVoices.length ? '' : ' (no ES)';
           opt.textContent = `${v.name} — ${v.lang}${v.default ? ' (predeterminada)' : ''}${note}`;
           voiceSel.appendChild(opt);
         });
 
+        // Seleccionar mejor voz: guardada > mejor ES > primera
+        const saved = localStorage.getItem(VOICE_LS_KEY);
         if (saved && voices.find(v => v.name === saved)){
           voiceSel.value = saved;
         } else if (esVoices.length){
@@ -771,7 +648,7 @@
           localStorage.setItem(VOICE_LS_KEY, voices[0].name);
         }
 
-        // Aviso si no hay voces en español
+        // Aviso si no hay voces ES
         if (!esVoices.length){
           const first = voiceSel.options[voiceSel.selectedIndex];
           if (first) first.textContent += ' (sin voces ES detectadas)';
@@ -789,6 +666,12 @@
         if (v) localStorage.setItem(VOICE_LS_KEY, v.name);
       });
 
+      function getSelectedVoice(){
+        if (!voices.length) return null;
+        const name = voiceSel.value;
+        return voices.find(v => v.name === name) || null;
+      }
+
       function queueSpeak(text){
         if (!synth || !text) return;
         if (!voicesReady){ queuedText = text; setTimeout(loadVoices, 250); return; }
@@ -801,10 +684,12 @@
           const u = new SpeechSynthesisUtterance(text);
           const v = getSelectedVoice();
           if (v) u.voice = v;
-          // Si la voz no es española, al menos establece el lang a 'es-MX' como fallback
-          u.lang = (v && /^es[-_]/i.test(v.lang)) ? v.lang : 'es-MX';
-          u.rate = 1; u.pitch = 1; u.volume = 1;
 
+          // Fallback de idioma: prioriza es-CR; si la voz no es ES, forzamos es-CR
+          const vlang = v && v.lang ? v.lang.toLowerCase() : '';
+          u.lang = vlang.startsWith('es') ? v.lang : 'es-CR';
+
+          u.rate = 1; u.pitch = 1; u.volume = 1;
           u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); };
           u.onend     = () => { setTalking(false); stopAvatarVideo(); };
           u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
@@ -827,13 +712,13 @@
         };
       });
 
-      // Botón Reproducir (relee lo visible)
+      // Reproducir última respuesta
       btnSpeak.onclick = () => {
         const text = (answerBox.textContent || '').trim();
         if (text) queueSpeak(text);
       };
 
-      // Helpers globales para addQA
+      // Helpers globales (para addQA externo si lo usas)
       window.typeText = typeText;
       window.queueSpeak = queueSpeak;
 
@@ -843,7 +728,7 @@
       subtitleEl.textContent = bienvenida;
     });
 
-    /* ====== Helpers para agregar preguntas sin tocar estructura ====== */
+    /* ==== Helpers addQA / bulkAddQA ==== */
     (function(){
       const grid = document.getElementById('faqGrid');
       if(!grid) return;
@@ -877,7 +762,7 @@
       window.bulkAddQA = function(list){ (list || []).forEach(item => addQA(item.q, item.a)); };
     })();
 
-    /* ====== Agregar las preguntas adicionales ya definidas ====== */
+    /* ==== Preguntas adicionales ==== */
     (function(){
       bulkAddQA([
         {
@@ -903,11 +788,10 @@
       ]);
     })();
 
-    /* ==== NUMERAR TODAS LAS PREGUNTAS AUTOMÁTICAMENTE ==== */
+    /* ==== Numeración automática ==== */
     (function(){
       const grid = document.getElementById('faqGrid');
       if (!grid) return;
-
       function renumberFAQ() {
         const items = [...grid.querySelectorAll('.qbtn')];
         items.forEach((btn, idx) => {
@@ -915,31 +799,20 @@
           btn.textContent = `${idx + 1}. ${text}`;
         });
       }
-
-      // Numerar inicialmente
       renumberFAQ();
-
-      // Parchear addQA y bulkAddQA para renumerar al agregar
       const oldAddQA = window.addQA;
       if (typeof oldAddQA === "function") {
-        window.addQA = function(q, a){
-          oldAddQA(q, a);
-          renumberFAQ();
-        };
+        window.addQA = function(q, a){ oldAddQA(q, a); renumberFAQ(); };
       }
       const oldBulk = window.bulkAddQA;
       if (typeof oldBulk === "function") {
-        window.bulkAddQA = function(list){
-          oldBulk(list);
-          renumberFAQ();
-        };
+        window.bulkAddQA = function(list){ oldBulk(list); renumberFAQ(); };
       }
     })();
 
-    /* ==== PARCHE ROBUSTO PARA PAUSAR / DETENER (Web Speech) ==== */
+    /* ==== Pausa/Detener robusto ==== */
     (function(){
       if (!('speechSynthesis' in window)) return;
-
       const synth    = window.speechSynthesis;
       const btnPause = document.getElementById('btnPause');
       const btnStop  = document.getElementById('btnStop');
@@ -954,6 +827,10 @@
         else if (synth.speaking)btnPause.textContent = '⏸️ Pausar';
         else                    btnPause.textContent = '⏸️ Pausar';
       }
+      function stopAvatarVideo(){ const v=document.getElementById('avatarVideo'); if(!v) return; try{ v.pause(); v.currentTime=0; }catch{} }
+      function pauseAvatarVideo(){ const v=document.getElementById('avatarVideo'); if(!v) return; v.pause(); }
+      function playAvatarVideo(){ const v=document.getElementById('avatarVideo'); if(!v) return; v.play().catch(()=>{}); }
+
       function hardCancel(){
         try { synth.cancel(); } catch {}
         setTalking(false);
@@ -976,7 +853,6 @@
           setBtnLabels();
           return;
         }
-        // Si no hay nada sonando, repetir la última respuesta visible
         const last = (answerBox && (answerBox.textContent||'').trim()) || '';
         if (last && typeof window.queueSpeak === 'function'){ window.queueSpeak(last); }
       }
@@ -1002,15 +878,13 @@
     })();
   </script>
 
-  <!-- Música corporativa (reproductor sin UI con preferencia persistente) -->
+  <!-- Música corporativa (preferencia persistente) -->
   <script>
   (function(){
     const bg  = document.getElementById('bgMusic');
     const btn = document.getElementById('btnMusic');
     if (!bg) return;
-
     const LS_KEY = 'bgMusicMuted';
-
     const saved = localStorage.getItem(LS_KEY);
     bg.muted = (saved === 'true');
     bg.volume = 0.18;
