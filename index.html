@@ -16,69 +16,29 @@
       --viz-bg:#0f1216; --viz-stroke:#2e3640;
 
       /* Chips/leyendas legibles */
-      --chip-bg:#eef6f0;
-      --chip-text:#0b0e11;
-      --chip-border:rgba(0,0,0,.16);
+      --chip-bg:#eef6f0; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
       --chip-bg-hover:#e4f2ea;
-
-      /* 3D helpers */
-      --glass-bg: rgba(255,255,255,.06);
-      --glass-border: rgba(255,255,255,.14);
-      --shadow-1: 0 8px 24px rgba(0,0,0,.35);
-      --shadow-2: 0 2px 10px rgba(0,0,0,.3);
     }
     *{box-sizing:border-box}
 
-    /* ==== FONDO “AI” TECNOLÓGICO (sutil y legible) ==== */
     body{
       margin:0;
-      background:var(--bg);
+      background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
       color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      position:relative;
-      min-height:100dvh;
-      overflow-x:hidden;
-    }
-    /* Capa animada (grid/flux) */
-    body::before{
-      content:"";
-      position:fixed; inset:0; z-index:-2;
-      background:
-        radial-gradient(1200px 600px at 15% 0%, #0e1117 0%, var(--bg) 60%),
-        repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
-      background-blend-mode:screen;
-      animation: bgShift 36s linear infinite;
-      opacity:.75;
-      pointer-events:none;
-    }
-    /* Capa de glow leve */
-    body::after{
-      content:"";
-      position:fixed; inset:0; z-index:-1;
-      background:
-        radial-gradient(800px 400px at 80% 20%, rgba(34,179,106,.12), transparent 60%),
-        radial-gradient(600px 300px at 20% 80%, rgba(28,140,63,.10), transparent 60%);
-      filter: blur(14px);
-      pointer-events:none;
-    }
-    @keyframes bgShift{
-      0%{ background-position: 0 0, 0 0; }
-      100%{ background-position: 0 0, 480px 280px; }
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif
     }
 
     /* === CABECERA === */
     header{
       padding:16px 20px;
       border-bottom:2px solid var(--brand);
-      background:rgba(15,19,23,.75);
-      backdrop-filter: blur(6px);
-      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-      box-shadow: var(--shadow-2);
+      background:#0f1317;
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
     }
     .brand{display:flex;align-items:center;gap:10px}
     .logo{height:24px;width:auto;display:block}
     .logo-fallback{height:24px;display:none;align-items:center;color:#cfe9d5;font-weight:700}
-    header h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+    header h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap}
 
     /* === CONTROLES CABECERA (ALTO CONTRASTE) === */
     .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -87,8 +47,7 @@
       background:#f1f5f3; color:#0b0e11;
       border:1px solid rgba(0,0,0,.18);
       border-radius:8px; padding:8px 10px; font-size:14px;
-      box-shadow:0 1px 0 rgba(255,255,255,.15) inset, 0 1px 8px rgba(0,0,0,.12);
-      cursor:pointer;
+      box-shadow:0 1px 0 rgba(255,255,255,.15) inset; cursor:pointer;
     }
     .btn-primary{
       background:linear-gradient(180deg,#27ae60,#1c8c3f);
@@ -101,54 +60,54 @@
     .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
     @media (max-width:1100px){ .wrap{grid-template-columns:1fr} }
 
-    /* ==== CONTENEDORES CON GLASSMORPHISM (3D) ==== */
     .left,.right{
-      background: var(--glass-bg);
-      border:1px solid var(--glass-border);
-      border-radius:14px;
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow-1);
+      background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 180px);
+      border:1px solid rgba(255,255,255,.08);border-radius:14px
     }
     .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
-    .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
 
+    /* === AVATAR === */
+    .avatar{
+      position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
+      background:#07090d;border:1px solid rgba(32,163,74,.35);
+      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35);
+      contain: layout paint;
+      will-change: transform; transform: translateZ(0);
+    }
+    /* El media del avatar (video) se mantiene estable, sin animar transform directamente */
+    .avatar .media{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;object-position:center;display:block;
+      will-change: auto; transform: translateZ(0);
+      transition: filter .18s ease;
+    }
+    .subtitle{
+      position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
+      backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
+    }
+
+    .muted{color:var(--muted);font-size:12px}
+
+    .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
     .panel{
       padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-      background:linear-gradient(180deg, rgba(255,255,255,.06), transparent);
-      border-top-left-radius:14px;border-top-right-radius:14px;
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
     }
     .panel h2{margin:0;font-size:16px}
 
     .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
-    .card{
-      background:rgba(8,12,15,.6);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:12px; padding:12px; position:relative;
-      box-shadow: 0 18px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
-      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-      perspective:800px; transform-style:preserve-3d;
-    }
-    .card:hover{
-      transform: translateY(-3px);
-      box-shadow: 0 24px 56px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
-      border-color: rgba(34,179,106,.28);
-    }
-
     .qbtn{
       width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);
       background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35;
       transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .35s ease;
-      box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 8px 20px rgba(0,0,0,.25);
     }
     .qbtn:hover{
       border-color:rgba(32,163,74,.55);
-      box-shadow:0 0 6px rgba(32,163,74,.24), 0 0 18px rgba(32,163,74,.12) inset, 0 10px 26px rgba(0,0,0,.35);
+      box-shadow:0 0 6px rgba(32,163,74,.24), 0 0 18px rgba(32,163,74,.12) inset;
       transform: translateY(-1px);
     }
     .qbtn:active{
       background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.4) 50%, rgba(28,140,63,.15) 100%);
-      transform: translateY(0);
     }
     .qbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
@@ -156,55 +115,34 @@
     footer{padding:10px 16px;color:var(--muted)}
     .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
 
-    /* === AVATAR === */
-    .avatar{
-      position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
-      background:#07090d;border:1px solid rgba(32,163,74,.35);
-      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35);
-      contain: layout paint;           /* aisla repaints */
-      will-change: transform;          /* prepara GPU */
-      transform: translateZ(0);
-    }
-    .avatar img,
-    .avatar video{
-      position:absolute;inset:0;width:100%;height:100%;
-      object-fit:cover;object-position:center;display:block;
-      will-change: transform;
-      transform: translateZ(0);        /* layer propia */
-      transition: filter .18s ease;    /* no animamos transform del video */
-    }
-    .subtitle{
-      position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
-      backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
-    }
-    .muted{color:var(--muted);font-size:12px}
-
     /* === AVATAR: VIDA MIENTRAS HABLA (animar contenedor, no el video) === */
+    #avatar .media{will-change: auto}
     #avatar.talking{
-      animation: avatarBob 1.25s ease-in-out infinite;
+      animation: headBobSmooth 1.25s ease-in-out infinite;
     }
-    @keyframes avatarBob{
+    @keyframes headBobSmooth{
+      /* valores más sutiles para evitar “brinco” visual */
       0%   { transform: translateZ(0) translateY(0) rotate(0deg) }
-      25%  { transform: translateZ(0) translateY(-0.6%) rotate(-0.12deg) }
-      50%  { transform: translateZ(0) translateY(0.15%) rotate(0.08deg) }
-      75%  { transform: translateZ(0) translateY(-0.4%) rotate(0.10deg) }
+      25%  { transform: translateZ(0) translateY(-0.25%) rotate(-0.04deg) }
+      50%  { transform: translateZ(0) translateY(0.08%)  rotate(0.03deg) }
+      75%  { transform: translateZ(0) translateY(-0.18%) rotate(0.04deg) }
       100% { transform: translateZ(0) translateY(0) rotate(0deg) }
     }
+    @keyframes fadeAI{from{opacity:.65} to{opacity:1}}
 
-    /* Halo/respiración + parallax controlado por variables */
+    /* Halo/respiración */
     #avatar::before{
       content:""; position:absolute; inset:-3%; border-radius:12px;
       background:
         radial-gradient(65% 60% at 50% 40%, rgba(32,163,74,.25), rgba(32,163,74,0) 60%),
         radial-gradient(60% 55% at 50% 70%, rgba(28,140,63,.18), rgba(28,140,63,0) 70%);
-      opacity:0; pointer-events:none; filter: blur(6px);
-      transform: translate(var(--ax, 0), var(--ay, 0)) scale(1);
-      transition: opacity .15s ease, transform .12s ease;
+      opacity:0; pointer-events:none; filter: blur(6px); transform: scale(1);
+      transition: opacity .15s ease;
     }
     #avatar.talking::before{opacity:.65; animation: haloBreath 1.25s ease-in-out infinite}
-    @keyframes haloBreath{0%{transform:translate(var(--ax,0),var(--ay,0)) scale(1); filter:blur(6px)} 50%{transform:translate(var(--ax,0),var(--ay,0)) scale(1.03); filter:blur(7px)} 100%{transform:translate(var(--ax,0),var(--ay,0)) scale(1); filter:blur(6px)}}
+    @keyframes haloBreath{0%{transform:scale(1); filter:blur(6px)} 50%{transform:scale(1.03); filter:blur(7px)} 100%{transform:scale(1); filter:blur(6px)}}
 
-    /* Ecualizador */
+    /* Ecualizador (lo mantenemos tal como te gusta) */
     #avatar::after{
       content:""; position:absolute; left:8%; bottom:10%;
       width:26%; height:16%; pointer-events:none; opacity:0; transition: opacity .15s ease;
@@ -216,12 +154,20 @@
       filter: drop-shadow(0 0 4px rgba(36,167,93,.35));
     }
     #avatar.talking::after{opacity:.95; animation: vuDance .24s linear infinite}
+    #avatar.talking.talking-boost::after{ animation-duration:.16s }
     @keyframes vuDance{
       0%{   background-size:10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22% }
       25%{  background-size:10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48% }
       50%{  background-size:10% 36%, 10% 68%, 10% 52%, 10% 44%, 10% 76% }
       75%{  background-size:10% 82%, 10% 46%, 10% 74%, 10% 58%, 10% 40% }
       100%{ background-size:10% 28%, 10% 60%, 10% 26%, 10% 68%, 10% 32% }
+    }
+
+    /* Accesibilidad: menos movimiento */
+    @media (prefers-reduced-motion: reduce){
+      #avatar.talking{ animation:none }
+      #avatar.talking::before{ animation:none }
+      #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6 }
     }
 
     /* Onda AI inferior */
@@ -246,13 +192,13 @@
       padding:12px 14px; background:rgba(0,0,0,.14); border-top:1px solid rgba(255,255,255,.08)
     }
     @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
-
-    /* Títulos de gráficos bien visibles */
+    .card{
+      background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
+    }
     .card h3{
       margin:0 0 8px 0;
       font-size:15px;
       color:var(--viz-text);
-      text-shadow: 0 1px 0 rgba(0,0,0,.35);
     }
     .viz{ width:100%; height:260px; display:block }
     .viz text{
@@ -262,17 +208,15 @@
 
     .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
 
-    /* Chips/leyendas legibles con relieve */
+    /* Chips/leyendas legibles */
     .badge{
       display:inline-flex; align-items:center; gap:6px;
-      background:linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.74));
-      color:#0b0e11;
-      border:1px solid rgba(0,0,0,.12);
+      background:var(--chip-bg); color:var(--chip-text);
+      border:1px solid var(--chip-border);
       border-radius:999px; padding:6px 10px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 6px 14px rgba(0,0,0,.12);
-      transition: background .15s ease, transform .12s ease, box-shadow .12s ease;
+      transition: background .15s ease, transform .12s ease;
     }
-    .badge:hover{ background:linear-gradient(180deg, #fff, #f2f7f4); transform:translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 10px 22px rgba(0,0,0,.16) }
+    .badge:hover{ background:var(--chip-bg-hover); transform:translateY(-1px) }
     .badge:focus-visible{ outline:2px solid var(--focus); outline-offset:2px }
     .dot{width:10px;height:10px;border-radius:50%}
 
@@ -282,8 +226,6 @@
       background:#0f1216; color:#eaf7ef; border:1px solid rgba(255,255,255,.15);
       padding:6px 8px; font-size:12px; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.35);
       display:none; white-space:nowrap;
-      transform-origin: 10% 90%;
-      transition: transform .12s ease, opacity .12s ease;
     }
 
     /* Modo claro */
@@ -298,7 +240,7 @@
         --chip-bg-hover:#f2f7f4;
       }
       body{ background:#f4f4f4; color:#111 }
-      header{ background:rgba(255,255,255,.8); border-bottom-color:#1c8c3f; backdrop-filter: blur(6px) }
+      header{ background:#ffffff; border-bottom-color:#1c8c3f }
       .left,.right{ border-color: rgba(0,0,0,.08) }
       .qbtn{ background:#ffffff; color:#111 }
       .answer{ background:#ffffff }
@@ -331,10 +273,11 @@
     <!-- Izquierda: AVATAR (VIDEO + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- VIDEO del avatar: sin autoplay (solo habla con TTS), preload para suavizar inicio -->
-        <video id="avatarVideo" muted playsinline preload="auto" loop>
+        <!-- Video fluido: sin animar transform del <video>, con warm-up -->
+        <video id="avatarVideo" class="media" muted playsinline preload="auto" loop
+               poster="./741349c8be401dbf3728fc41f925c741.jpg">
           <source src="./Diseño sin título (5).mp4" type="video/mp4" />
-          <!-- Opcional: <source src="./avatar.webm" type="video/webm" /> -->
+          <!-- Puedes añadir un .webm alternativo si tienes -->
         </video>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
@@ -362,9 +305,15 @@
           <svg id="chartBars" class="viz" role="img" aria-label="Barras de profesionales por país"></svg>
           <div class="legend" id="legendBars"></div>
         </div>
-
-        <!-- 🔥 Se eliminó la tarjeta de “Empresas públicas auditadas” (dona) -->
-
+        <div class="card">
+          <h3>Empresas públicas auditadas</h3>
+          <svg id="chartDonut" class="viz" role="img" aria-label="Dona de porcentaje de empresas públicas auditadas"></svg>
+          <div class="legend">
+            <span class="badge"><span class="dot" style="background:#22b36a"></span> Auditadas: 51</span>
+            <span class="badge"><span class="dot" style="background:#2e3640"></span> Total mercado: 457</span>
+            <span class="badge"><strong>Participación: 11%</strong></span>
+          </div>
+        </div>
         <div class="card">
           <h3>Medios destacados por país</h3>
           <svg id="chartBarsMedia" class="viz" role="img" aria-label="Barras de cantidad de medios por país"></svg>
@@ -372,14 +321,14 @@
         </div>
       </div>
 
-      <!-- Preguntas base (sin la pregunta de empresas auditadas) -->
+      <!-- Preguntas base -->
       <div class="grid" id="faqGrid" role="list">
         <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
         <button class="qbtn" data-answer="Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región.">3. ¿En qué países opera el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113).">4. ¿Cuántos profesionales integran Deloitte en la región?</button>
         <button class="qbtn" data-answer="El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales.">5. ¿Qué áreas de servicio están representadas dentro del Marketplace?</button>
-        <!-- (Se eliminó la pregunta de participación en empresas públicas auditadas) -->
+        <button class="qbtn" data-answer="Deloitte audita el 11% de las compañías listadas en las bolsas de valores de los siete países del Marketplace, lo que representa 51 empresas auditadas de un total de 457 en 2025.">6. ¿Cuál es la participación de Deloitte en empresas públicas auditadas dentro del Marketplace CA?</button>
         <button class="qbtn" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
         <button class="qbtn" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
         <button class="qbtn" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
@@ -396,7 +345,7 @@
     </section>
   </main>
 
-  <!-- Música corporativa (si no existe, la página funciona igual) -->
+  <!-- Música corporativa (opcional; si no existe, la página funciona igual) -->
   <audio id="bgMusic" src="./musica-corporativa.mp3" preload="auto" loop></audio>
 
   <!-- Tooltip global de gráficos -->
@@ -421,17 +370,12 @@
     document.addEventListener('DOMContentLoaded', () => {
       const tip = document.getElementById('vizTip');
       const showTip = (html, x, y) => {
-        tip.innerHTML = html;
-        tip.style.left = (x+12)+'px'; tip.style.top=(y+12)+'px';
+        tip.innerHTML = html; tip.style.left = (x+12)+'px'; tip.style.top=(y+12)+'px';
         tip.style.display='block'; tip.setAttribute('aria-hidden','false');
-        tip.style.opacity = '1'; tip.style.transform = 'scale(1)';
       };
-      const hideTip = () => {
-        tip.style.opacity='0'; tip.style.transform='scale(.98)';
-        setTimeout(()=>{ tip.style.display='none'; tip.setAttribute('aria-hidden','true'); }, 120);
-      };
+      const hideTip = () => { tip.style.display='none'; tip.setAttribute('aria-hidden','true'); };
 
-      /* --- 1) BARRAS: Profesionales por país (con gradiente y sombra) --- */
+      /* --- 1) BARRAS: Profesionales por país (con banderita) --- */
       const dataBars = [
         {label:'Guatemala',       flag:'🇬🇹', val:242, color:'#1ea55a'},
         {label:'Honduras',        flag:'🇭🇳', val:62,  color:'#24c06a'},
@@ -444,26 +388,11 @@
       const svgB = document.getElementById('chartBars');
       const legend = document.getElementById('legendBars');
 
-      function ensureDefsWithFilters(svg){
-        let defs = svg.querySelector('defs');
-        if(!defs){ defs = document.createElementNS('http://www.w3.org/2000/svg','defs'); svg.appendChild(defs); }
-        // Filtro de sombra suave reutilizable
-        if(!defs.querySelector('#dropSoft')){
-          const f = document.createElementNS('http://www.w3.org/2000/svg','filter');
-          f.setAttribute('id','dropSoft'); f.setAttribute('x','-20%'); f.setAttribute('y','-20%'); f.setAttribute('width','140%'); f.setAttribute('height','140%');
-          f.innerHTML = `<feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,.4)" flood-opacity="1"/>`;
-          defs.appendChild(f);
-        }
-        return defs;
-      }
-
       function drawBars(){
         if(!svgB) return;
         const w = svgB.clientWidth || 600, h = svgB.clientHeight || 260, pad = {t:10,r:16,b:30,l:110};
         svgB.setAttribute('viewBox', `0 0 ${w} ${h}`);
         while(svgB.firstChild) svgB.removeChild(svgB.firstChild);
-
-        const defs = ensureDefsWithFilters(svgB);
 
         const max = Math.max(...dataBars.map(d=>d.val));
         const rowH = (h - pad.t - pad.b) / dataBars.length;
@@ -472,17 +401,6 @@
         dataBars.forEach((d,i)=>{
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-
-          // Gradiente por barra (volumen/iluminación)
-          const gid = `gradB_${i}`;
-          const grad = document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
-          grad.setAttribute('id', gid); grad.setAttribute('x1','0'); grad.setAttribute('y1','0'); grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
-          grad.innerHTML = `
-            <stop offset="0%" stop-color="${d.color}" stop-opacity="1"/>
-            <stop offset="60%" stop-color="${d.color}" stop-opacity=".9"/>
-            <stop offset="100%" stop-color="${d.color}" stop-opacity=".75"/>
-          `;
-          defs.appendChild(grad);
 
           // etiqueta izq.: banderita + nombre
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
@@ -495,7 +413,13 @@
           const tFlag = document.createElementNS('http://www.w3.org/2000/svg','tspan');
           tFlag.setAttribute('font-size','11');
           tFlag.textContent = d.flag + ' ';
-          labelChild(label);
+          label.appendChild(tFlag);
+
+          const tName = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+          tName.textContent = d.label;
+          label.appendChild(tName);
+
+          g.appendChild(label);
 
           // barra
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -504,8 +428,7 @@
           bar.setAttribute('width', 0);
           bar.setAttribute('height', barH);
           bar.setAttribute('rx', 8);
-          bar.setAttribute('fill', `url(#${gid})`);
-          bar.setAttribute('filter', 'url(#dropSoft)');
+          bar.setAttribute('fill', d.color);
           bar.style.transition = 'width 420ms ease';
           g.appendChild(bar);
 
@@ -523,10 +446,10 @@
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
             showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
-            bar.setAttribute('opacity','1');
+            bar.setAttribute('fill', '#35d07a');
           });
           g.addEventListener('mouseleave', ()=>{
-            hideTip(); bar.setAttribute('opacity','1');
+            hideTip(); bar.setAttribute('fill', d.color);
           });
 
           svgB.appendChild(g);
@@ -552,7 +475,60 @@
         }
       }
 
-      /* --- 2) Medios destacados por país (gradiente + sombra) --- */
+      /* --- 2) DONA: 51/457 ≈ 11% (hover) --- */
+      const svgD = document.getElementById('chartDonut');
+      function drawDonut(){
+        if(!svgD) return;
+        const w=svgD.clientWidth||600, h=svgD.clientHeight||260, cx=w/2, cy=h/2, r=Math.min(w,h)*0.32, sw=r*0.38;
+        svgD.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        while(svgD.firstChild) svgD.removeChild(svgD.firstChild);
+
+        const total = 457, audited = 51, pct = audited/total;
+
+        const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
+        bg.setAttribute('fill','none'); bg.setAttribute('stroke','var(--viz-stroke)'); bg.setAttribute('stroke-width',sw);
+        svgD.appendChild(bg);
+
+        const arc = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        arc.setAttribute('cx',cx); arc.setAttribute('cy',cy); arc.setAttribute('r',r);
+        arc.setAttribute('fill','none'); arc.setAttribute('stroke', '#22b36a'); arc.setAttribute('stroke-width',sw);
+        arc.setAttribute('stroke-linecap','round');
+        arc.setAttribute('transform',`rotate(-90 ${cx} ${cy})`);
+        const C = 2*Math.PI*r;
+        arc.setAttribute('stroke-dasharray', `${C} ${C}`);
+        arc.setAttribute('stroke-dashoffset', C);
+        svgD.appendChild(arc);
+
+        const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t1.setAttribute('x',cx); t1.setAttribute('y',cy-2);
+        t1.setAttribute('text-anchor','middle'); t1.setAttribute('fill','var(--viz-text)'); t1.setAttribute('font-size','26');
+        t1.textContent = `${Math.round(pct*100)}%`;
+        svgD.appendChild(t1);
+
+        const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t2.setAttribute('x',cx); t2.setAttribute('y',cy+18);
+        t2.setAttribute('text-anchor','middle'); t2.setAttribute('fill','var(--viz-muted)'); t2.setAttribute('font-size','12');
+        t2.textContent = `51 de 457`;
+        svgD.appendChild(t2);
+
+        setTimeout(()=>{ arc.setAttribute('stroke-dashoffset', C*(1-pct)); arc.style.transition='stroke-dashoffset 900ms ease' }, 180);
+
+        svgD.addEventListener('mousemove', (e)=>{
+          const bb = svgD.getBoundingClientRect();
+          const x = e.clientX - bb.left - cx;
+          const y = e.clientY - bb.top  - cy;
+          const ang = (Math.atan2(y, x) + Math.PI/2 + 2*Math.PI) % (2*Math.PI);
+          const over = ang <= (2*Math.PI*pct);
+          const html = over
+            ? `<strong>Auditadas</strong><br>51 / 457 (${Math.round(pct*100)}%)`
+            : `<strong>No auditadas</strong><br>${457-51} / 457`;
+          showTip(html, e.clientX, e.clientY);
+        });
+        svgD.addEventListener('mouseleave', hideTip);
+      }
+
+      /* --- 3) Medios destacados por país (tooltip por CLIC) --- */
       const dataMedia = [
         {label:'Costa Rica',    flag:'🇨🇷', val:4, medios:['El Financiero','La Nación','La República','Noticias Repretel'], color:'#22b36a'},
         {label:'Panamá',        flag:'🇵🇦', val:4, medios:['La Estrella','La Prensa','TVN','Telemetro'], color:'#1ea55a'},
@@ -592,8 +568,6 @@
         svgM.setAttribute('viewBox', `0 0 ${w} ${h}`);
         while(svgM.firstChild) svgM.removeChild(svgM.firstChild);
 
-        const defs = ensureDefsWithFilters(svgM);
-
         const max = Math.max(...dataMedia.map(d=>d.val));
         const rowH = (h - pad.t - pad.b) / dataMedia.length;
         const barH = rowH * 0.64, gap = rowH * 0.36;
@@ -621,26 +595,14 @@
 
           g.appendChild(label);
 
-          // Gradiente
-          const gid = `gradM_${i}`;
-          const grad = document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
-          grad.setAttribute('id', gid); grad.setAttribute('x1','0'); grad.setAttribute('y1','0'); grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
-          grad.innerHTML = `
-            <stop offset="0%" stop-color="${d.color}" stop-opacity="1"/>
-            <stop offset="70%" stop-color="${d.color}" stop-opacity=".88"/>
-            <stop offset="100%" stop-color="${d.color}" stop-opacity=".72"/>
-          `;
-          defs.appendChild(grad);
-
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
           bar.setAttribute('x', pad.l);
           bar.setAttribute('y', y);
           bar.setAttribute('width', 0);
           bar.setAttribute('height', barH);
           bar.setAttribute('rx', 8);
-          bar.setAttribute('fill', `url(#${gid})`);
-          bar.setAttribute('data-base', `url(#${gid})`);
-          bar.setAttribute('filter', 'url(#dropSoft)');
+          bar.setAttribute('fill', d.color);
+          bar.setAttribute('data-base', d.color);
           bar.style.transition = 'width 420ms ease, fill 120ms ease';
           g.appendChild(bar);
 
@@ -653,6 +615,7 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
+          // Interacción por clic (toggle tooltip)
           function showTipAt(clientX, clientY){
             const sample = d.medios.slice(0,4).join(', ');
             const extra  = d.medios.length - Math.min(4, d.medios.length);
@@ -662,16 +625,14 @@
             tip.style.top  = (clientY + 12) + 'px';
             tip.style.display = 'block';
             tip.setAttribute('aria-hidden','false');
-            tip.style.opacity='1'; tip.style.transform='scale(1)';
           }
 
           function activate(ev){
             svgM.querySelectorAll('rect').forEach(r=>{
               const base = r.getAttribute('data-base') || r.getAttribute('fill');
               r.setAttribute('fill', base);
-              r.setAttribute('opacity','1');
             });
-            bar.setAttribute('opacity','1');
+            bar.setAttribute('fill', '#35d07a');
             openKeyMedia = i;
             showTipAt(ev.clientX, ev.clientY);
           }
@@ -714,28 +675,12 @@
 
       // Pintar y responder a resize
       function redrawAll(){
-        hideTipMedia();
         drawBars();
+        drawDonut();
         drawBarsMedia();
       }
       redrawAll();
       window.addEventListener('resize', redrawAll);
-
-      /* Parallax suave del halo del avatar */
-      const avatar = document.getElementById('avatar');
-      if (avatar){
-        avatar.addEventListener('mousemove', (e)=>{
-          const rect = avatar.getBoundingClientRect();
-          const mx = ((e.clientX - rect.left) / rect.width - .5) * 6;   // -3px..3px
-          const my = ((e.clientY - rect.top)  / rect.height - .5) * 6;
-          avatar.style.setProperty('--ax', mx.toFixed(2)+'px');
-          avatar.style.setProperty('--ay', my.toFixed(2)+'px');
-        });
-        avatar.addEventListener('mouseleave', ()=>{
-          avatar.style.setProperty('--ax','0px');
-          avatar.style.setProperty('--ay','0px');
-        });
-      }
     });
 
     /* ====== Q&A + TTS (typewriter cancelable, avatar suave) ====== */
@@ -769,7 +714,7 @@
         btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
       }
 
-      // TYPEWRITER cancelable (evita duplicaciones)
+      // TYPEWRITER cancelable
       let typeSeq = 0;
       function typeText(target, text, speed=22){
         typeSeq++;
@@ -785,21 +730,20 @@
         })();
       }
 
+      // Clase visual de "hablando"
       function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
+      let boostTimer = null;
+      function boostOnce(){
+        if(!avatar) return;
+        avatar.classList.add('talking-boost');
+        clearTimeout(boostTimer);
+        boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
+      }
 
       // 🎬 Control del video del avatar (solo habla cuando hay TTS)
-      function playAvatarVideo(){
-        if (!avatarVideo) return;
-        avatarVideo.play().catch(()=>{});
-      }
-      function pauseAvatarVideo(){
-        if (!avatarVideo) return;
-        avatarVideo.pause();
-      }
-      function stopAvatarVideo(){
-        if (!avatarVideo) return;
-        try { avatarVideo.pause(); avatarVideo.currentTime = 0; } catch {}
-      }
+      function playAvatarVideo(){ if (avatarVideo) avatarVideo.play().catch(()=>{}); }
+      function pauseAvatarVideo(){ if (avatarVideo) avatarVideo.pause(); }
+      function stopAvatarVideo(){ if (avatarVideo){ try{ avatarVideo.pause(); avatarVideo.currentTime = 0; }catch{} } }
 
       // 🔥 Warm-up del video para que la primera reproducción sea fluida
       if (avatarVideo) {
@@ -808,7 +752,7 @@
         avatarVideo.play().then(()=>{
           avatarVideo.pause();
           try { avatarVideo.currentTime = 0; } catch {}
-        }).catch(()=>{ /* algunos navegadores bloquearán esto; está bien */ });
+        }).catch(()=>{ /* puede bloquear, está bien */ });
       }
 
       // TTS
@@ -873,21 +817,10 @@
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          u.onstart   = () => {
-            aiThinking.style.display='none';
-            setTalking(true);
-            playAvatarVideo();   // ▶️ arranca el video al hablar
-            // (eliminado) boostOnce / onboundary para evitar janks
-          };
-          u.onend     = () => {
-            setTalking(false);
-            stopAvatarVideo();   // ⏹️ detener al terminar
-          };
-          u.onerror   = () => {
-            setTalking(false);
-            stopAvatarVideo();
-            aiThinking.style.display='none';
-          };
+          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); /* boostOnce(); (omitido para fluidez) */ };
+          // u.onboundary= () => { boostOnce(); };  // desactivado para evitar micro janks
+          u.onend     = () => { setTalking(false); stopAvatarVideo(); };
+          u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
 
           lastUtterance = u;
           synth.speak(u);
@@ -913,7 +846,7 @@
         if (text) queueSpeak(text);
       };
 
-      // Mensaje inicial (sin voz)
+      // Mensaje inicial
       const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
       typeText(answerBox, bienvenida);
       subtitleEl.textContent = bienvenida;
@@ -991,15 +924,12 @@
           btn.textContent = `${idx + 1}. ${text}`;
         });
       }
-
-      // Numerar inicialmente
       renumberFAQ();
 
-      // Parchear addQA y bulkAddQA para renumerar al agregar
-      const oldAdd = window.addQA;
-      if (typeof oldAdd === "function") {
+      const oldAddQA = window.addQA;
+      if (typeof oldAddQA === "function") {
         window.addQA = function(q, a){
-          oldAdd(q, a);
+          oldAddQA(q, a);
           renumberFAQ();
         };
       }
@@ -1053,7 +983,6 @@
           setBtnLabels();
           return;
         }
-        // Si no hay nada sonando, repetir la última respuesta visible
         const last = (answerBox && (answerBox.textContent||'').trim()) || '';
         if (last && typeof window.queueSpeak === 'function'){
           window.queueSpeak(last);
@@ -1089,16 +1018,10 @@
     if (!bg) return;
 
     const LS_KEY = 'bgMusicMuted';
-
-    // Estado inicial: por defecto con sonido (salvo preferencia guardada)
     const saved = localStorage.getItem(LS_KEY);
-    bg.muted = (saved === 'true');   // null => false
+    bg.muted = (saved === 'true');
     bg.volume = 0.18;
 
-    // Si por accidente el HTML tenía muted y NO hay preferencia guardada de silencio, lo quitamos
-    if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
-
-    // Sincroniza botón
     function syncBtn(){
       if (!btn) return;
       btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
@@ -1107,7 +1030,6 @@
     }
     syncBtn();
 
-    // Desbloquear reproducción tras primer gesto (autoplay policy)
     async function tryPlay(){ try { await bg.play(); } catch(_) {} }
     const unlock = async () => {
       if (bg.paused) await tryPlay();
@@ -1117,7 +1039,6 @@
     window.addEventListener('click',  unlock, { once:true });
     window.addEventListener('keydown', unlock, { once:true });
 
-    // Toggle desde botón Música (y guarda preferencia)
     if (btn){
       btn.addEventListener('click', async () => {
         bg.muted = !bg.muted;
@@ -1126,7 +1047,6 @@
         if (!bg.muted && bg.paused) await tryPlay();
       });
 
-      // Salvavidas: Shift+clic limpia preferencia si quedó pegado en silencio
       btn.addEventListener('click', (e) => {
         if (e.shiftKey){
           localStorage.removeItem(LS_KEY);
@@ -1136,7 +1056,6 @@
       }, { capture:true });
     }
 
-    // Atajo: tecla M
     document.addEventListener('keydown', async (e) => {
       if ((e.key || '').toLowerCase() === 'm'){
         bg.muted = !bg.muted;
@@ -1148,7 +1067,6 @@
   })();
   </script>
 
-  <!-- Onda AI decorativa -->
   <div id="aiWave" aria-hidden="true"></div>
 </body>
 </html>
