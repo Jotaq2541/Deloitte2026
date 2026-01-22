@@ -998,80 +998,78 @@
       window.addEventListener('beforeunload', () => clearInterval(visInterval));
     })();
   </script>
+  
+<!-- Música corporativa (reproductor sin UI) -->
+<audio id="bgMusic" src="techno-sphere_88321.mp3" preload="auto" loop></audio>
 
-<!-- Música corporativa (sólo el reproductor, sin UI) -->
-<audio id="bgMusic"techno-sphere_88321.mp3 preload="auto" loop></audio
 <script>
-  (function(){
-    const bg  = document.getElementById('bgMusic');   // <audio id="bgMusic">
-    const btn = document.getElementById('btnMusic');  // botón de cabecera "Música"
-    if (!bg) return;
+(function(){
+  const bg  = document.getElementById('bgMusic');   // <audio id="bgMusic">
+  const btn = document.getElementById('btnMusic');  // botón de cabecera "Música"
+  if (!bg) return;
 
-    const LS_KEY = 'bgMusicMuted';
+  const LS_KEY = 'bgMusicMuted';
 
-    // Estado inicial: por defecto con sonido (salvo que el usuario lo haya silenciado antes)
-    const saved = localStorage.getItem(LS_KEY);
-    bg.muted = (saved === 'true');   // null => false
-    bg.volume = 0.18;
+  // Estado inicial: por defecto con sonido (salvo preferencia guardada)
+  const saved = localStorage.getItem(LS_KEY);
+  bg.muted = (saved === 'true');   // null => false
+  bg.volume = 0.18;
 
-    // Si por accidente quedó el atributo HTML muted y NO hay preferencia guardada de silencio, lo removemos
-    if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
+  // Si por accidente el HTML tenía muted y NO hay preferencia guardada de silencio, lo quitamos
+  if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
 
-    // Sincroniza el botón
-    function syncBtn(){
-      if (!btn) return;
-      btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
-      btn.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
-      btn.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
-    }
-    syncBtn();
+  // Sincroniza botón
+  function syncBtn(){
+    if (!btn) return;
+    btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
+    btn.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
+    btn.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
+  }
+  syncBtn();
 
-    // Desbloquear reproducción tras primer gesto (clic o tecla) por políticas de autoplay
-    async function tryPlay(){ try { await bg.play(); } catch(_) {} }
-    const unlock = async () => {
-      if (bg.paused) await tryPlay();
-      window.removeEventListener('click', unlock);
-      window.removeEventListener('keydown', unlock);
-    };
-    window.addEventListener('click', unlock,  { once:true });
-    window.addEventListener('keydown', unlock, { once:true });
+  // Desbloquear reproducción tras primer gesto (autoplay policy)
+  async function tryPlay(){ try { await bg.play(); } catch(_) {} }
+  const unlock = async () => {
+    if (bg.paused) await tryPlay();
+    window.removeEventListener('click', unlock);
+    window.removeEventListener('keydown', unlock);
+  };
+  window.addEventListener('click',  unlock, { once:true });
+  window.addEventListener('keydown', unlock, { once:true });
 
-    // Toggle desde el botón de cabecera
-    if (btn){
-      // Click normal: alterna mute y guarda preferencia
-      btn.addEventListener('click', async (e) => {
-        bg.muted = !bg.muted;
-        localStorage.setItem(LS_KEY, String(bg.muted));
-        syncBtn();
-        // Si activaste sonido y aún está pausado (p. ej., primera interacción), intenta reproducir
-        if (!bg.muted && bg.paused) await tryPlay();
-      });
-
-      // Shift + clic: limpia la preferencia por si quedó “pegado” en silenciado
-      btn.addEventListener('click', (e) => {
-        if (e.shiftKey){
-          localStorage.removeItem(LS_KEY);
-          bg.muted = false;
-          syncBtn();
-        }
-      }, { capture:true });
-    }
-
-    // Atajo de teclado "M" (como ya indicas en la UI)
-    document.addEventListener('keydown', async (e) => {
-      if ((e.key || '').toLowerCase() === 'm'){
-        bg.muted = !bg.muted;
-        localStorage.setItem(LS_KEY, String(bg.muted));
-        syncBtn();
-        if (!bg.muted && bg.paused) await tryPlay();
-      }
+  // Toggle desde botón Música (y guarda preferencia)
+  if (btn){
+    btn.addEventListener('click', async () => {
+      bg.muted = !bg.muted;
+      localStorage.setItem(LS_KEY, String(bg.muted));
+      syncBtn();
+      if (!bg.muted && bg.paused) await tryPlay();
     });
-  })();
+
+    // Salvavidas: Shift+clic limpia preferencia si quedó pegado en silencio
+    btn.addEventListener('click', (e) => {
+      if (e.shiftKey){
+        localStorage.removeItem(LS_KEY);
+        bg.muted = false;
+        syncBtn();
+      }
+    }, { capture:true });
+  }
+
+  // Atajo: tecla M
+  document.addEventListener('keydown', async (e) => {
+    if ((e.key || '').toLowerCase() === 'm'){
+      bg.muted = !bg.muted;
+      localStorage.setItem(LS_KEY, String(bg.muted));
+      syncBtn();
+      if (!bg.muted && bg.paused) await tryPlay();
+    }
+  });
+})();
 </script>
   
 </body>
 </html>
-
 
 
 
