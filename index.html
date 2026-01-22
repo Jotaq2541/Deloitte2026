@@ -2,164 +2,143 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Deloitte AI Experience</title>
-
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    :root {
-      --primary: #000000;
-      --secondary: #1a1a1a;
-      --accent: #86BC25; /* Verde Deloitte */
-      --light: #f4f4f4;
-      --gray: #6b6b6b;
-    }
-
+    /* ===== RESET ===== */
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
     }
 
     body {
-      background: var(--light);
-      color: var(--primary);
-      line-height: 1.6;
-    }
-
-    header {
-      background: var(--primary);
-      color: white;
-      padding: 80px 10%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0b1d2d, #02080f 70%);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
       align-items: center;
     }
 
-    header h1 {
-      font-size: 42px;
-      font-weight: 700;
+    /* ===== FONDO TECNOLÓGICO ===== */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
     }
 
-    header p {
-      margin-top: 20px;
-      color: #dcdcdc;
-      font-size: 18px;
-    }
-
-    .cta {
-      margin-top: 30px;
-      padding: 14px 28px;
-      background: var(--accent);
-      border: none;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .hero-box {
-      background: #111;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 20px 40px rgba(0,0,0,.4);
-    }
-
-    section {
-      padding: 80px 10%;
-    }
-
-    .section-title {
-      font-size: 32px;
-      margin-bottom: 20px;
-    }
-
-    .grid {
+    /* ===== CONTENEDOR PRINCIPAL ===== */
+    .app {
+      position: relative;
+      z-index: 1;
+      width: 95%;
+      max-width: 1200px;
+      background: rgba(10, 25, 40, 0.65);
+      backdrop-filter: blur(14px);
+      border-radius: 24px;
+      padding: 32px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      box-shadow: 0 0 80px rgba(0, 180, 255, 0.15);
     }
 
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,.08);
-    }
-
-    .card h3 {
-      margin-bottom: 10px;
-      font-size: 20px;
-    }
-
-    /* Chat */
-    .chat-container {
-      background: white;
-      border-radius: 12px;
-      padding: 30px;
-      max-width: 700px;
-      margin: auto;
-      box-shadow: 0 15px 30px rgba(0,0,0,.1);
-    }
-
-    .chat-box {
-      height: 260px;
-      overflow-y: auto;
-      border: 1px solid #ddd;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    .chat-message.user {
-      text-align: right;
-      color: var(--primary);
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-
-    .chat-message.bot {
-      text-align: left;
-      color: var(--gray);
-      margin-bottom: 10px;
-    }
-
-    .chat-input {
+    /* ===== AVATAR ===== */
+    .avatar-box {
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
     }
 
-    .chat-input input {
-      flex: 1;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+    .avatar-frame {
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 9 / 16;
+      background: radial-gradient(circle at top, #123a5a, #05131f);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 40px rgba(0, 180, 255, 0.3);
+      overflow: hidden;
     }
 
-    .chat-input button {
-      padding: 12px 20px;
-      border: none;
-      background: var(--accent);
+    .avatar-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .voice-select {
+      width: 100%;
+      max-width: 320px;
+    }
+
+    /* ===== PANEL DE INTERACCIÓN ===== */
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
       font-weight: 600;
+    }
+
+    p.sub {
+      color: #b7d6ea;
+      font-size: 0.95rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      resize: none;
+      border-radius: 12px;
+      border: none;
+      padding: 14px;
+      font-size: 1rem;
+    }
+
+    button {
+      align-self: flex-start;
+      background: linear-gradient(135deg, #00b4ff, #0077b6);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
       cursor: pointer;
-      border-radius: 6px;
+      font-size: 1rem;
     }
 
-    footer {
-      background: #000;
-      color: #aaa;
-      text-align: center;
-      padding: 40px 10%;
-      font-size: 14px;
+    button:hover {
+      opacity: 0.9;
     }
 
-    @media(max-width: 900px){
-      header {
+    .response {
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      min-height: 80px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .app {
         grid-template-columns: 1fr;
       }
     }
@@ -168,90 +147,103 @@
 
 <body>
 
-<header>
-  <div>
-    <h1>AI Experience by Deloitte</h1>
-    <p>Converse con una inteligencia artificial diseñada para responder únicamente sobre capacidades, servicios y visión de Deloitte.</p>
-    <button class="cta">Probar la experiencia</button>
+  <div class="app">
+
+    <!-- ===== AVATAR ===== -->
+    <div class="avatar-box">
+      <div class="avatar-frame">
+        <!-- Podés cambiar esto por un <video> si querés -->
+        <img src="avatar-mujer.png" alt="Avatar Deloitte AI">
+      </div>
+
+      <select id="voiceSelect" class="voice-select"></select>
+    </div>
+
+    <!-- ===== PANEL DE PREGUNTAS ===== -->
+    <div class="panel">
+      <h1>Preguntá a Deloitte AI</h1>
+      <p class="sub">
+        Consultá sobre servicios, innovación, estrategia y transformación.
+      </p>
+
+      <textarea id="question" placeholder="Escribí tu pregunta aquí..."></textarea>
+
+      <button id="askBtn">Responder</button>
+
+      <div id="response" class="response">
+        La respuesta aparecerá aquí.
+      </div>
+    </div>
+
   </div>
 
-  <div class="hero-box">
-    <p style="color:#86BC25;font-weight:600;">🔒 AI controlada · 🎯 Respuestas verificadas</p>
-    <p style="margin-top:15px;color:#ccc;">
-      Ideal para congresos, ferias, activaciones y experiencias corporativas.
-    </p>
-  </div>
-</header>
+  <script>
+    /* ===== TEXT TO SPEECH ===== */
+    const voiceSel = document.getElementById("voiceSelect");
+    let voices = [];
 
-<section>
-  <h2 class="section-title">¿Cómo funciona?</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>1. Preguntas guiadas</h3>
-      <p>La AI responde solo sobre Deloitte, evitando errores o improvisación.</p>
-    </div>
-    <div class="card">
-      <h3>2. Conocimiento validado</h3>
-      <p>Las respuestas provienen de documentos, FAQs y mensajes aprobados.</p>
-    </div>
-    <div class="card">
-      <h3>3. Experiencia segura</h3>
-      <p>Perfecta para espacios públicos y audiencias corporativas.</p>
-    </div>
-  </div>
-</section>
+    function loadVoices() {
+      voices = speechSynthesis.getVoices();
+      voiceSel.innerHTML = "";
 
-<section>
-  <h2 class="section-title">Converse con la AI</h2>
+      const allowedCountries = [
+        { code: 'CR', label: 'Costa Rica 🇨🇷' },
+        { code: 'GT', label: 'Guatemala 🇬🇹' },
+        { code: 'SV', label: 'El Salvador 🇸🇻' },
+        { code: 'HN', label: 'Honduras 🇭🇳' },
+        { code: 'NI', label: 'Nicaragua 🇳🇮' },
+        { code: 'PA', label: 'Panamá 🇵🇦' },
+        { code: 'DO', label: 'Rep. Dominicana 🇩🇴' }
+      ];
 
-  <div class="chat-container">
-    <div class="chat-box" id="chatBox">
-      <div class="chat-message bot">Hola, soy la AI de Deloitte. ¿En qué puedo ayudarte?</div>
-    </div>
+      const femaleVoices = voices.filter(v =>
+        /^es/i.test(v.lang) &&
+        /female|mujer|woman/i.test(v.name + " " + v.voiceURI)
+      );
 
-    <div class="chat-input">
-      <input type="text" id="userInput" placeholder="Escribe una pregunta..." />
-      <button onclick="sendMessage()">Enviar</button>
-    </div>
-  </div>
-</section>
+      allowedCountries.forEach(c => {
+        const match = femaleVoices.find(v =>
+          v.lang.toUpperCase().includes(c.code)
+        );
+        if (match) {
+          const opt = document.createElement("option");
+          opt.value = match.name;
+          opt.textContent = `Mujer – ${c.label}`;
+          voiceSel.appendChild(opt);
+        }
+      });
 
-<footer>
-  © 2026 Deloitte. Experiencia de Inteligencia Artificial Corporativa.
-</footer>
-
-<script>
-  const respuestas = {
-    "servicios": "Deloitte ofrece servicios en auditoría, consultoría, impuestos, riesgo y tecnología.",
-    "inteligencia artificial": "Deloitte ayuda a las organizaciones a implementar IA de forma ética, segura y escalable.",
-    "contacto": "Puede conocer más en nuestro stand o con un representante de Deloitte.",
-    "default": "Esta AI responde únicamente sobre Deloitte y sus capacidades."
-  };
-
-  function sendMessage() {
-    const input = document.getElementById("userInput");
-    const chatBox = document.getElementById("chatBox");
-    const text = input.value.toLowerCase();
-
-    if (!text) return;
-
-    chatBox.innerHTML += `<div class="chat-message user">${input.value}</div>`;
-
-    let response = respuestas.default;
-    for (let key in respuestas) {
-      if (text.includes(key)) {
-        response = respuestas[key];
+      if (!voiceSel.options.length) {
+        femaleVoices.forEach(v => {
+          const opt = document.createElement("option");
+          opt.value = v.name;
+          opt.textContent = "Mujer – Español Latino";
+          voiceSel.appendChild(opt);
+        });
       }
     }
 
-    setTimeout(() => {
-      chatBox.innerHTML += `<div class="chat-message bot">${response}</div>`;
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }, 600);
+    speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
 
-    input.value = "";
-  }
-</script>
+    /* ===== RESPUESTAS ===== */
+    const askBtn = document.getElementById("askBtn");
+    const responseBox = document.getElementById("response");
+
+    askBtn.addEventListener("click", () => {
+      const text = "Gracias por tu consulta. Deloitte ofrece soluciones integrales en estrategia, innovación y transformación digital.";
+
+      responseBox.textContent = text;
+
+      const utter = new SpeechSynthesisUtterance(text);
+      const selectedVoice = voices.find(v => v.name === voiceSel.value);
+      if (selectedVoice) utter.voice = selectedVoice;
+      utter.lang = "es-CR";
+
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utter);
+    });
+  </script>
 
 </body>
 </html>
