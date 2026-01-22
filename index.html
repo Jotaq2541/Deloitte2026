@@ -198,13 +198,14 @@
       font-size:15px;
       color:var(--viz-text);
     }
-    .viz{
-      width:100%; height:260px; display:block
-    }
-    /* Usamos una familia con soporte de emoji para banderas en SVG */
+    .viz{width:100%; height:260px; display:block}
+    /* Asegurar soporte de emoji (banderas) en texto de SVG */
     .viz text{
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
     }
+    /* Clickable en 'Medios destacados por país' */
+    #chartBarsMedia{ cursor:pointer; }
+
     .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
 
     /* Chips/leyendas legibles */
@@ -326,7 +327,7 @@
         <button class="qbtn" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
         <button class="qbtn" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
         <button class="qbtn" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
-        <button class="qbtn" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados & Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
+        <button class="qbtn" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados &amp; Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
       </div>
 
       <div id="answerBox" class="answer" aria-live="polite">
@@ -396,7 +397,7 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
-          // etiqueta izquierda (banderita pequeña + texto)
+          // etiqueta izq.: banderita + nombre
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
@@ -436,7 +437,7 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
-          // interacción
+          // interacción hover (se mantiene)
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
             showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
@@ -457,7 +458,7 @@
           });
         });
 
-        // Leyenda (chips claros)
+        // Leyenda
         if(legend){
           legend.innerHTML = '';
           dataBars.forEach(d=>{
@@ -469,7 +470,7 @@
         }
       }
 
-      /* --- 2) DONA: 51/457 ≈ 11% --- */
+      /* --- 2) DONA: 51/457 ≈ 11% (se mantiene hover) --- */
       const svgD = document.getElementById('chartDonut');
       function drawDonut(){
         if(!svgD) return;
@@ -522,7 +523,7 @@
         svgD.addEventListener('mouseleave', hideTip);
       }
 
-      /* --- 3) Medios destacados por país (con banderita y tooltip con ejemplos) --- */
+      /* --- 3) Medios destacados por país (con banderita y tooltip por CLIC) --- */
       const dataMedia = [
         {label:'Costa Rica',    flag:'🇨🇷', val:4, medios:['El Financiero','La Nación','La República','Noticias Repretel'], color:'#22b36a'},
         {label:'Panamá',        flag:'🇵🇦', val:4, medios:['La Estrella','La Prensa','TVN','Telemetro'], color:'#1ea55a'},
@@ -532,6 +533,30 @@
       ];
       const svgM = document.getElementById('chartBarsMedia');
       const legendM = document.getElementById('legendBarsMedia');
+
+      // Estado de tooltip por clic
+      let openKeyMedia = null;
+
+      function hideTipMedia(){
+        hideTip();
+        openKeyMedia = null;
+        // restaurar colores
+        if(svgM){
+          svgM.querySelectorAll('rect').forEach(r=>{
+            const base = r.getAttribute('data-base');
+            if(base) r.setAttribute('fill', base);
+          });
+        }
+      }
+
+      // Cerrar al hacer clic fuera o con Escape
+      document.addEventListener('click', (e)=>{
+        if (!svgM) return;
+        if (!svgM.contains(e.target)) hideTipMedia();
+      });
+      document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape') hideTipMedia();
+      });
 
       function drawBarsMedia(){
         if(!svgM) return;
@@ -573,7 +598,8 @@
           bar.setAttribute('height', barH);
           bar.setAttribute('rx', 8);
           bar.setAttribute('fill', d.color);
-          bar.style.transition = 'width 420ms ease';
+          bar.setAttribute('data-base', d.color);
+          bar.style.transition = 'width 420ms ease, fill 120ms ease';
           g.appendChild(bar);
 
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
@@ -585,17 +611,43 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
-          // Tooltip con ejemplos de medios
-          g.addEventListener('mousemove', (e)=>{
+          // --- Interacción por CLIC (toggle) ---
+          function showTipAt(clientX, clientY){
             const sample = d.medios.slice(0,4).join(', ');
             const extra  = d.medios.length - Math.min(4, d.medios.length);
             const extras = extra > 0 ? ` +${extra} más` : '';
-            showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} medios<br><em>Ejemplos:</em> ${sample}${extras}`, e.clientX, e.clientY);
+            tip.innerHTML = `<strong>${d.flag} ${d.label}</strong><br>${d.val} medios<br><em>Ejemplos:</em> ${sample}${extras}`;
+            tip.style.left = (clientX + 12) + 'px';
+            tip.style.top  = (clientY + 12) + 'px';
+            tip.style.display = 'block';
+            tip.setAttribute('aria-hidden','false');
+          }
+
+          function activate(ev){
+            // resaltar solo la activa
+            svgM.querySelectorAll('rect').forEach(r=>{
+              const base = r.getAttribute('data-base') || r.getAttribute('fill');
+              r.setAttribute('fill', base);
+            });
             bar.setAttribute('fill', '#35d07a');
+            openKeyMedia = i;
+            showTipAt(ev.clientX, ev.clientY);
+          }
+
+          function handleClick(ev){
+            if (openKeyMedia === i){
+              hideTipMedia();
+            } else {
+              activate(ev);
+            }
+          }
+
+          // Accesible: también con Enter/Espacio
+          g.setAttribute('tabindex', '0');
+          g.addEventListener('keydown', (e)=>{
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }
           });
-          g.addEventListener('mouseleave', ()=>{
-            hideTip(); bar.setAttribute('fill', d.color);
-          });
+          g.addEventListener('click', handleClick);
 
           svgM.appendChild(g);
 
@@ -618,11 +670,15 @@
         }
       }
 
-      // Pintar y responder a resize
-      drawBars();
-      drawDonut();
-      drawBarsMedia();
-      window.addEventListener('resize', ()=>{ drawBars(); drawDonut(); drawBarsMedia(); });
+      // Pintar y responder a resize (si se redibuja, cerramos tooltip abierto)
+      function redrawAll(){
+        hideTipMedia();
+        drawBars();
+        drawDonut();
+        drawBarsMedia();
+      }
+      redrawAll();
+      window.addEventListener('resize', redrawAll);
     });
 
     /* ====== Q&A + TTS (typewriter cancelable, avatar suave) ====== */
@@ -754,7 +810,7 @@
         }
       }
 
-      // Clicks en preguntas (usamos onclick para permitir que el parche envuelva btnSpeak si hiciera falta)
+      // Clicks en preguntas
       faqGrid.querySelectorAll('.qbtn').forEach(btn => {
         btn.onclick = () => {
           const text = btn.dataset.answer || '';
