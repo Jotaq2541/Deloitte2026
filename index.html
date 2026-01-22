@@ -998,6 +998,38 @@
       window.addEventListener('beforeunload', () => clearInterval(visInterval));
     })();
   </script>
+
+<!-- === MÚSICA CORPORATIVA (PEGA ESTO JUSTO ANTES DE </body>) === -->
+<!-- 1) El audio (debe estar en la misma carpeta que el index.html) -->
+<audio id="bgMusic" src="techno-sphere_88321.mp3" preload="auto" loop></audio>
+
+<!-- 2) El script que la enciende tras el primer clic y activa el botón "Música" -->
+<script>
+  (function(){
+    const bg = document.getElementById('bgMusic');
+    // Si tienes el botón en tu header con id="btnMusic" (como en tu index):
+    const btnMusic = document.getElementById('btnMusic');
+
+    if (!bg) return; // Si no encuentra el audio, no hace nada
+
+    // Iniciar música tras el primer clic (obligatorio por el navegador)
+    document.addEventListener('click', () => {
+      if (bg.paused) {
+        bg.volume = 0.18;   // volumen suave
+        bg.muted  = false;  // des-silenciar por si acaso
+        bg.play().catch(() => { /* Algunos navegadores piden otro clic; no pasa nada */ });
+      }
+    }, { once:true });
+
+    // Botón para silenciar/activar
+    if (btnMusic) {
+      const actualizarTexto = () => { btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; };
+      btnMusic.addEventListener('click', () => { bg.muted = !bg.muted; actualizarTexto(); });
+      actualizarTexto();
+    }
+  })();
+</script>
+<!-- === FIN MÚSICA CORPORATIVA === -->
 </body>
 </html>
 
