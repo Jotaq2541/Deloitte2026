@@ -160,12 +160,18 @@
     .avatar{
       position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
       background:#07090d;border:1px solid rgba(32,163,74,.35);
-      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)
+      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35);
+      contain: layout paint;           /* aisla repaints */
+      will-change: transform;          /* prepara GPU */
+      transform: translateZ(0);
     }
     .avatar img,
     .avatar video{
       position:absolute;inset:0;width:100%;height:100%;
-      object-fit:cover;object-position:center;display:block
+      object-fit:cover;object-position:center;display:block;
+      will-change: transform;
+      transform: translateZ(0);        /* layer propia */
+      transition: filter .18s ease;    /* no animamos transform del video */
     }
     .subtitle{
       position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
@@ -173,22 +179,17 @@
     }
     .muted{color:var(--muted);font-size:12px}
 
-    /* === AVATAR: VIDA MIENTRAS HABLA (con parallax en halo) === */
-    #avatar img,
-    #avatar video{will-change:transform,filter;transition:transform .18s ease, filter .18s ease}
-    #avatar.talking img,
-    #avatar.talking video{
-      transform-origin:50% 28%;
-      animation: headBobSmooth 1.25s ease-in-out infinite, fadeAI .25s ease forwards;
+    /* === AVATAR: VIDA MIENTRAS HABLA (animar contenedor, no el video) === */
+    #avatar.talking{
+      animation: avatarBob 1.25s ease-in-out infinite;
     }
-    @keyframes headBobSmooth{
-      0%   { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
-      25%  { transform: translateY(-0.6%)   rotate(-0.12deg)  scale(1.002); filter: brightness(1.02); }
-      50%  { transform: translateY(0.15%)   rotate(0.08deg)   scale(1.001); filter: brightness(1.01); }
-      75%  { transform: translateY(-0.4%)   rotate(0.10deg)   scale(1.003); filter: brightness(1.015); }
-      100% { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
+    @keyframes avatarBob{
+      0%   { transform: translateZ(0) translateY(0) rotate(0deg) }
+      25%  { transform: translateZ(0) translateY(-0.6%) rotate(-0.12deg) }
+      50%  { transform: translateZ(0) translateY(0.15%) rotate(0.08deg) }
+      75%  { transform: translateZ(0) translateY(-0.4%) rotate(0.10deg) }
+      100% { transform: translateZ(0) translateY(0) rotate(0deg) }
     }
-    @keyframes fadeAI{from{opacity:.65} to{opacity:1}}
 
     /* Halo/respiración + parallax controlado por variables */
     #avatar::before{
@@ -215,9 +216,6 @@
       filter: drop-shadow(0 0 4px rgba(36,167,93,.35));
     }
     #avatar.talking::after{opacity:.95; animation: vuDance .24s linear infinite}
-    #avatar.talking.talking-boost::after{ animation-duration:.16s }
-    #avatar.talking.talking-boost img,
-    #avatar.talking.talking-boost video{ animation-duration:1.05s }
     @keyframes vuDance{
       0%{   background-size:10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22% }
       25%{  background-size:10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48% }
@@ -333,8 +331,11 @@
     <!-- Izquierda: AVATAR (VIDEO + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- VIDEO del avatar: sin autoplay para que solo “hable” con TTS -->
-        <video id="avatarVideo" src="./Diseño sin título (5).mp4" playsinline muted loop preload="auto"></video>
+        <!-- VIDEO del avatar: sin autoplay (solo habla con TTS), preload para suavizar inicio -->
+        <video id="avatarVideo" muted playsinline preload="auto" loop>
+          <source src="./Diseño sin título (5).mp4" type="video/mp4" />
+          <!-- Opcional: <source src="./avatar.webm" type="video/webm" /> -->
+        </video>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
@@ -395,7 +396,7 @@
     </section>
   </main>
 
-  <!-- Música corporativa (opcional; si no existe, la página funciona igual) -->
+  <!-- Música corporativa (si no existe, la página funciona igual) -->
   <audio id="bgMusic" src="./musica-corporativa.mp3" preload="auto" loop></audio>
 
   <!-- Tooltip global de gráficos -->
@@ -450,9 +451,7 @@
         if(!defs.querySelector('#dropSoft')){
           const f = document.createElementNS('http://www.w3.org/2000/svg','filter');
           f.setAttribute('id','dropSoft'); f.setAttribute('x','-20%'); f.setAttribute('y','-20%'); f.setAttribute('width','140%'); f.setAttribute('height','140%');
-          f.innerHTML = `
-            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,.4)" flood-opacity="1"/>
-          `;
+          f.innerHTML = `<feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,.4)" flood-opacity="1"/>`;
           defs.appendChild(f);
         }
         return defs;
@@ -496,13 +495,7 @@
           const tFlag = document.createElementNS('http://www.w3.org/2000/svg','tspan');
           tFlag.setAttribute('font-size','11');
           tFlag.textContent = d.flag + ' ';
-          label.appendChild(tFlag);
-
-          const tName = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tName.textContent = d.label;
-          label.appendChild(tName);
-
-          g.appendChild(label);
+          labelChild(label);
 
           // barra
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -793,13 +786,6 @@
       }
 
       function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
-      let boostTimer = null;
-      function boostOnce(){
-        if(!avatar) return;
-        avatar.classList.add('talking-boost');
-        clearTimeout(boostTimer);
-        boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
-      }
 
       // 🎬 Control del video del avatar (solo habla cuando hay TTS)
       function playAvatarVideo(){
@@ -813,6 +799,16 @@
       function stopAvatarVideo(){
         if (!avatarVideo) return;
         try { avatarVideo.pause(); avatarVideo.currentTime = 0; } catch {}
+      }
+
+      // 🔥 Warm-up del video para que la primera reproducción sea fluida
+      if (avatarVideo) {
+        avatarVideo.muted = true;
+        avatarVideo.preload = 'auto';
+        avatarVideo.play().then(()=>{
+          avatarVideo.pause();
+          try { avatarVideo.currentTime = 0; } catch {}
+        }).catch(()=>{ /* algunos navegadores bloquearán esto; está bien */ });
       }
 
       // TTS
@@ -877,10 +873,21 @@
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); boostOnce(); };
-          u.onboundary= () => { boostOnce(); };
-          u.onend     = () => { setTalking(false); stopAvatarVideo(); };
-          u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
+          u.onstart   = () => {
+            aiThinking.style.display='none';
+            setTalking(true);
+            playAvatarVideo();   // ▶️ arranca el video al hablar
+            // (eliminado) boostOnce / onboundary para evitar janks
+          };
+          u.onend     = () => {
+            setTalking(false);
+            stopAvatarVideo();   // ⏹️ detener al terminar
+          };
+          u.onerror   = () => {
+            setTalking(false);
+            stopAvatarVideo();
+            aiThinking.style.display='none';
+          };
 
           lastUtterance = u;
           synth.speak(u);
@@ -905,10 +912,6 @@
         const text = (answerBox.textContent || '').trim();
         if (text) queueSpeak(text);
       };
-
-      // Exponer helpers para addQA
-      window.typeText = typeText;
-      window.queueSpeak = queueSpeak;
 
       // Mensaje inicial (sin voz)
       const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
@@ -993,10 +996,10 @@
       renumberFAQ();
 
       // Parchear addQA y bulkAddQA para renumerar al agregar
-      const oldAddQA = window.addQA;
-      if (typeof oldAddQA === "function") {
+      const oldAdd = window.addQA;
+      if (typeof oldAdd === "function") {
         window.addQA = function(q, a){
-          oldAddQA(q, a);
+          oldAdd(q, a);
           renumberFAQ();
         };
       }
@@ -1019,6 +1022,7 @@
       const btnSpeak = document.getElementById('btnSpeak');
       const answerBox  = document.getElementById('answerBox');
       const avatarEl   = document.getElementById('avatar');
+      const v          = document.getElementById('avatarVideo');
 
       function setTalking(on){ avatarEl && avatarEl.classList.toggle('talking', !!on); }
       function setBtnLabels(){
@@ -1030,15 +1034,12 @@
       function hardCancel(){
         try { synth.cancel(); } catch {}
         setTalking(false);
-        // Detener video del avatar también
-        const v = document.getElementById('avatarVideo');
-        if (v) { try { v.pause(); v.currentTime = 0; } catch {} }
+        if (v){ try { v.pause(); v.currentTime = 0; } catch {} }
         setBtnLabels();
       }
       function pauseResume(e){
         e && e.preventDefault();
         if (!synth) return;
-        const v = document.getElementById('avatarVideo');
         if (synth.speaking && !synth.paused){
           try { synth.pause(); } catch {}
           setTalking(false);
