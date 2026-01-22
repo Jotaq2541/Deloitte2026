@@ -999,39 +999,93 @@
     })();
   </script>
 
-<!-- === MÚSICA CORPORATIVA (PEGA ESTO JUSTO ANTES DE </body>) === -->
-<!-- 1) El audio (debe estar en la misma carpeta que el index.html) -->
-<audio id="bgMusic" src="techno-sphere_88321.mp3" preload="auto" loop></audio>
+<!-- === MÚSICA CORPORATIVA: BLOQUE DE PRUEBA === -->
+<!-- 1) Audio. Asegúrate que techno-sphere_88321.mp3 esté en la misma carpeta del index.html -->
+<audio id="bgMusic"
+       src="techno-sphere_88321.mp3"
+       preload="auto"
+       loop
+       style="display:none"
+       onerror="document.getElementById('musicStatus').textContent='❌ No se encontró el archivo: techno-sphere_88321.mp3 (verifica el nombre o la carpeta)';">
+</audio>
 
-<!-- 2) El script que la enciende tras el primer clic y activa el botón "Música" -->
+<!-- 2) Indicador de estado y botón de prueba (solo para ayudarte) -->
+<div id="musicDebug" style="position:fixed;bottom:10px;left:10px;z-index:99999;background:rgba(0,0,0,.6);color:#fff;padding:8px 10px;border-radius:8px;font-size:12px">
+  <button id="btnTestMusic" style="cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid #2a2a2a;background:#22b36a;color:#0b0e11;margin-right:8px">
+    ▶️ Probar música
+  </button>
+  <span id="musicStatus">⏳ Lista. Haz clic en “Probar música”.</span>
+</div>
+
 <script>
   (function(){
-    const bg = document.getElementById('bgMusic');
-    // Si tienes el botón en tu header con id="btnMusic" (como en tu index):
-    const btnMusic = document.getElementById('btnMusic');
+    const bg       = document.getElementById('bgMusic');
+    const btnMusic = document.getElementById('btnMusic');     // botón del header (si existe)
+    const btnTest  = document.getElementById('btnTestMusic'); // botón de prueba visible
+    const statusEl = document.getElementById('musicStatus');
 
-    if (!bg) return; // Si no encuentra el audio, no hace nada
+    if (!bg) return;
 
-    // Iniciar música tras el primer clic (obligatorio por el navegador)
+    function setStatus(msg){ if(statusEl) statusEl.textContent = msg; }
+    function labelMusicBtn(){
+      if (!btnMusic) return;
+      btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
+    }
+
+    // Intentar reproducir con volumen suave
+    async function tryPlay(){
+      try {
+        bg.volume = 0.18;
+        bg.muted  = false;
+        await bg.play();
+        setStatus('✅ Reproduciendo música de fondo.');
+        labelMusicBtn();
+      } catch(e){
+        setStatus('⚠️ El navegador pidió interacción para reproducir. Pulsa “Probar música”.');
+      }
+    }
+
+    // 1) Primer clic en la página: intentar reproducir (autoplay policy)
     document.addEventListener('click', () => {
-      if (bg.paused) {
-        bg.volume = 0.18;   // volumen suave
-        bg.muted  = false;  // des-silenciar por si acaso
-        bg.play().catch(() => { /* Algunos navegadores piden otro clic; no pasa nada */ });
+      if (bg.paused){
+        tryPlay();
       }
     }, { once:true });
 
-    // Botón para silenciar/activar
-    if (btnMusic) {
-      const actualizarTexto = () => { btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; };
-      btnMusic.addEventListener('click', () => { bg.muted = !bg.muted; actualizarTexto(); });
-      actualizarTexto();
+    // 2) Botón visible de prueba (siempre funciona tras clic)
+    if (btnTest){
+      btnTest.addEventListener('click', () => {
+        if (bg.paused) {
+          tryPlay();
+        } else {
+          bg.pause();
+          setStatus('⏸️ Música en pausa. Pulsa de nuevo para reanudar.');
+        }
+      });
     }
+
+    // 3) Botón “Música” del header (si lo tienes)
+    if (btnMusic){
+      btnMusic.addEventListener('click', () => {
+        bg.muted = !bg.muted;
+        labelMusicBtn();
+        setStatus(bg.muted ? '🔇 Música silenciada.' : '🔈 Música activa.');
+      });
+      labelMusicBtn();
+    }
+
+    // 4) Mensajes al cargar/estado
+    bg.addEventListener('play',   () => setStatus('✅ Reproduciendo música de fondo.'));
+    bg.addEventListener('pause',  () => setStatus('⏸️ Música en pausa.'));
+    bg.addEventListener('volumechange', () => labelMusicBtn());
+    bg.addEventListener('ended',  () => setStatus('🔁 Loop finalizó y se reinicia (loop activo).'));
+    setStatus('⏳ Lista. Haz clic en “Probar música”.');
   })();
 </script>
-<!-- === FIN MÚSICA CORPORATIVA === -->
+<!-- === FIN BLOQUE === -->
 </body>
 </html>
+
 
 
 
