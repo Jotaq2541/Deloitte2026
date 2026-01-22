@@ -1,1226 +1,257 @@
-
 <!DOCTYPE html>
-<html lang="es" class="force-light"> <!-- NUEVO: fuerza modo claro homogéneo -->
+<html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Asistente Virtual – Marketplace Deloitte CA</title>
-  <meta name="description" content="Asistente con voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
-  <!-- Evitar traducción automática del navegador/Google -->
-  <meta name="google" content="notranslate" />
-  <!-- Uniformar UI del navegador en móvil (tema claro) -->
-  <meta name="theme-color" content="#f4f7f4" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0b0e11" media="(prefers-color-scheme: dark)">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Deloitte AI Experience</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root{
-      /* === MODO CLARO POR DEFECTO (HOMOGÉNEO) === */
-      --bg:#f4f7f4; --panel:#ffffff; --card:#ffffff;
-      --brand:#1c8c3f; --brand-2:#22b36a;
-      --text:#111111; --muted:#4b5563; --focus:#22b36a;
-      --viz-text:#0b0e11; --viz-muted:#47515a;
-      --viz-bg:#ffffff; --viz-stroke:#d7dde3;
-
-      /* Chips/leyendas legibles */
-      --chip-bg:#ffffff; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
-      --chip-bg-hover:#f2f7f4;
-
-      /* Efectos en claro (más suaves) */
-      --glow: rgba(34,179,106,.22);
-      --glow-soft: rgba(34,179,106,.10);
+    :root {
+      --primary: #000000;
+      --secondary: #1a1a1a;
+      --accent: #86BC25; /* Verde Deloitte */
+      --light: #f4f4f4;
+      --gray: #6b6b6b;
     }
 
-    /* Permitir un tema oscuro (opcional) sin depender del sistema */
-    .theme-dark {
-      --bg:#0b0e11; --panel:#111418; --card:#141a1f;
-      --text:#ffffff; --muted:#b9c0c7; --focus:#8bd8a9;
-      --viz-text:#eaf7ef; --viz-muted:#b9c0c7;
-      --viz-bg:#0f1216; --viz-stroke:#2e3640;
-
-      --chip-bg:#0f1216; --chip-text:#eaf7ef; --chip-border:rgba(255,255,255,.15);
-      --chip-bg-hover:#12161b;
-
-      --glow: rgba(34,179,106,.55);
-      --glow-soft: rgba(34,179,106,.18);
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
     }
 
-    /* Si quieres aún respetar sistema: aplica .theme-dark automáticamente cuando el SO está oscuro */
-    @media (prefers-color-scheme: dark){
-      html:not(.force-light) { /* si NO fuerzas claro */
-        color-scheme: dark;
+    body {
+      background: var(--light);
+      color: var(--primary);
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 80px 10%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 42px;
+      font-weight: 700;
+    }
+
+    header p {
+      margin-top: 20px;
+      color: #dcdcdc;
+      font-size: 18px;
+    }
+
+    .cta {
+      margin-top: 30px;
+      padding: 14px 28px;
+      background: var(--accent);
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .hero-box {
+      background: #111;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.4);
+    }
+
+    section {
+      padding: 80px 10%;
+    }
+
+    .section-title {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,.08);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    /* Chat */
+    .chat-container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 15px 30px rgba(0,0,0,.1);
+    }
+
+    .chat-box {
+      height: 260px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .chat-message.user {
+      text-align: right;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .chat-message.bot {
+      text-align: left;
+      color: var(--gray);
+      margin-bottom: 10px;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .chat-input button {
+      padding: 12px 20px;
+      border: none;
+      background: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    footer {
+      background: #000;
+      color: #aaa;
+      text-align: center;
+      padding: 40px 10%;
+      font-size: 14px;
+    }
+
+    @media(max-width: 900px){
+      header {
+        grid-template-columns: 1fr;
       }
-      html:not(.force-light) body { background:#0b0e11; }
-      html:not(.force-light) body, html:not(.force-light) .theme-dark { /* no toco; tu CSS oscuro ya vivía aquí */}
     }
-
-    *{box-sizing:border-box}
-    html { color-scheme: light; } /* NUEVO: asegura formularios/fondos del UA en claro */
-    body{
-      margin:0;
-      background: linear-gradient(180deg, #f7faf7 0%, var(--bg) 100%); /* CAMBIO: claro sólido */
-      color:var(--text);
-      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-      position:relative; min-height:100dvh; overflow-x:hidden;
-      -webkit-text-size-adjust:100%;
-      text-rendering:optimizeLegibility;
-    }
-
-    /* ====== FONDO TECNOLÓGICO ====== */
-    .fx-grid{
-      position:fixed; inset:0; z-index:-2; pointer-events:none;
-      /* CAMBIO: sin mix-blend-mode para que nunca oscurezca */
-      background:
-        radial-gradient(1200px 600px at 15% 0%, rgba(34,179,106,.08), transparent 60%),
-        repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
-      animation: bgShift 36s linear infinite;
-      opacity:.75; /* más suave en claro */
-    }
-    .fx-glow{
-      position:fixed; inset:0; z-index:-1; pointer-events:none;
-      background:
-        radial-gradient(800px 400px at 80% 20%, var(--glow), transparent 60%),
-        radial-gradient(700px 380px at 20% 80%, var(--glow-soft), transparent 60%);
-      filter: blur(12px);
-    }
-    @keyframes bgShift{ 0%{background-position:0 0,0 0} 100%{background-position:0 0,480px 280px} }
-
-    /* === CABECERA === */
-    header{
-      padding:16px 20px;
-      border-bottom:2px solid var(--brand);
-      background: #ffffff; /* claro fijo */
-      backdrop-filter: none; /* evita inconsistencias en móviles */
-      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-      box-shadow: 0 8px 18px rgba(0,0,0,.06);
-    }
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{height:24px;width:auto;display:block}
-    .logo-fallback{height:24px;display:none;align-items:center;color:#0b0e11;font-weight:700}
-    header h1{
-      margin:0;font-size:18px;font-weight:700;white-space:nowrap;color:#0b0e11;
-    }
-
-    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    label{display:flex;gap:6px;align-items:center;color:#111}
-    select,button{
-      background:#ffffff; color:#0b0e11;
-      border:1px solid rgba(0,0,0,.18);
-      border-radius:10px; padding:8px 10px; font-size:14px;
-      box-shadow:0 1px 0 rgba(255,255,255,.65) inset, 0 6px 14px rgba(0,0,0,.05);
-      cursor:pointer; transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
-    }
-    select:hover,button:hover{
-      border-color: rgba(28,140,63,.35);
-      box-shadow: 0 0 0 1px rgba(34,179,106,.22), 0 8px 18px rgba(0,0,0,.08);
-      transform: translateY(-1px);
-    }
-    .btn-primary{
-      background:linear-gradient(180deg,#27ae60,#1c8c3f);
-      color:#ffffff;border:1px solid #1c8c3f
-    }
-    .btn-ghost{background:#f4f7f4}
-    .controls select:focus-visible,.controls .btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-
-    .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
-    @media (max-width:1100px){ .wrap{grid-template-columns:1fr} }
-
-    /* ====== CONTENEDORES ====== */
-    .left,.right{
-      background: var(--panel);
-      border:1px solid rgba(0,0,0,.08);
-      border-radius:14px;
-      box-shadow:0 14px 32px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.65);
-      position:relative; overflow:clip;
-    }
-    .left::before,.right::before{
-      content:""; position:absolute; inset:0; pointer-events:none;
-      border-radius:inherit;
-      box-shadow: 0 0 0 1px rgba(34,179,106,.10) inset;
-    }
-    .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
-
-    /* === AVATAR === */
-    .avatar{
-      position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
-      background:#eaeff0;border:1px solid rgba(32,163,74,.25);
-      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 40px rgba(0,0,0,.08)
-    }
-    .avatar img,
-    .avatar video{
-      position:absolute;inset:0;width:100%;height:100%;
-      object-fit:cover;object-position:center;display:block
-    }
-    .subtitle{
-      position:absolute;bottom:8px;left:8px;right:8px;background:rgba(255,255,255,.78);
-      backdrop-filter:saturate(110%) blur(2px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto;color:#0b0e11;
-      border:1px solid rgba(0,0,0,.08);
-    }
-
-    .muted{color:var(--muted);font-size:12px}
-
-    .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
-    .panel{
-      padding:12px 14px;border-bottom:1px solid rgba(0,0,0,.08);
-      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
-    }
-    .panel h2{margin:0;font-size:16px;color:#111}
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap:12px;
-      padding:14px;
-      background:#f6faf7;
-      align-items:start;
-      border-top:1px solid rgba(0,0,0,.06);
-    }
-    @media (max-width: 980px){
-      .grid{ grid-template-columns: 1fr; }
-    }
-
-    .card{
-      background:var(--viz-bg); border:1px solid rgba(0,0,0,.08); border-radius:12px; padding:12px; position:relative;
-      box-shadow: 0 14px 30px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.65);
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-      color:#111;
-    }
-    .card:hover{
-      transform: translateY(-2px);
-      box-shadow: 0 20px 38px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.8);
-      border-color: rgba(34,179,106,.24);
-    }
-
-    .qbtn{
-      width:100%;text-align:left;padding:12px;border:1px solid rgba(0,0,0,.08);
-      background:#ffffff;border-radius:10px;cursor:pointer;line-height:1.35;color:#111;
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .35s ease;
-      box-shadow: 0 1px 0 rgba(255,255,255,.65) inset, 0 8px 18px rgba(0,0,0,.05);
-    }
-    .qbtn:hover{
-      border-color:rgba(32,163,74,.45);
-      box-shadow:0 0 0 1px rgba(32,163,74,.18), 0 8px 20px rgba(0,0,0,.08);
-      transform: translateY(-1px);
-    }
-    .qbtn:active{
-      background: linear-gradient(90deg, rgba(28,140,63,.08) 0%, rgba(32,163,74,.18) 50%, rgba(28,140,63,.08) 100%);
-      transform: translateY(0);
-    }
-    .qbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-
-    .answer{
-      padding:16px;border-top:1px solid rgba(0,0,0,.08);
-      background:#ffffff;min-height:160px;color:#111;
-    }
-    footer{padding:10px 16px;color:var(--muted);background:transparent}
-    .kbd{border:1px solid rgba(0,0,0,.22);padding:0 6px;border-radius:6px;background:#f2f7f4;color:#111}
-
-    /* === AVATAR movimiento === */
-    #avatar img, #avatar video{will-change:transform,filter;transition:transform .18s ease, filter .18s ease}
-    #avatar.talking img, #avatar.talking video{
-      transform-origin:50% 28%;
-      animation: headBobSmooth 1.25s ease-in-out infinite, fadeAI .25s ease forwards;
-    }
-    @keyframes headBobSmooth{
-      0%   { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
-      25%  { transform: translateY(-0.6%)   rotate(-0.12deg)  scale(1.002); filter: brightness(1.02); }
-      50%  { transform: translateY(0.15%)   rotate(0.08deg)   scale(1.001); filter: brightness(1.01); }
-      75%  { transform: translateY(-0.4%)   rotate(0.10deg)   scale(1.003); filter: brightness(1.015); }
-      100% { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
-    }
-    @keyframes fadeAI{from{opacity:.65} to{opacity:1}}
-
-    #avatar::before{
-      content:""; position:absolute; inset:-3%; border-radius:12px;
-      background:
-        radial-gradient(65% 60% at 50% 40%, rgba(32,163,74,.18), rgba(32,163,74,0) 60%),
-        radial-gradient(60% 55% at 50% 70%, rgba(28,140,63,.10), rgba(28,140,63,0) 70%);
-      opacity:0; pointer-events:none; filter: blur(5px); transform: scale(1);
-      transition: opacity .15s ease;
-    }
-    #avatar.talking::before{opacity:.55; animation: haloBreath 1.25s ease-in-out infinite}
-    @keyframes haloBreath{0%{transform:scale(1); filter:blur(5px)} 50%{transform:scale(1.03); filter:blur(6px)} 100%{transform:scale(1); filter:blur(5px)}}
-
-    #avatar::after{
-      content:""; position:absolute; left:8%; bottom:10%;
-      width:26%; height:16%; pointer-events:none; opacity:0; transition: opacity .15s ease;
-      --bar: linear-gradient(180deg, #22b36a 0%, #1c8c3f 100%);
-      background: var(--bar), var(--bar), var(--bar), var(--bar), var(--bar);
-      background-repeat:no-repeat;
-      background-position:0% 100%, 25% 100%, 50% 100%, 75% 100%, 100% 100%;
-      background-size:10% 22%, 10% 32%, 10% 18%, 10% 28%, 10% 24%;
-      filter: drop-shadow(0 0 2px rgba(36,167,93,.20));
-    }
-    #avatar.talking::after{opacity:.9; animation: vuDance .24s linear infinite}
-    #avatar.talking.talking-boost::after{ animation-duration:.16s }
-    #avatar.talking.talking-boost img, #avatar.talking.talking-boost video{ animation-duration:1.05s }
-    @keyframes vuDance{
-      0%{   background-size:10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22% }
-      25%{  background-size:10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48% }
-      50%{  background-size:10% 36%, 10% 68%, 10% 52%, 10% 44%, 10% 76% }
-      75%{  background-size:10% 82%, 10% 46%, 10% 74%, 10% 58%, 10% 40% }
-      100%{ background-size:10% 28%, 10% 60%, 10% 26%, 10% 68%, 10% 32% }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      #avatar.talking img, #avatar.talking video{ animation:none }
-      #avatar.talking::before{ animation:none }
-      #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6 }
-    }
-
-    #aiWave{
-      position:fixed;left:0;right:0;bottom:0;height:4px;z-index:9999;
-      background:linear-gradient(90deg, rgba(32,163,74,.18), rgba(32,163,74,.35), rgba(32,163,74,.18));
-      background-size:400% 100%;
-      animation: wave 4s infinite linear;
-    }
-    @keyframes wave{ from{background-position:0 0} to{background-position:400% 0} }
-
-    #aiThinking{
-      position:absolute; top:10px; right:12px; display:none;
-      font-size:12px; color:#1c8c3f; opacity:.92; padding:4px 8px;
-      background:#ffffff; border:1px solid rgba(28,140,63,.35); border-radius:8px;
-      box-shadow:0 6px 14px rgba(0,0,0,.06);
-    }
-
-    .insights{
-      display:grid; grid-template-columns:1fr 1fr; gap:12px;
-      padding:12px 14px; background:#f6faf7; border-top:1px solid rgba(0,0,0,.06)
-    }
-    @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
-    .card h3{
-      margin:0 0 8px 0; font-size:15px; color:var(--viz-text);
-    }
-    .viz{ width:100%; height:260px; display:block }
-    .viz text{
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-      fill: var(--viz-text);
-    }
-    #chartBarsMedia{ cursor:pointer; }
-
-    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
-    .badge{
-      display:inline-flex; align-items:center; gap:6px;
-      background:var(--chip-bg); color:var(--chip-text);
-      border:1px solid var(--chip-border);
-      border-radius:999px; padding:6px 10px;
-      transition: background .15s ease, transform .12s ease;
-    }
-    .badge:hover{ background:var(--chip-bg-hover); transform:translateY(-1px) }
-    .badge:focus-visible{ outline:2px solid var(--focus); outline-offset:2px }
-    .dot{width:10px;height:10px;border-radius:50%}
-
-    #vizTip{
-      position:fixed; z-index:99999; pointer-events:none;
-      background:#ffffff; color:#0b0e11; border:1px solid rgba(0,0,0,.15);
-      padding:6px 8px; font-size:12px; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.12);
-      display:none; white-space:nowrap;
-    }
-
-    /* OVERRIDES: no animar <video> transform para suavidad */
-    #avatar video{ will-change:auto; transform:none; transition:filter .18s ease; }
-    #avatar.talking video{ animation:none !important; transform:none !important; }
   </style>
 </head>
 
 <body>
-  <!-- Fondos tecnológicos -->
-  <div class="fx-grid" aria-hidden="true"></div>
-  <div class="fx-glow" aria-hidden="true"></div>
 
-  <header>
-    <div class="brand">
-      <img id="logoImg" class="logo" src="./Deloitte-Emblem.png" alt="Deloitte" loading="eager" decoding="async" />
-      <span id="logoFallback" class="logo-fallback" aria-hidden="true">Deloitte</span>
-      <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
+<header>
+  <div>
+    <h1>AI Experience by Deloitte</h1>
+    <p>Converse con una inteligencia artificial diseñada para responder únicamente sobre capacidades, servicios y visión de Deloitte.</p>
+    <button class="cta">Probar la experiencia</button>
+  </div>
+
+  <div class="hero-box">
+    <p style="color:#86BC25;font-weight:600;">🔒 AI controlada · 🎯 Respuestas verificadas</p>
+    <p style="margin-top:15px;color:#ccc;">
+      Ideal para congresos, ferias, activaciones y experiencias corporativas.
+    </p>
+  </div>
+</header>
+
+<section>
+  <h2 class="section-title">¿Cómo funciona?</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>1. Preguntas guiadas</h3>
+      <p>La AI responde solo sobre Deloitte, evitando errores o improvisación.</p>
+    </div>
+    <div class="card">
+      <h3>2. Conocimiento validado</h3>
+      <p>Las respuestas provienen de documentos, FAQs y mensajes aprobados.</p>
+    </div>
+    <div class="card">
+      <h3>3. Experiencia segura</h3>
+      <p>Perfecta para espacios públicos y audiencias corporativas.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">Converse con la AI</h2>
+
+  <div class="chat-container">
+    <div class="chat-box" id="chatBox">
+      <div class="chat-message bot">Hola, soy la AI de Deloitte. ¿En qué puedo ayudarte?</div>
     </div>
 
-    <div class="controls" aria-label="Controles de voz y música">
-      <label for="voiceSel">Voz:
-        <select id="voiceSel" title="Voz neutral latinoamericana" aria-label="Seleccionar voz"></select>
-      </label>
-      <button id="btnSpeak"  class="btn btn-primary" title="Reproducir última respuesta">🔊 Reproducir</button>
-      <button id="btnPause"  class="btn btn-ghost"   title="Pausar/Reanudar audio">⏸️ Pausar</button>
-      <button id="btnStop"   class="btn btn-ghost"   title="Detener audio">⏹️ Detener</button>
-      <button id="btnMusic"  class="btn btn-ghost"   title="Silenciar/activar música de fondo">🔈 Música</button>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Escribe una pregunta..." />
+      <button onclick="sendMessage()">Enviar</button>
     </div>
-  </header>
+  </div>
+</section>
 
-  <main class="wrap">
-    <!-- Izquierda: AVATAR -->
-    <section class="left">
-      <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <video id="avatarVideo"
-               src="./Diseño sin título (5).mp4"
-               muted
-               loop
-               playsinline
-               preload="auto"></video>
-        <div id="subtitle" class="subtitle" aria-live="polite"></div>
-      </div>
+<footer>
+  © 2026 Deloitte. Experiencia de Inteligencia Artificial Corporativa.
+</footer>
 
-      <div class="muted">
-        Sugerencia: usa <span class="kbd">R</span> para reproducir/pausar,
-        <span class="kbd">S</span> para detener y <span class="kbd">M</span> para silenciar música.
-      </div>
-    </section>
-
-    <!-- Derecha: Q&A + INSIGHTS -->
-    <section class="right">
-      <div class="panel">
-        <h2>Preguntas frecuentes – Marketplace Deloitte CA</h2>
-        <div class="controls">
-          <small class="muted">Haz clic en una pregunta para ver la respuesta y reproducirla.</small>
-        </div>
-        <div id="aiThinking" aria-live="polite">Procesando…</div>
-      </div>
-
-      <div class="insights" aria-label="Indicadores clave">
-        <div class="card">
-          <h3>Profesionales por país (muestra)</h3>
-          <svg id="chartBars" class="viz" role="img" aria-label="Barras de profesionales por país"></svg>
-          <div class="legend" id="legendBars"></div>
-        </div>
-
-        <div class="card">
-          <h3>Medios destacados por país</h3>
-          <svg id="chartBarsMedia" class="viz" role="img" aria-label="Barras de cantidad de medios por país"></svg>
-          <div class="legend" id="legendBarsMedia"></div>
-        </div>
-      </div>
-
-      <div class="grid" id="faqGrid" role="list">
-        <!-- (Tus botones FAQ existentes) -->
-        <!-- ... (SE MANTIENEN IGUAL QUE TU HTML ORIGINAL) ... -->
-      </div>
-
-      <div id="answerBox" class="answer" aria-live="polite">
-        Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.
-      </div>
-
-      <footer>
-        © 2026 Deloitte &amp; Touche, S.A. — Demostración de asistente con TTS. Recomendado: Chrome/Edge.
-      </footer>
-    </section>
-  </main>
-
-  <!-- Música corporativa -->
-  <audio id="bgMusic" src="./musica-corporativa.mp3" preload="auto" loop></audio>
-
-  <!-- Tooltip global de gráficos -->
-  <div id="vizTip" role="tooltip" aria-hidden="true"></div>
-
-  <!-- Onda AI decorativa -->
-  <div id="aiWave" aria-hidden="true"></div>
-
-  <script>
-    "use strict";
-    /* ====== Fallback del logo ====== */
-    (function(){
-      const img = document.getElementById('logoImg');
-      const fb  = document.getElementById('logoFallback');
-      if (!img) return;
-      img.addEventListener('error', () => { img.style.display='none'; fb.style.display='inline-flex'; }, { once:true });
-      if (img.complete && !img.naturalWidth){ img.style.display='none'; fb.style.display='inline-flex'; }
-    })();
-
-    /* ====== INFOGRÁFICOS ====== */
-    document.addEventListener('DOMContentLoaded', () => {
-      const tip = document.getElementById('vizTip');
-      const showTip = (html, x, y) => {
-        tip.innerHTML = html; tip.style.left = (x+12)+'px'; tip.style.top=(y+12)+'px';
-        tip.style.display='block'; tip.setAttribute('aria-hidden','false');
-      };
-      const hideTip = () => { tip.style.display='none'; tip.setAttribute('aria-hidden','true'); };
-
-      /* 1) Barras Profesionales */
-      const dataBars = [
-        {label:'Guatemala',       flag:'🇬🇹', val:242, color:'#1ea55a'},
-        {label:'Honduras',        flag:'🇭🇳', val:62,  color:'#24c06a'},
-        {label:'El Salvador',     flag:'🇸🇻', val:93,  color:'#1a8a4a'},
-        {label:'Nicaragua',       flag:'🇳🇮', val:28,  color:'#2bd07a'},
-        {label:'Costa Rica',      flag:'🇨🇷', val:421, color:'#22b36a'},
-        {label:'Panamá',          flag:'🇵🇦', val:229, color:'#1f9656'},
-        {label:'R. Dominicana',   flag:'🇩🇴', val:113, color:'#2aa868'}
-      ];
-      const svgB = document.getElementById('chartBars');
-      const legend = document.getElementById('legendBars');
-
-      function drawBars(){
-        if(!svgB) return;
-        const w = svgB.clientWidth || 600, h = svgB.clientHeight || 260, pad = {t:10,r:16,b:30,l:110};
-        svgB.setAttribute('viewBox', `0 0 ${w} ${h}`);
-        while(svgB.firstChild) svgB.removeChild(svgB.firstChild);
-
-        const max = Math.max(...dataBars.map(d=>d.val));
-        const rowH = (h - pad.t - pad.b) / dataBars.length;
-        const barH = rowH * 0.64, gap = rowH * 0.36;
-
-        dataBars.forEach((d,i)=>{
-          const y = pad.t + i*(barH+gap);
-          const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-
-          const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-          label.setAttribute('x', pad.l - 12);
-          label.setAttribute('y', y + barH*0.72);
-          label.setAttribute('text-anchor','end');
-          label.setAttribute('fill','var(--viz-text)');
-          label.setAttribute('font-size','12');
-
-          const tFlag = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tFlag.setAttribute('font-size','11');
-          tFlag.textContent = d.flag + ' ';
-          label.appendChild(tFlag);
-
-          const tName = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tName.textContent = d.label;
-          label.appendChild(tName);
-          g.appendChild(label);
-
-          const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
-          bar.setAttribute('x', pad.l);
-          bar.setAttribute('y', y);
-          bar.setAttribute('width', 0);
-          bar.setAttribute('height', barH);
-          bar.setAttribute('rx', 8);
-          bar.setAttribute('fill', d.color);
-          bar.style.transition = 'width 420ms ease';
-          g.appendChild(bar);
-
-          const val = document.createElementNS('http://www.w3.org/2000/svg','text');
-          val.setAttribute('x', pad.l + 6);
-          val.setAttribute('y', y + barH/2 + 4);
-          val.setAttribute('fill','var(--viz-text)');
-          val.setAttribute('font-size','12');
-          val.textContent = d.val;
-          val.style.opacity = 0;
-          g.appendChild(val);
-
-          g.addEventListener('mousemove', (e)=>{
-            const pct = Math.round(d.val/max*100);
-            showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
-            bar.setAttribute('fill', '#35d07a');
-          });
-          g.addEventListener('mouseleave', ()=>{
-            hideTip(); bar.setAttribute('fill', d.color);
-          });
-
-          svgB.appendChild(g);
-
-          requestAnimationFrame(()=>{
-            const wBar = (w - pad.l - pad.r) * (d.val/max);
-            bar.setAttribute('width', wBar);
-            val.setAttribute('x', pad.l + Math.min(wBar - 28, w - pad.r - 28));
-            val.style.opacity = 0.95;
-          });
-        });
-
-        if(legend){
-          legend.innerHTML = '';
-          dataBars.forEach(d=>{
-            const span = document.createElement('span');
-            span.className = 'badge';
-            span.innerHTML = `<span class="dot" style="background:${d.color}"></span>${d.flag} ${d.label}: ${d.val}`;
-            legend.appendChild(span);
-          });
-        }
-      }
-
-      /* 2) Barras Medios (click) */
-      const dataMedia = [
-        {label:'Costa Rica',    flag:'🇨🇷', val:4, medios:['El Financiero','La Nación','La República','Noticias Repretel'], color:'#22b36a'},
-        {label:'Panamá',        flag:'🇵🇦', val:4, medios:['La Estrella','La Prensa','TVN','Telemetro'], color:'#1ea55a'},
-        {label:'R. Dominicana', flag:'🇩🇴', val:6, medios:['Listín Diario','El Dinero','Hoy','El Día','Noticias SIN','El Caribe'], color:'#2bd07a'},
-        {label:'Honduras',      flag:'🇭🇳', val:2, medios:['La Tribuna','El Heraldo'], color:'#24c06a'},
-        {label:'Guatemala',     flag:'🇬🇹', val:1, medios:['Prensa Libre'], color:'#1a8a4a'}
-      ];
-      const svgM = document.getElementById('chartBarsMedia');
-      const legendM = document.getElementById('legendBarsMedia');
-      let openKeyMedia = null;
-
-      const hideTipMedia = () => {
-        hideTip();
-        openKeyMedia = null;
-        if(svgM){
-          svgM.querySelectorAll('rect').forEach(r=>{
-            const base = r.getAttribute('data-base');
-            if(base) r.setAttribute('fill', base);
-          });
-        }
-      };
-
-      document.addEventListener('click', (e)=>{
-        if (!svgM) return;
-        if (!svgM.contains(e.target)) hideTipMedia();
-      });
-      document.addEventListener('keydown', (e)=>{
-        if (e.key === 'Escape') hideTipMedia();
-      });
-
-      function drawBarsMedia(){
-        if(!svgM) return;
-        const w = svgM.clientWidth || 600, h = svgM.clientHeight || 260, pad = {t:10,r:16,b:30,l:126};
-        svgM.setAttribute('viewBox', `0 0 ${w} ${h}`);
-        while(svgM.firstChild) svgM.removeChild(svgM.firstChild);
-
-        const max = Math.max(...dataMedia.map(d=>d.val));
-        const rowH = (h - pad.t - pad.b) / dataMedia.length;
-        const barH = rowH * 0.64, gap = rowH * 0.36;
-
-        dataMedia.forEach((d,i)=>{
-          const y = pad.t + i*(barH+gap);
-          const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-
-          const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-          label.setAttribute('x', pad.l - 12);
-          label.setAttribute('y', y + barH*0.72);
-          label.setAttribute('text-anchor','end');
-          label.setAttribute('fill','var(--viz-text)');
-          label.setAttribute('font-size','12');
-
-          const tFlag = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tFlag.setAttribute('font-size','11');
-          tFlag.textContent = d.flag + ' ';
-          label.appendChild(tFlag);
-
-          const tName = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tName.textContent = d.label;
-          label.appendChild(tName);
-          g.appendChild(label);
-
-          const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
-          bar.setAttribute('x', pad.l);
-          bar.setAttribute('y', y);
-          bar.setAttribute('width', 0);
-          bar.setAttribute('height', barH);
-          bar.setAttribute('rx', 8);
-          bar.setAttribute('fill', d.color);
-          bar.setAttribute('data-base', d.color);
-          bar.style.transition = 'width 420ms ease, fill 120ms ease';
-          g.appendChild(bar);
-
-          const val = document.createElementNS('http://www.w3.org/2000/svg','text');
-          val.setAttribute('x', pad.l + 6);
-          val.setAttribute('y', y + barH/2 + 4);
-          val.setAttribute('fill','var(--viz-text)');
-          val.setAttribute('font-size','12');
-          val.textContent = d.val;
-          val.style.opacity = 0;
-          g.appendChild(val);
-
-          function showTipAt(clientX, clientY){
-            const sample = d.medios.slice(0,4).join(', ');
-            const extra  = d.medios.length - Math.min(4, d.medios.length);
-            const extras = extra > 0 ? ` +${extra} más` : '';
-            tip.innerHTML = `<strong>${d.flag} ${d.label}</strong><br>${d.val} medios<br><em>Ejemplos:</em> ${sample}${extras}`;
-            tip.style.left = (clientX + 12) + 'px';
-            tip.style.top  = (clientY + 12) + 'px';
-            tip.style.display = 'block';
-            tip.setAttribute('aria-hidden','false');
-          }
-
-          function activate(ev){
-            svgM.querySelectorAll('rect').forEach(r=>{
-              const base = r.getAttribute('data-base') || r.getAttribute('fill');
-              r.setAttribute('fill', base);
-            });
-            bar.setAttribute('fill', '#35d07a');
-            openKeyMedia = i;
-            showTipAt(ev.clientX, ev.clientY);
-          }
-
-          function handleClick(ev){
-            if (openKeyMedia === i){
-              hideTipMedia();
-            } else {
-              activate(ev);
-            }
-          }
-
-          g.setAttribute('tabindex', '0');
-          g.addEventListener('keydown', (e)=>{
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }
-          });
-          g.addEventListener('click', handleClick);
-
-          svgM.appendChild(g);
-
-          requestAnimationFrame(()=>{
-            const wBar = (w - pad.l - pad.r) * (d.val/max);
-            bar.setAttribute('width', wBar);
-            val.setAttribute('x', pad.l + Math.min(wBar - 18, w - pad.r - 18));
-            val.style.opacity = 0.95;
-          });
-        });
-
-        if(legendM){
-          legendM.innerHTML = '';
-          dataMedia.forEach(d=>{
-            const span = document.createElement('span');
-            span.className = 'badge';
-            span.innerHTML = `<span class="dot" style="background:${d.color}"></span>${d.flag} ${d.label}: ${d.val}`;
-            legendM.appendChild(span);
-          });
-        }
-      }
-
-      function redrawAll(){
-        hideTipMedia();
-        drawBars();
-        drawBarsMedia();
-      }
-      redrawAll();
-      window.addEventListener('resize', redrawAll);
-    });
-
-    /* ====== Q&A + TTS ====== */
-    document.addEventListener('DOMContentLoaded', () => {
-      const voiceSel   = document.getElementById('voiceSel');
-      const btnSpeak   = document.getElementById('btnSpeak');
-      const btnPause   = document.getElementById('btnPause');
-      const btnStop    = document.getElementById('btnStop');
-      const btnMusic   = document.getElementById('btnMusic');
-      const faqGrid    = document.getElementById('faqGrid');
-      const answerBox  = document.getElementById('answerBox');
-      const subtitleEl = document.getElementById('subtitle');
-      const aiThinking = document.getElementById('aiThinking');
-      const bg         = document.getElementById('bgMusic');
-      const avatar     = document.getElementById('avatar');
-      const avatarVideo= document.getElementById('avatarVideo');
-
-      if (!voiceSel || !btnSpeak || !btnPause || !btnStop || !faqGrid || !answerBox || !subtitleEl){
-        if (answerBox) answerBox.textContent = 'Faltan nodos esenciales; verifica el HTML.';
-        return;
-      }
-
-      // Música: primer clic para iniciar
-      document.addEventListener("click", ()=>{
-        if(bg && bg.paused){
-          bg.volume = 0.18;
-          bg.play().catch(()=>{});
-        }
-      }, {once:true});
-      if (btnMusic && bg){
-        btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
-      }
-
-      // Typewriter cancelable
-      let typeSeq = 0;
-      function typeText(target, text, speed=22){
-        typeSeq++;
-        const mySeq = typeSeq;
-        target.textContent = "";
-        let i = 0;
-        (function step(){
-          if(mySeq !== typeSeq) return;
-          if(i < text.length){
-            target.textContent += text[i++];
-            setTimeout(step, speed);
-          }
-        })();
-      }
-
-      function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
-      let boostTimer = null;
-      function boostOnce(){
-        if(!avatar) return;
-        avatar.classList.add('talking-boost');
-        clearTimeout(boostTimer);
-        boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
-      }
-      function playAvatarVideo(){ avatarVideo && avatarVideo.play().catch(()=>{}); }
-      function pauseAvatarVideo(){ avatarVideo && avatarVideo.pause(); }
-      function stopAvatarVideo(){ if(!avatarVideo) return; try { avatarVideo.pause(); avatarVideo.currentTime = 0; } catch {} }
-
-      /* === TTS Básico (Web Speech) === */
-      const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
-      let voices = [], voicesReady = false, lastUtterance = null, queuedText = null;
-
-      function loadVoices(){
-        voiceSel.innerHTML = '';
-        if (!synth){
-          const opt = document.createElement('option');
-          opt.textContent = 'TTS no disponible'; opt.value = '';
-          voiceSel.appendChild(opt); voiceSel.disabled = true; voicesReady = false; return;
-        }
-        voices = synth.getVoices() || [];
-        if (!voices.length){
-          const opt = document.createElement('option');
-          opt.textContent = 'Cargando voces…'; opt.value = '';
-          voiceSel.appendChild(opt); voicesReady = false; return;
-        }
-        voices.forEach(v => {
-          const opt = document.createElement('option');
-          opt.value = v.name;
-          opt.textContent = `${v.name} — ${v.lang}${v.default ? ' (predeterminada)' : ''}`;
-          voiceSel.appendChild(opt);
-        });
-
-        /* Priorización robusta LATAM (CENTROAM) */
-        const prefer = [
-          /es-CR/i,           // Costa Rica
-          /es-419/i,          // LatAm
-          /spanish.*(latin|latino|mexico)/i,
-          /es-(MX|CO|AR|CL|PE|PA|GT|SV|NI|HN|DO)/i,
-          /spanish.*(united states)/i,
-          /spanish|^es/i
-        ];
-        for (const rx of prefer) {
-          const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
-          if (match) { voiceSel.value = match.name; break; }
-        }
-        voicesReady = true;
-        if (queuedText){ const t = queuedText; queuedText = null; speakNow(t); }
-      }
-      loadVoices();
-      if (synth && 'onvoiceschanged' in synth) synth.onvoiceschanged = loadVoices;
-
-      function getSelectedVoice(){
-        if (!voices.length) return null;
-        const name = voiceSel.value;
-        return voices.find(v => v.name === name)
-            || voices.find(v => /es-CR|es-419/i.test(v.lang))
-            || voices.find(v => /spanish|^es/i.test(v.lang))
-            || voices[0];
-      }
-
-      function queueSpeak(text){
-        if (!text) return;
-        // Si activas modo PRO, intercepta aquí (ver bloque más abajo)
-        if (!synth){ return; }
-        if (!voicesReady){ queuedText = text; setTimeout(loadVoices, 250); return; }
-        speakNow(text);
-      }
-
-      function speakNow(text){
-        try{
-          synth.cancel();
-          const u = new SpeechSynthesisUtterance(text);
-          const v = getSelectedVoice();
-          if (v) u.voice = v;
-          u.lang = (v && v.lang) ? v.lang : 'es-ES';
-          u.rate = 1; u.pitch = 1; u.volume = 1;
-
-          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); };
-          u.onend     = () => { setTalking(false); stopAvatarVideo(); };
-          u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
-
-          lastUtterance = u;
-          synth.speak(u);
-        } catch(e){
-          aiThinking.style.display='none';
-        }
-      }
-
-      // Clicks FAQ
-      faqGrid.querySelectorAll('.qbtn').forEach(btn => {
-        btn.onclick = () => {
-          const text = btn.dataset.answer || '';
-          aiThinking.style.display='block';
-          typeText(answerBox, text);
-          subtitleEl.textContent = text;
-          queueSpeak(text);
-        };
-      });
-
-      // Botón Reproducir
-      btnSpeak.onclick = () => {
-        const text = (answerBox.textContent || '').trim();
-        if (text) queueSpeak(text);
-      };
-
-      // Exponer helpers
-      window.typeText = typeText;
-      window.queueSpeak = queueSpeak;
-
-      // Bienvenida
-      const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
-      typeText(answerBox, bienvenida);
-      subtitleEl.textContent = bienvenida;
-    });
-
-    /* ====== Helpers para agregar preguntas ====== */
-    (function(){
-      const grid = document.getElementById('faqGrid');
-      if(!grid) return;
-
-      window.addQA = function(questionText, answerText){
-        const btn = document.createElement('button');
-        btn.className = 'qbtn';
-        btn.setAttribute('role','listitem');
-        btn.textContent = questionText;
-        btn.dataset.answer = answerText;
-
-        btn.onclick = () => {
-          const text = btn.dataset.answer || '';
-          const aiThinking = document.getElementById('aiThinking');
-          if (aiThinking) aiThinking.style.display='block';
-
-          const answerBox  = document.getElementById('answerBox');
-          const subtitleEl = document.getElementById('subtitle');
-          if (answerBox && subtitleEl){
-            if (typeof window.typeText === 'function'){ window.typeText(answerBox, text); }
-            else { answerBox.textContent = text; }
-            subtitleEl.textContent = text;
-          }
-          if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
-          if (aiThinking) setTimeout(()=> aiThinking.style.display='none', 100);
-        };
-
-        grid.appendChild(btn);
-      };
-
-      window.bulkAddQA = function(list){ (list || []).forEach(item => addQA(item.q, item.a)); };
-    })();
-
-    /* ==== Agregar preguntas adicionales (tu bloque original) ==== */
-    (function(){
-      bulkAddQA([
-        /* … (Mantengo tu lista tal cual) … */
-      ]);
-    })();
-
-    /* ==== Numerar preguntas automáticamente ==== */
-    (function(){
-      const grid = document.getElementById('faqGrid');
-      if (!grid) return;
-      function renumberFAQ() {
-        const items = [...grid.querySelectorAll('.qbtn')];
-        items.forEach((btn, idx) => {
-          const text = btn.textContent.replace(/^\d+\.\s*/, "").trim();
-          btn.textContent = `${idx + 1}. ${text}`;
-        });
-      }
-      renumberFAQ();
-      const oldAddQA = window.addQA;
-      if (typeof oldAddQA === "function") {
-        window.addQA = function(q, a){
-          oldAddQA(q, a);
-          renumberFAQ();
-        };
-      }
-      const oldBulk = window.bulkAddQA;
-      if (typeof oldBulk === "function") {
-        window.bulkAddQA = function(list){
-          oldBulk(list);
-          renumberFAQ();
-        };
-      }
-    })();
-
-    /* ==== Parche pausar/detener ==== */
-    (function(){
-      if (!('speechSynthesis' in window)) return;
-
-      const synth    = window.speechSynthesis;
-      const btnPause = document.getElementById('btnPause');
-      const btnStop  = document.getElementById('btnStop');
-      const btnSpeak = document.getElementById('btnSpeak');
-      const answerBox  = document.getElementById('answerBox');
-      const avatarEl   = document.getElementById('avatar');
-      const avatarVideo= document.getElementById('avatarVideo');
-
-      function setTalking(on){ avatarEl && avatarEl.classList.toggle('talking', !!on); }
-      function playAvatarVideo(){ avatarVideo && avatarVideo.play().catch(()=>{}); }
-      function stopAvatarVideo(){ if(!avatarVideo) return; try { avatarVideo.pause(); avatarVideo.currentTime = 0; } catch {} }
-
-      function setBtnLabels(){
-        if (!btnPause) return;
-        if (synth.paused)       btnPause.textContent = '▶ Reanudar';
-        else if (synth.speaking)btnPause.textContent = '⏸️ Pausar';
-        else                    btnPause.textContent = '⏸️ Pausar';
-      }
-      function hardCancel(){
-        try { synth.cancel(); } catch {}
-        setTalking(false);
-        stopAvatarVideo();
-        setBtnLabels();
-      }
-      function pauseResume(e){
-        e && e.preventDefault();
-        if (!synth) return;
-        if (synth.speaking && !synth.paused){
-          try { synth.pause(); } catch {}
-          setTalking(false);
-          try { avatarVideo && avatarVideo.pause(); } catch {}
-          setBtnLabels();
-          return;
-        }
-        if (synth.paused){
-          try { synth.resume(); } catch {}
-          setTimeout(()=>{ if (synth.speaking && !synth.paused) { setTalking(true); playAvatarVideo(); } }, 30);
-          setBtnLabels();
-          return;
-        }
-        const last = (answerBox && (answerBox.textContent||'').trim()) || '';
-        if (last && typeof window.queueSpeak === 'function'){
-          window.queueSpeak(last);
-        }
-      }
-      function stopAll(e){
-        e && e.preventDefault();
-        if (!synth) return;
-        hardCancel();
-      }
-
-      if (btnPause){ btnPause.onclick = pauseResume; }
-      if (btnStop ){ btnStop .onclick = stopAll; }
-
-      if (btnSpeak){
-        const orig = btnSpeak.onclick;
-        btnSpeak.onclick = function(ev){
-          hardCancel();
-          if (typeof orig === 'function') orig.call(this, ev);
-        };
-      }
-
-      const visInterval = setInterval(setBtnLabels, 250);
-      window.addEventListener('beforeunload', () => clearInterval(visInterval));
-    })();
-
-    /* ====== Música corporativa (persistencia) ====== */
-    (function(){
-      const bg  = document.getElementById('bgMusic');
-      const btn = document.getElementById('btnMusic');
-      if (!bg) return;
-
-      const LS_KEY = 'bgMusicMuted';
-      const saved = localStorage.getItem(LS_KEY);
-      bg.muted = (saved === 'true');
-      bg.volume = 0.18;
-      if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
-
-      function syncBtn(){
-        if (!btn) return;
-        btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
-        btn.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
-        btn.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
-      }
-      syncBtn();
-
-      async function tryPlay(){ try { await bg.play(); } catch(_) {} }
-      const unlock = async () => {
-        if (bg.paused) await tryPlay();
-        window.removeEventListener('click', unlock);
-        window.removeEventListener('keydown', unlock);
-      };
-      window.addEventListener('click',  unlock, { once:true });
-      window.addEventListener('keydown', unlock, { once:true });
-
-      if (btn){
-        btn.addEventListener('click', async () => {
-          bg.muted = !bg.muted;
-          localStorage.setItem(LS_KEY, String(bg.muted));
-          syncBtn();
-          if (!bg.muted && bg.paused) await tryPlay();
-        });
-        btn.addEventListener('click', (e) => {
-          if (e.shiftKey){
-            localStorage.removeItem(LS_KEY);
-            bg.muted = false;
-            syncBtn();
-          }
-        }, { capture:true });
-      }
-
-      document.addEventListener('keydown', async (e) => {
-        if ((e.key || '').toLowerCase() === 'm'){
-          bg.muted = !bg.muted;
-          localStorage.setItem(LS_KEY, String(bg.muted));
-          syncBtn();
-          if (!bg.muted && bg.paused) await tryPlay();
-        }
-      });
-    })();
-
-    /* ========= OPCIONAL: TTS PRO CON AZURE (uniforme en todos los dispositivos) =========
-       1) Crea un endpoint backend que retorne un token de Azure Speech y tu región.
-       2) Reemplaza fetch('/api/azure-speech-token') por tu ruta real.
-       3) Ajusta voiceName masculino/femenino (p.ej.: 'es-CR-JuanNeural' y 'es-CR-MariaNeural' si tu suscripción los tiene).
-       4) Descomenta y, en queueSpeak(), intercepta para usar playAzure(text) en vez de Web Speech.
-    */
-    /*
-    async function getAzureToken(){
-      const r = await fetch('/api/azure-speech-token'); // tu endpoint seguro
-      if (!r.ok) throw new Error('No se pudo obtener token de voz');
-      return r.json(); // { token: '...', region: '...' }
-    }
-    let azureAudio = null;
-    async function playAzure(text, gender='F'){
-      const { token, region } = await getAzureToken();
-      const voiceName = gender === 'M' ? 'es-CR-JuanNeural' : 'es-CR-MariaNeural';
-      const ssml = `
-        <speak version="1.0" xml:lang="es-CR">
-          <voice xml:lang="es-CR" name="${voiceName}">
-            ${text.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
-          </voice>
-        </speak>`;
-      const r = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
-        method:'POST',
-        headers:{
-          'Authorization': 'Bearer ' + token,
-          'Content-Type':'application/ssml+xml',
-          'X-Microsoft-OutputFormat':'audio-24khz-48kbitrate-mono-mp3'
-        },
-        body:ssml
-      });
-      if (!r.ok) throw new Error('Azure TTS error');
-      const blob = await r.blob();
-      if (azureAudio){ try{ azureAudio.pause(); }catch{} }
-      azureAudio = new Audio(URL.createObjectURL(blob));
-      azureAudio.onplay = () => { document.getElementById('aiThinking').style.display='none'; document.getElementById('avatar').classList.add('talking'); document.getElementById('avatarVideo').play().catch(()=>{}); };
-      azureAudio.onended= () => { document.getElementById('avatar').classList.remove('talking'); try{ const v=document.getElementById('avatarVideo'); v.pause(); v.currentTime=0; }catch{} };
-      azureAudio.onerror= () => { document.getElementById('avatar').classList.remove('talking'); };
-      await azureAudio.play();
-    }
-    */
-  </script>
-
-<!-- ===== PARCHE COMPAT: fondo claro + voces ES (no quita elementos) ===== -->
 <script>
-(() => {
-  "use strict";
+  const respuestas = {
+    "servicios": "Deloitte ofrece servicios en auditoría, consultoría, impuestos, riesgo y tecnología.",
+    "inteligencia artificial": "Deloitte ayuda a las organizaciones a implementar IA de forma ética, segura y escalable.",
+    "contacto": "Puede conocer más en nuestro stand o con un representante de Deloitte.",
+    "default": "Esta AI responde únicamente sobre Deloitte y sus capacidades."
+  };
 
-  /* 1) Fuerza tema claro homogéneo con CSS inyectado (sin tocar tu <style>) */
-  const css = `
-    :root{ color-scheme: light !important; }
-    body{ background:#f4f4f4 !important; color:#111 !important; }
-    header{ background:#ffffff !important; border-bottom-color:#1c8c3f !important; }
-    .left,.right{ border-color: rgba(0,0,0,.08) !important; }
-    .grid{ background:rgba(246,250,247,1) !important; }
-    .card{ background:#ffffff !important; color:#111 !important; }
-    .qbtn{ background:#ffffff !important; color:#111 !important; border-color: rgba(0,0,0,.08) !important; }
-    .answer{ background:#ffffff !important; color:#111 !important; border-color: rgba(0,0,0,.08) !important; }
-    .subtitle{
-      background: rgba(255,255,255,.82) !important; color:#0b0e11 !important;
-      border:1px solid rgba(0,0,0,.08) !important;
-    }
-    .fx-grid{ mix-blend-mode: normal !important; opacity:.75 !important; }
-    #vizTip{
-      background:#ffffff !important; color:#0b0e11 !important;
-      border-color: rgba(0,0,0,.15) !important; box-shadow:0 10px 24px rgba(0,0,0,.12) !important;
-    }
-    .viz text{ fill:#0b0e11 !important; }
-  `;
-  const style = document.createElement('style');
-  style.setAttribute('data-force-light','1');
-  style.textContent = css;
-  document.head.appendChild(style);
+  function sendMessage() {
+    const input = document.getElementById("userInput");
+    const chatBox = document.getElementById("chatBox");
+    const text = input.value.toLowerCase();
 
-  /* Evitar traducción automática (por si algún navegador fuerza traducción de UI) */
-  const metaNotranslate = document.createElement('meta');
-  metaNotranslate.name = 'google';
-  metaNotranslate.content = 'notranslate';
-  document.head.appendChild(metaNotranslate);
+    if (!text) return;
 
-  /* 2) TTS: mostrar SOLO voces en español y priorizar Centroamérica/LatAm */
-  const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
-  const voiceSel = document.getElementById('voiceSel');
+    chatBox.innerHTML += `<div class="chat-message user">${input.value}</div>`;
 
-  function spanishFilter(list){
-    return (list||[]).filter(v=>{
-      const tag = (v.lang||'').toLowerCase();
-      const name= (v.name||'').toLowerCase();
-      return (
-        /^es(-|$)/.test(tag) ||                                     // es-*
-        /es-419|es-cr|es-mx|es-pa|es-gt|es-sv|es-ni|es-hn|es-do|es-co|es-ar|es-cl|es-pe|es-uy|es-bo|es-py|es-ec|es-ve/.test(tag) ||
-        /spanish|español/.test(name)
-      );
-    });
-  }
-  function score(v){
-    const t = ((v.lang||'') + ' ' + (v.name||'')).toLowerCase();
-    if (/es-cr/.test(t)) return 10;      // Costa Rica primero
-    if (/es-419/.test(t)) return 9;      // LatAm
-    if (/es-mx|es-pa|es-gt|es-sv|es-ni|es-hn|es-do/.test(t)) return 8; // C.A./MX/RD
-    if (/es-co|es-ar|es-cl|es-pe|es-uy|es-bo|es-py|es-ec|es-ve/.test(t)) return 7;
-    if (/^es/.test(t)) return 6;
-    return 0;
-  }
-
-  function refillSelect(){
-    if (!synth || !voiceSel) return;
-    const all = synth.getVoices() || [];
-    const es = spanishFilter(all).sort((a,b)=>score(b)-score(a));
-
-    // Si NO hay voces ES, mostrar un único ítem informativo y deshabilitar selector
-    if (!es.length){
-      voiceSel.innerHTML = '';
-      const opt = document.createElement('option');
-      opt.value = '';
-      opt.textContent = 'Español (automático)';
-      voiceSel.appendChild(opt);
-      voiceSel.disabled = true;
-      return;
-    }
-
-    // Llenar SOLO con voces ES
-    const prev = voiceSel.value;
-    voiceSel.innerHTML = '';
-    es.forEach(v=>{
-      const opt = document.createElement('option');
-      opt.value = v.name;
-      opt.textContent = `${v.name.replace(/Google\\s*|Microsoft\\s*/gi,'').trim()} — ${v.lang}`;
-      voiceSel.appendChild(opt);
-    });
-
-    // Seleccionar la mejor o conservar si existe
-    const found = es.find(v => v.name === prev) || es[0];
-    voiceSel.value = found.name;
-    voiceSel.disabled = false;
-  }
-
-  function ensureSpanishSelected(){
-    if (!voiceSel || voiceSel.disabled) return;
-    const selText = (voiceSel.options[voiceSel.selectedIndex]?.text || '').toLowerCase();
-    if (!/es-|spanish|español/.test(selText)){
-      voiceSel.selectedIndex = 0; // siempre una voz ES
-    }
-  }
-
-  // Ejecutar cuando el navegador informe voces y también con reintentos (algunos tardan)
-  if (synth){
-    synth.onvoiceschanged = () => { refillSelect(); ensureSpanishSelected(); };
-    let tries = 0;
-    const t = setInterval(()=>{
-      refillSelect(); ensureSpanishSelected();
-      if (++tries > 10 || (voiceSel && voiceSel.options.length)) clearInterval(t);
-    }, 250);
-  }
-
-  // Última defensa: antes de hablar (botón o FAQ) nos aseguramos voz ES seleccionada
-  document.addEventListener('click', (e)=>{
-    const target = e.target;
-    const id = target && target.id;
-    if (id === 'btnSpeak' || target.classList?.contains('qbtn')){
-      ensureSpanishSelected();
-    }
-  }, true);
-
-  /* 3) FORZAR por defecto 'es-419' (LatAm) en SpeechSynthesisUtterance SIN tocar tu speakNow
-        - Si tu speakNow no asigna una voz concreta o el navegador no tiene voces ES,
-          este shim pone lang='es-419' por defecto (en vez de 'es-ES').
-        - No interfiere si ya seleccionaste una voz ES concreta (respeta u.lang existente).
-  */
-  try{
-    if ('SpeechSynthesisUtterance' in window && !window.__ssu_es419_patched__){
-      const NativeSSU = window.SpeechSynthesisUtterance;
-      function PatchedSSU(text){
-        const u = new NativeSSU(text);
-        // Si no viene lang o no empieza por español, forzar es-419
-        if (!u.lang || !/^es(-|$)/i.test(u.lang)) {
-          u.lang = 'es-419';
-        }
-        return u;
+    let response = respuestas.default;
+    for (let key in respuestas) {
+      if (text.includes(key)) {
+        response = respuestas[key];
       }
-      // Mantener prototipo y propiedades
-      PatchedSSU.prototype = NativeSSU.prototype;
-      Object.setPrototypeOf(PatchedSSU, NativeSSU);
-      window.SpeechSynthesisUtterance = PatchedSSU;
-      window.__ssu_es419_patched__ = true;
     }
-  } catch(_) {}
-})();
+
+    setTimeout(() => {
+      chatBox.innerHTML += `<div class="chat-message bot">${response}</div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 600);
+
+    input.value = "";
+  }
 </script>
-<!-- ===== FIN PARCHE ===== -->
+
 </body>
 </html>
-
