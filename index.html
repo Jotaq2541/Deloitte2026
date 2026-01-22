@@ -27,51 +27,36 @@
     }
     *{box-sizing:border-box}
 
-    /* ==== FONDO “AI” TECNOLÓGICO (sutil y legible) ==== */
+    /* ==== FONDO AI TECNOLÓGICO ==== */
     body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
+      margin:0; color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      position:relative;
-      min-height:100dvh;
-      overflow-x:hidden;
+      min-height:100dvh; overflow-x:hidden;
       background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
+      position:relative;
     }
-    /* Capa animada (grid/flux) */
     body::before{
-      content:"";
-      position:fixed; inset:0; z-index:-2;
+      content:""; position:fixed; inset:0; z-index:-2;
       background:
         radial-gradient(1200px 600px at 15% 0%, #0e1117 0%, var(--bg) 60%),
         repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
       background-blend-mode:screen;
-      animation: bgShift 36s linear infinite;
-      opacity:.75;
-      pointer-events:none;
+      animation: bgShift 36s linear infinite; opacity:.75; pointer-events:none;
     }
-    /* Capa de glow leve */
     body::after{
-      content:"";
-      position:fixed; inset:0; z-index:-1;
+      content:""; position:fixed; inset:0; z-index:-1;
       background:
         radial-gradient(800px 400px at 80% 20%, rgba(34,179,106,.12), transparent 60%),
         radial-gradient(600px 300px at 20% 80%, rgba(28,140,63,.10), transparent 60%);
-      filter: blur(14px);
-      pointer-events:none;
+      filter: blur(14px); pointer-events:none;
     }
-    @keyframes bgShift{
-      0%{ background-position: 0 0, 0 0; }
-      100%{ background-position: 0 0, 480px 280px; }
-    }
+    @keyframes bgShift{ 0%{background-position:0 0,0 0} 100%{background-position:0 0,480px 280px} }
 
     /* === CABECERA === */
     header{
-      padding:16px 20px;
-      border-bottom:2px solid var(--brand);
-      background:rgba(15,19,23,.75);
-      backdrop-filter: blur(6px);
-      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      padding:16px 20px; border-bottom:2px solid var(--brand);
+      background:rgba(15,19,23,.75); backdrop-filter: blur(6px);
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
       box-shadow: var(--shadow-2);
     }
     .brand{display:flex;align-items:center;gap:10px}
@@ -89,7 +74,7 @@
       box-shadow:0 1px 0 rgba(255,255,255,.15) inset, 0 1px 8px rgba(0,0,0,.12);
       cursor:pointer;
     }
-    .btn-primary{ background:linear-gradient(180deg,#27ae60,#1c8c3f); color:#ffffff;border:1px solid #1c8c3f }
+    .btn-primary{ background:linear-gradient(180deg,#27ae60,#1c8c3f); color:#fff; border:1px solid #1c8c3f }
     .btn-ghost{background:#e9efe9}
     .controls select:hover,.controls .btn:hover{filter:brightness(1.06)}
     .controls select:focus-visible,.controls .btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -97,39 +82,31 @@
     .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
     @media (max-width:1100px){ .wrap{grid-template-columns:1fr} }
 
-    /* ==== CONTENEDORES CON GLASSMORPHISM (3D) ==== */
+    /* ==== CONTENEDORES GLASSMORPHISM ==== */
     .left,.right{
-      background: var(--glass-bg);
-      border:1px solid var(--glass-border);
-      border-radius:14px;
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow-1);
+      background: var(--glass-bg); border:1px solid var(--glass-border); border-radius:14px;
+      backdrop-filter: blur(10px); box-shadow: var(--shadow-1);
     }
     .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
     .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
 
     .panel{
-      padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
       background:linear-gradient(180deg, rgba(255,255,255,.06), transparent);
-      border-top-left-radius:14px;border-top-right-radius:14px;
+      border-top-left-radius:14px; border-top-right-radius:14px;
     }
     .panel h2{margin:0;font-size:16px}
 
     .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
     .card{
-      background:rgba(8,12,15,.6);
-      border:1px solid rgba(255,255,255,.08);
+      background:rgba(8,12,15,.6); border:1px solid rgba(255,255,255,.08);
       border-radius:12px; padding:12px; position:relative;
       box-shadow: 0 18px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
       transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
       perspective:800px; transform-style:preserve-3d;
     }
-    .card:hover{
-      transform: translateY(-3px);
-      box-shadow: 0 24px 56px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
-      border-color: rgba(34,179,106,.28);
-    }
+    .card:hover{ transform: translateY(-3px); box-shadow: 0 24px 56px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08); border-color: rgba(34,179,106,.28) }
 
     .qbtn{
       width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);
@@ -142,10 +119,7 @@
       box-shadow:0 0 6px rgba(32,163,74,.24), 0 0 18px rgba(32,163,74,.12) inset, 0 10px 26px rgba(0,0,0,.35);
       transform: translateY(-1px);
     }
-    .qbtn:active{
-      background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.4) 50%, rgba(28,140,63,.15) 100%);
-      transform: translateY(0);
-    }
+    .qbtn:active{ background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.4) 50%, rgba(28,140,63,.15) 100%); transform: translateY(0) }
     .qbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
     .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
@@ -154,45 +128,27 @@
 
     /* === AVATAR === */
     .avatar{
-      position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
-      background:#07090d;border:1px solid rgba(32,163,74,.35);
+      position:relative; aspect-ratio:4/5; border-radius:12px; overflow:hidden;
+      background:#07090d; border:1px solid rgba(32,163,74,.35);
       box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35);
-      contain: layout paint;
+      /* Mantener estable (sin animar transform del contenedor) */
       will-change: transform; transform: translateZ(0);
     }
     .avatar .media{
-      position:absolute;inset:0;width:100%;height:100%;
-      object-fit:cover;object-position:center;display:block;
+      position:absolute; inset:0; width:100%; height:100%;
+      object-fit:cover; object-position:center; display:block;
       will-change: auto; transform: translateZ(0);
-      transition: filter .18s ease;
+      transition: filter .18s ease; /* NO animamos transform del video */
     }
     .subtitle{
-      position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
-      backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
+      position:absolute; bottom:8px; left:8px; right:8px; background:rgba(0,0,0,.45);
+      backdrop-filter:blur(4px); padding:8px; border-radius:8px; font-size:12px; max-height:38%; overflow:auto
     }
 
-    /* === AVATAR: VIDA MIENTRAS HABLA (animar contenedor, no el video) === */
-    #avatar.talking{ animation: avatarBob 1.25s ease-in-out infinite; }
-    @keyframes avatarBob{
-      0%   { transform: translateZ(0) translateY(0) rotate(0deg) }
-      25%  { transform: translateZ(0) translateY(-0.25%) rotate(-0.04deg) }
-      50%  { transform: translateZ(0) translateY(0.08%)  rotate(0.03deg) }
-      75%  { transform: translateZ(0) translateY(-0.18%) rotate(0.04deg) }
-      100% { transform: translateZ(0) translateY(0) rotate(0deg) }
-    }
-
-    /* Halo/respiración */
-    #avatar::before{
-      content:""; position:absolute; inset:-3%; border-radius:12px;
-      background:
-        radial-gradient(65% 60% at 50% 40%, rgba(32,163,74,.25), rgba(32,163,74,0) 60%),
-        radial-gradient(60% 55% at 50% 70%, rgba(28,140,63,.18), rgba(28,140,63,0) 70%);
-      opacity:0; pointer-events:none; filter: blur(6px); transform: scale(1);
-      transition: opacity .15s ease;
-    }
-    #avatar.talking::before{opacity:.65; animation: haloBreath 1.25s ease-in-out infinite}
-    @keyframes haloBreath{0%{transform:scale(1); filter:blur(6px)} 50%{transform:scale(1.03); filter:blur(7px)} 100%{transform:scale(1); filter:blur(6px)}}
-
+    /* === AVATAR: SOLO ECUALIZADOR (sin “cabeceo” para evitar saltos) === */
+    #avatar.talking{ /* sin animaciones de movimiento */ }
+    /* Desactivamos halo animado para máxima estabilidad */
+    #avatar::before{ content:""; position:absolute; inset:-3%; border-radius:12px; opacity:0; }
     /* Ecualizador (se mantiene) */
     #avatar::after{
       content:""; position:absolute; left:8%; bottom:10%;
@@ -215,8 +171,6 @@
 
     /* Accesibilidad: menos movimiento */
     @media (prefers-reduced-motion: reduce){
-      #avatar.talking{ animation:none }
-      #avatar.talking::before{ animation:none }
       #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6 }
     }
 
@@ -243,13 +197,7 @@
     }
     @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
 
-    /* Títulos de gráficos */
-    .card h3{
-      margin:0 0 8px 0;
-      font-size:15px;
-      color:var(--viz-text);
-      text-shadow: 0 1px 0 rgba(0,0,0,.35);
-    }
+    .card h3{ margin:0 0 8px 0; font-size:15px; color:var(--viz-text); text-shadow: 0 1px 0 rgba(0,0,0,.35) }
     .viz{ width:100%; height:260px; display:block }
     .viz text{
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
@@ -290,7 +238,7 @@
         --chip-bg-hover:#f2f7f4;
       }
       body{ background:#f4f4f4; color:#111 }
-      header{ background:#ffffff; border-bottom-color:#1c8c3f }
+      header{ background:rgba(255,255,255,.8); border-bottom-color:#1c8c3f; backdrop-filter: blur(6px) }
       .left,.right{ border-color: rgba(0,0,0,.08) }
       .qbtn{ background:#ffffff; color:#111 }
       .answer{ background:#ffffff }
@@ -323,11 +271,11 @@
     <!-- Izquierda: AVATAR (VIDEO + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- Video fluido: sin animar transform del <video>, con warm-up -->
+        <!-- Video estable (sin animar transform); ecualizador aparte -->
         <video id="avatarVideo" class="media" muted playsinline preload="auto" loop
                poster="./741349c8be401dbf3728fc41f925c741.jpg">
           <source src="./Diseño sin título (5).mp4" type="video/mp4" />
-          <!-- Opcional: <source src="./avatar.webm" type="video/webm" /> -->
+          <!-- (opcional) <source src="./avatar.webm" type="video/webm" /> -->
         </video>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
@@ -356,7 +304,7 @@
           <div class="legend" id="legendBars"></div>
         </div>
 
-        <!-- 👇 Eliminada la tarjeta “Empresas públicas auditadas” -->
+        <!-- (ELIMINADA la tarjeta de “Empresas públicas auditadas”) -->
 
         <div class="card">
           <h3>Medios destacados por país</h3>
@@ -365,7 +313,7 @@
         </div>
       </div>
 
-      <!-- Preguntas base (SIN la pregunta de empresas auditadas) -->
+      <!-- Preguntas base (sin la pregunta de empresas auditadas; re-numeración automática) -->
       <div class="grid" id="faqGrid" role="list">
         <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
@@ -388,10 +336,10 @@
     </section>
   </main>
 
-  <!-- Música corporativa (opcional) -->
+  <!-- Música corporativa (si no existe, la página funciona igual) -->
   <audio id="bgMusic" src="./musica-corporativa.mp3" preload="auto" loop></audio>
 
-  <!-- Tooltip de gráficos -->
+  <!-- Tooltip global de gráficos -->
   <div id="vizTip" role="tooltip" aria-hidden="true"></div>
 
   <!-- Onda AI decorativa -->
@@ -459,6 +407,7 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
+          // Gradiente por barra
           const gid = `gradB_${i}`;
           const grad = document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
           grad.setAttribute('id', gid); grad.setAttribute('x1','0'); grad.setAttribute('y1','0'); grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
@@ -469,6 +418,7 @@
           `;
           defs.appendChild(grad);
 
+          // etiqueta
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
@@ -481,20 +431,22 @@
           tName.textContent = d.label; label.appendChild(tName);
           g.appendChild(label);
 
+          // barra
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
           bar.setAttribute('x', pad.l); bar.setAttribute('y', y);
           bar.setAttribute('width', 0); bar.setAttribute('height', barH); bar.setAttribute('rx', 8);
-          bar.setAttribute('fill', `url(#${gid})`);
-          bar.setAttribute('filter', 'url(#dropSoft)');
+          bar.setAttribute('fill', `url(#${gid})`); bar.setAttribute('filter', 'url(#dropSoft)');
           bar.style.transition = 'width 420ms ease';
           g.appendChild(bar);
 
+          // valor
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
           val.setAttribute('x', pad.l + 6); val.setAttribute('y', y + barH/2 + 4);
           val.setAttribute('fill','var(--viz-text)'); val.setAttribute('font-size','12');
           val.textContent = d.val; val.style.opacity = 0;
           g.appendChild(val);
 
+          // interacción
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
             showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
@@ -511,6 +463,7 @@
           });
         });
 
+        // Leyenda
         if(legend){
           legend.innerHTML = '';
           dataBars.forEach(d=>{
@@ -533,13 +486,33 @@
       const svgM = document.getElementById('chartBarsMedia');
       const legendM = document.getElementById('legendBarsMedia');
 
+      // Estado de tooltip por clic
       let openKeyMedia = null;
+
+      function hideTip(){ tip.style.display='none'; tip.setAttribute('aria-hidden','true'); }
       function hideTipMedia(){
         hideTip(); openKeyMedia = null;
-        if(svgM){ svgM.querySelectorAll('rect').forEach(r=>{ const base=r.getAttribute('data-base'); if(base) r.setAttribute('fill', base); }); }
+        if(svgM){
+          svgM.querySelectorAll('rect').forEach(r=>{
+            const base = r.getAttribute('data-base');
+            if(base) r.setAttribute('fill', base);
+          });
+        }
       }
       document.addEventListener('click', (e)=>{ if (svgM && !svgM.contains(e.target)) hideTipMedia(); });
       document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') hideTipMedia(); });
+
+      function ensureDefs(svg){
+        let defs = svg.querySelector('defs');
+        if(!defs){ defs = document.createElementNS('http://www.w3.org/2000/svg','defs'); svg.appendChild(defs); }
+        if(!defs.querySelector('#dropSoft')){
+          const f = document.createElementNS('http://www.w3.org/2000/svg','filter');
+          f.setAttribute('id','dropSoft'); f.setAttribute('x','-20%'); f.setAttribute('y','-20%'); f.setAttribute('width','140%'); f.setAttribute('height','140%');
+          f.innerHTML = `<feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,.4)" flood-opacity="1"/>`;
+          defs.appendChild(f);
+        }
+        return defs;
+      }
 
       function drawBarsMedia(){
         if(!svgM) return;
@@ -557,6 +530,7 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
+          // etiqueta izquierda con banderita
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 12); label.setAttribute('y', y + barH*0.72);
           label.setAttribute('text-anchor','end'); label.setAttribute('fill','var(--viz-text)'); label.setAttribute('font-size','12');
@@ -566,6 +540,7 @@
           tName.textContent = d.label; label.appendChild(tName);
           g.appendChild(label);
 
+          // Gradiente
           const gid = `gradM_${i}`;
           const grad = document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
           grad.setAttribute('id', gid); grad.setAttribute('x1','0'); grad.setAttribute('y1','0'); grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
@@ -590,6 +565,7 @@
           val.textContent = d.val; val.style.opacity = 0;
           g.appendChild(val);
 
+          // CLIC = tooltip
           function showTipAt(clientX, clientY){
             const sample = d.medios.slice(0,4).join(', ');
             const extra  = d.medios.length - Math.min(4, d.medios.length);
@@ -600,21 +576,15 @@
             tip.style.display = 'block';
             tip.setAttribute('aria-hidden','false');
           }
-
           function activate(ev){
             svgM.querySelectorAll('rect').forEach(r=>{
               const base = r.getAttribute('data-base') || r.getAttribute('fill');
               r.setAttribute('fill', base);
             });
             bar.setAttribute('fill', '#35d07a');
-            openKeyMedia = i;
-            showTipAt(ev.clientX, ev.clientY);
+            openKeyMedia = i; showTipAt(ev.clientX, ev.clientY);
           }
-
-          function handleClick(ev){
-            if (openKeyMedia === i){ hideTipMedia(); }
-            else { activate(ev); }
-          }
+          function handleClick(ev){ if (openKeyMedia === i){ hideTipMedia(); } else { activate(ev); } }
 
           g.setAttribute('tabindex', '0');
           g.addEventListener('keydown', (e)=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }});
@@ -684,20 +654,12 @@
       // TYPEWRITER cancelable
       let typeSeq = 0;
       function typeText(target, text, speed=22){
-        typeSeq++;
-        const mySeq = typeSeq;
-        target.textContent = "";
-        let i = 0;
-        (function step(){
-          if(mySeq !== typeSeq) return;
-          if(i < text.length){
-            target.textContent += text[i++];
-            setTimeout(step, speed);
-          }
-        })();
+        typeSeq++; const mySeq = typeSeq;
+        target.textContent = ""; let i = 0;
+        (function step(){ if(mySeq !== typeSeq) return; if(i < text.length){ target.textContent += text[i++]; setTimeout(step, speed); } })();
       }
 
-      // Clase visual “hablando” (anima contenedor, no el video)
+      // Clase visual “hablando” (solo activa ecualizador)
       function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
 
       // Control del video del avatar (solo habla con TTS)
@@ -705,29 +667,22 @@
       function pauseAvatarVideo(){ if (avatarVideo) avatarVideo.pause(); }
       function stopAvatarVideo(){ if (avatarVideo){ try{ avatarVideo.pause(); avatarVideo.currentTime = 0; }catch{} } }
 
-      // Warm-up del video para primera reproducción fluida
-      if (avatarVideo) {
-        avatarVideo.muted = true;
-        avatarVideo.preload = 'auto';
-        avatarVideo.play().then(()=>{ avatarVideo.pause(); try { avatarVideo.currentTime = 0; } catch {} }).catch(()=>{});
-      }
-
       // TTS
       const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
-      let voices = [], voicesReady = false, lastUtterance = null, queuedText = null;
+      let voices = [], voicesReady = false, queuedText = null;
 
       function loadVoices(){
         voiceSel.innerHTML = '';
         if (!synth){
           const opt = document.createElement('option');
           opt.textContent = 'TTS no disponible'; opt.value = '';
-          voiceSel.appendChild(opt); voiceSel.disabled = true; voicesReady = false; return;
+          voiceSel.appendChild(opt); voiceSel.disabled = true; return;
         }
         voices = synth.getVoices() || [];
         if (!voices.length){
           const opt = document.createElement('option');
           opt.textContent = 'Cargando voces…'; opt.value = '';
-          voiceSel.appendChild(opt); voicesReady = false; return;
+          voiceSel.appendChild(opt); return;
         }
         voices.forEach(v => {
           const opt = document.createElement('option');
@@ -745,7 +700,6 @@
           const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
           if (match) { voiceSel.value = match.name; break; }
         }
-        voicesReady = true;
         if (queuedText){ const t = queuedText; queuedText = null; speakNow(t); }
       }
       loadVoices();
@@ -761,7 +715,7 @@
 
       function queueSpeak(text){
         if (!synth || !text) return;
-        if (!voicesReady){ queuedText = text; setTimeout(loadVoices, 250); return; }
+        if (!voices.length){ queuedText = text; setTimeout(loadVoices, 250); return; }
         speakNow(text);
       }
 
@@ -774,12 +728,11 @@
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); };
-          // u.onboundary = () => {}; // desactivado para evitar micro janks
-          u.onend     = () => { setTalking(false); stopAvatarVideo(); };
-          u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
+          u.onstart = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); };
+          /* SIN onboundary para evitar micro janks */
+          u.onend   = () => { setTalking(false); stopAvatarVideo(); };
+          u.onerror = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
 
-          lastUtterance = u;
           synth.speak(u);
         } catch(e){
           aiThinking.style.display='none';
@@ -971,8 +924,7 @@
 
     const LS_KEY = 'bgMusicMuted';
     const saved = localStorage.getItem(LS_KEY);
-    bg.muted = (saved === 'true');
-    bg.volume = 0.18;
+    bg.muted = (saved === 'true'); bg.volume = 0.18;
 
     function syncBtn(){
       if (!btn) return;
