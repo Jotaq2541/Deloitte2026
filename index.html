@@ -3,10 +3,9 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Asistente Virtual – Marketplace Deloitte CA</title>
   <meta name="description" content="Asistente con voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
-  <meta name="theme-color" content="#0b0e11" />
 
   <style>
     :root{
@@ -23,59 +22,45 @@
       /* “Tecnológico” */
       --glow: rgba(34,179,106,.55);
       --glow-soft: rgba(34,179,106,.18);
-
-      /* Safe area iOS */
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-right: env(safe-area-inset-right, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --safe-left: env(safe-area-inset-left, 0px);
     }
     *{box-sizing:border-box}
 
     body{
       margin:0;
-      background:
-        radial-gradient(1200px 600px at 20% 0%, #0e1117 0%, var(--bg) 60%),
-        linear-gradient(180deg, rgba(28,140,63,.06), rgba(28,140,63,0));
+      background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
       color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       position:relative; min-height:100dvh; overflow-x:hidden;
-      padding-bottom:var(--safe-bottom);
+      /* no cambia tu base */
     }
 
-    /* ===== FONDOS TECNOLÓGICOS ===== */
+    /* ====== FONDO TECNOLÓGICO (capas no intrusivas) ====== */
+    /* Capa 1: “grid” animado muy tenue */
     .fx-grid{
-      position:fixed; inset:0; z-index:-3; pointer-events:none;
+      position:fixed; inset:0; z-index:-2; pointer-events:none;
       background:
-        radial-gradient(1200px 600px at 15% 0%, rgba(34,179,106,.10), transparent 60%),
+        radial-gradient(1200px 600px at 15% 0%, rgba(34,179,106,.12), transparent 60%),
         repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
       mix-blend-mode:screen; animation: bgShift 36s linear infinite;
     }
+    /* Capa 2: “neblina” verde profunda */
     .fx-glow{
-      position:fixed; inset:0; z-index:-2; pointer-events:none;
+      position:fixed; inset:0; z-index:-1; pointer-events:none;
       background:
         radial-gradient(800px 400px at 80% 20%, rgba(34,179,106,.12), transparent 60%),
         radial-gradient(700px 380px at 20% 80%, rgba(28,140,63,.10), transparent 60%);
       filter: blur(14px);
     }
-    .fx-hex{
-      position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.08;
-      background:
-        radial-gradient(circle at 10px 6px, rgba(255,255,255,.25) 2px, transparent 2.2px) 0 0/20px 17.5px,
-        radial-gradient(circle at 0 6px,  rgba(255,255,255,.25) 2px, transparent 2.2px) 10px 8.8px/20px 17.5px;
-      mix-blend-mode:soft-light;
-    }
-    @keyframes bgShift{ from{background-position:0 0,0 0} to{background-position:0 0,480px 280px} }
+    @keyframes bgShift{ 0%{background-position:0 0,0 0} 100%{background-position:0 0,480px 280px} }
 
-    /* ===== CABECERA ===== */
+    /* === CABECERA === */
     header{
-      padding:calc(8px + var(--safe-top)) 20px 16px 20px;
+      padding:16px 20px;
       border-bottom:2px solid var(--brand);
       background:linear-gradient(180deg, rgba(15,19,23,.92), rgba(15,19,23,.78));
       backdrop-filter: blur(6px);
       display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
       box-shadow: 0 10px 24px rgba(0,0,0,.35);
-      position:sticky; top:0; z-index:10;
     }
     .brand{display:flex;align-items:center;gap:10px}
     .logo{height:24px;width:auto;display:block}
@@ -85,7 +70,7 @@
       text-shadow: 0 1px 0 rgba(0,0,0,.6);
     }
 
-    /* ===== CONTROLES ===== */
+    /* === CONTROLES CABECERA (ALTO CONTRASTE) === */
     .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     label{display:flex;gap:6px;align-items:center}
     select,button{
@@ -110,7 +95,7 @@
     .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
     @media (max-width:1100px){ .wrap{grid-template-columns:1fr} }
 
-    /* ===== CONTENEDORES glass ===== */
+    /* ====== CONTENEDORES: glass + borde iluminado (sutil) ====== */
     .left,.right{
       background:
         linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00) 200px);
@@ -119,24 +104,17 @@
       box-shadow:
         0 14px 32px rgba(0,0,0,.38),
         inset 0 1px 0 rgba(255,255,255,.06);
-      position:relative; overflow:clip;
+      position:relative;
+      overflow:clip;
     }
     .left::before,.right::before{
       content:""; position:absolute; inset:0; pointer-events:none;
       border-radius:inherit;
       box-shadow: 0 0 0 1px rgba(34,179,106,.12), 0 0 32px rgba(34,179,106,.08) inset;
     }
-    /* Esquinas holográficas */
-    .left::after,.right::after{
-      content:""; position:absolute; width:120px; height:120px; pointer-events:none;
-      background: conic-gradient(from 180deg at 50% 50%, rgba(34,179,106,.0), rgba(34,179,106,.45), rgba(34,179,106,.0) 70%);
-      filter: blur(18px); opacity:.18;
-      right:-40px; top:-40px; border-radius:50%;
-    }
+    .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
 
-    .left{padding:14px;display:grid;grid-template-rows:auto auto auto 1fr;gap:14px}
-
-    /* ===== AVATAR ===== */
+    /* === AVATAR === */
     .avatar{
       position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
       background:#07090d;border:1px solid rgba(32,163,74,.35);
@@ -154,28 +132,6 @@
 
     .muted{color:var(--muted);font-size:12px}
 
-    /* ===== Slots/espacios en blanco para futuros elementos ===== */
-    .slots{
-      display:grid; grid-template-columns:1fr; gap:10px;
-    }
-    .slot{
-      min-height:72px; border:1px dashed rgba(139,216,169,.45); border-radius:10px;
-      background:linear-gradient(180deg, rgba(34,179,106,.05), rgba(34,179,106,.02));
-      color:#bfe9cf; display:flex; align-items:center; justify-content:space-between;
-      padding:10px 12px; font-size:13px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
-      transition: border-color .15s ease, box-shadow .18s ease, transform .12s ease;
-    }
-    .slot:hover{
-      border-color: rgba(34,179,106,.75);
-      box-shadow: 0 6px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.1);
-      transform: translateY(-1px);
-    }
-    .slot .tag{
-      padding:4px 8px; border-radius:999px; background:#0f1216; border:1px solid rgba(139,216,169,.35);
-      color:#dff6e7; font-size:11px;
-    }
-
     .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
     .panel{
       padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);
@@ -183,7 +139,7 @@
     }
     .panel h2{margin:0;font-size:16px}
 
-    /* ===== Tarjetas ===== */
+    /* ====== Tarjetas 3D sutil ====== */
     .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
     .card{
       background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
@@ -217,7 +173,7 @@
     footer{padding:10px 16px;color:var(--muted)}
     .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
 
-    /* ===== AVATAR: VIDA MIENTRAS HABLA ===== */
+    /* === AVATAR: VIDA MIENTRAS HABLA === */
     #avatar img,
     #avatar video{will-change:transform,filter;transition:transform .18s ease, filter .18s ease}
     #avatar.talking img,
@@ -269,13 +225,12 @@
       100%{ background-size:10% 28%, 10% 60%, 10% 26%, 10% 68%, 10% 32% }
     }
 
-    /* Menos movimiento */
+    /* Accesibilidad: menos movimiento */
     @media (prefers-reduced-motion: reduce){
       #avatar.talking img,
       #avatar.talking video{ animation:none }
       #avatar.talking::before{ animation:none }
       #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6 }
-      .fx-grid{ animation: none }
     }
 
     /* Onda AI inferior */
@@ -312,7 +267,7 @@
 
     .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
 
-    /* Chips/leyendas */
+    /* Chips/leyendas legibles */
     .badge{
       display:inline-flex; align-items:center; gap:6px;
       background:var(--chip-bg); color:var(--chip-text);
@@ -349,10 +304,9 @@
       .qbtn{ background:#ffffff; color:#111 }
       .answer{ background:#ffffff }
       .card{ background:#ffffff }
-      .slots .tag{ background:#f8faf8; color:#0b0e11; }
     }
 
-    /* OVERRIDES video del AVATAR */
+    /* ====== OVERRIDES de fluidez del AVATAR (no animar el <video>) ====== */
     #avatar video{ will-change:auto; transform:none; transition:filter .18s ease; }
     #avatar.talking video{ animation:none !important; transform:none !important; }
   </style>
@@ -362,7 +316,6 @@
   <!-- Fondos tecnológicos (decorativos, no funcionales) -->
   <div class="fx-grid" aria-hidden="true"></div>
   <div class="fx-glow" aria-hidden="true"></div>
-  <div class="fx-hex" aria-hidden="true"></div>
 
   <header>
     <div class="brand">
@@ -386,6 +339,7 @@
     <!-- Izquierda: AVATAR (VIDEO + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
+        <!-- VIDEO del avatar: se mantiene tu MP4 -->
         <video id="avatarVideo"
                src="./Diseño sin título (5).mp4"
                muted
@@ -395,25 +349,9 @@
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
-      <div class="muted" id="helpLine">
+      <div class="muted">
         Sugerencia: usa <span class="kbd">R</span> para reproducir/pausar,
         <span class="kbd">S</span> para detener y <span class="kbd">M</span> para silenciar música.
-      </div>
-
-      <!-- Espacios/slots listos para colocar elementos sin tocar la lógica -->
-      <div class="slots" aria-label="Espacios disponibles">
-        <div class="slot" data-slot="1">
-          <span>Espacio reservado (Widget / Imagen / KPIs)</span>
-          <span class="tag">Slot #1</span>
-        </div>
-        <div class="slot" data-slot="2">
-          <span>Espacio reservado (Notas / Accesos rápidos)</span>
-          <span class="tag">Slot #2</span>
-        </div>
-        <div class="slot" data-slot="3">
-          <span>Espacio reservado (Calendario / Agenda)</span>
-          <span class="tag">Slot #3</span>
-        </div>
       </div>
     </section>
 
@@ -435,6 +373,8 @@
           <div class="legend" id="legendBars"></div>
         </div>
 
+        <!-- 🔥 Eliminada la tarjeta de Empresas públicas auditadas -->
+
         <div class="card">
           <h3>Medios destacados por país</h3>
           <svg id="chartBarsMedia" class="viz" role="img" aria-label="Barras de cantidad de medios por país"></svg>
@@ -442,7 +382,7 @@
         </div>
       </div>
 
-      <!-- Preguntas base -->
+      <!-- Preguntas base (eliminada la pregunta de empresas auditadas; renumeración automática) -->
       <div class="grid" id="faqGrid" role="list">
         <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
@@ -562,7 +502,7 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
-          // interacción hover
+          // interacción hover (se mantiene)
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
             showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
@@ -595,7 +535,7 @@
         }
       }
 
-      /* --- 2) Medios destacados por país (tooltip por CLIC) --- */
+      /* --- 3) Medios destacados por país (tooltip por CLIC) --- */
       const dataMedia = [
         {label:'Costa Rica',    flag:'🇨🇷', val:4, medios:['El Financiero','La Nación','La República','Noticias Repretel'], color:'#22b36a'},
         {label:'Panamá',        flag:'🇵🇦', val:4, medios:['La Estrella','La Prensa','TVN','Telemetro'], color:'#1ea55a'},
@@ -606,6 +546,7 @@
       const svgM = document.getElementById('chartBarsMedia');
       const legendM = document.getElementById('legendBarsMedia');
 
+      // Estado de tooltip por clic
       let openKeyMedia = null;
 
       function hideTipMedia(){
@@ -681,6 +622,7 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
+          // --- Interacción por CLIC (toggle) ---
           function showTipAt(clientX, clientY){
             const sample = d.medios.slice(0,4).join(', ');
             const extra  = d.medios.length - Math.min(4, d.medios.length);
@@ -710,7 +652,7 @@
             }
           }
 
-          // Accesible: Enter/Espacio
+          // Accesible: también con Enter/Espacio
           g.setAttribute('tabindex', '0');
           g.addEventListener('keydown', (e)=>{
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }
@@ -738,9 +680,11 @@
         }
       }
 
+      // Pintar y responder a resize (cerrando tooltip abierto si se redibuja)
       function redrawAll(){
         hideTipMedia();
         drawBars();
+        /* drawDonut(); (eliminado) */
         drawBarsMedia();
       }
       redrawAll();
@@ -778,7 +722,7 @@
         btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
       }
 
-      // TYPEWRITER cancelable + autoscroll del subtítulo
+      // TYPEWRITER cancelable
       let typeSeq = 0;
       function typeText(target, text, speed=22){
         typeSeq++;
@@ -789,7 +733,6 @@
           if(mySeq !== typeSeq) return;
           if(i < text.length){
             target.textContent += text[i++];
-            if (subtitleEl){ subtitleEl.scrollTop = subtitleEl.scrollHeight; }
             setTimeout(step, speed);
           }
         })();
@@ -819,15 +762,9 @@
         try { avatarVideo.pause(); avatarVideo.currentTime = 0; } catch {}
       }
 
-      // Exponer control de video al global (para otros bloques)
-      window.playAvatarVideo  = playAvatarVideo;
-      window.pauseAvatarVideo = pauseAvatarVideo;
-      window.stopAvatarVideo  = stopAvatarVideo;
-
       // TTS
       const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
       let voices = [], voicesReady = false, lastUtterance = null, queuedText = null;
-      const VOICE_LS = 'preferredVoiceName';
 
       function loadVoices(){
         voiceSel.innerHTML = '';
@@ -842,41 +779,27 @@
           opt.textContent = 'Cargando voces…'; opt.value = '';
           voiceSel.appendChild(opt); voicesReady = false; return;
         }
-        const savedName = localStorage.getItem(VOICE_LS) || '';
         voices.forEach(v => {
           const opt = document.createElement('option');
           opt.value = v.name;
           opt.textContent = `${v.name} — ${v.lang}${v.default ? ' (predeterminada)' : ''}`;
           voiceSel.appendChild(opt);
         });
-
-        // Preferencia guardada o heurística para español LATAM
-        if (savedName && voices.find(v => v.name === savedName)){
-          voiceSel.value = savedName;
-        } else {
-          const preferred = [
-            /spanish.*(mexico|latin|latino)/i,
-            /esmx|ar|cl|co|pe|uy|bo|py|ec|ve/i,
-            /spanish.*(united states)/i,
-            /spanish|es/i
-          ];
-          for (const rx of preferred) {
-            const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
-            if (match) { voiceSel.value = match.name; break; }
-          }
+        const preferred = [
+          /spanish.*(mexico|latin|latino)/i,
+          /esmx|ar|cl|co|pe|uy|bo|py|ec|ve/i,
+          /spanish.*(united states)/i,
+          /spanish|es/i
+        ];
+        for (const rx of preferred) {
+          const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
+          if (match) { voiceSel.value = match.name; break; }
         }
-
         voicesReady = true;
         if (queuedText){ const t = queuedText; queuedText = null; speakNow(t); }
       }
       loadVoices();
       if (synth && 'onvoiceschanged' in synth) synth.onvoiceschanged = loadVoices;
-
-      // Persistencia de voz
-      voiceSel.addEventListener('change', () => {
-        const name = voiceSel.value || '';
-        try { localStorage.setItem(VOICE_LS, name); } catch {}
-      });
 
       function getSelectedVoice(){
         if (!voices.length) return null;
@@ -892,41 +815,25 @@
         speakNow(text);
       }
 
-      // --- ARREGLO ROBUSTO DE HABLA ---
       function speakNow(text){
         try{
-          synth.cancel();                       // limpia colas atascadas
+          synth.cancel();
           const u = new SpeechSynthesisUtterance(text);
           const v = getSelectedVoice();
           if (v) u.voice = v;
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          // Anti-GC: mantenemos referencia hasta terminar
-          window._utterances = window._utterances || [];
-          window._utterances.push(u);
-
-          // Pulso de actividad para el watchdog
-          window._ttsLastActivity = Date.now();
-          u.onstart   = () => { window._ttsLastActivity = Date.now(); aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); };
-          u.onboundary= () => { window._ttsLastActivity = Date.now(); /* boostOnce(); opcional */ };
-          u.onend     = () => {
-            setTalking(false); stopAvatarVideo(); aiThinking.style.display='none';
-            window._ttsLastActivity = Date.now();
-            window._utterances.shift();
-          };
-          u.onerror   = () => {
-            setTalking(false); stopAvatarVideo(); aiThinking.style.display='none';
-            window._ttsLastActivity = Date.now();
-            window._utterances.shift();
-          };
+          /* Handlers de habla (sin boosts por fonema para máxima fluidez) */
+          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); /* boostOnce(); */ };
+          // u.onboundary= () => { boostOnce(); }; // (omitido a propósito)
+          u.onend     = () => { setTalking(false); stopAvatarVideo(); };
+          u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
 
           lastUtterance = u;
           synth.speak(u);
         } catch(e){
           aiThinking.style.display='none';
-          setTalking(false);
-          try { stopAvatarVideo(); } catch {}
         }
       }
 
@@ -937,7 +844,6 @@
           aiThinking.style.display='block';
           typeText(answerBox, text);
           subtitleEl.textContent = text;
-          subtitleEl.scrollTop = subtitleEl.scrollHeight;
           queueSpeak(text);
         };
       });
@@ -958,7 +864,7 @@
       subtitleEl.textContent = bienvenida;
     });
 
-    /* ====== Helpers para agregar preguntas ====== */
+    /* ====== Helpers para agregar preguntas sin tocar estructura ====== */
     (function(){
       const grid = document.getElementById('faqGrid');
       if(!grid) return;
@@ -981,7 +887,6 @@
             if (typeof window.typeText === 'function'){ window.typeText(answerBox, text); }
             else { answerBox.textContent = text; }
             subtitleEl.textContent = text;
-            subtitleEl.scrollTop = subtitleEl.scrollHeight;
           }
           if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
           if (aiThinking) setTimeout(()=> aiThinking.style.display='none', 100);
@@ -993,7 +898,7 @@
       window.bulkAddQA = function(list){ (list || []).forEach(item => addQA(item.q, item.a)); };
     })();
 
-    /* ====== Agregar preguntas adicionales ====== */
+    /* ====== Agregar las preguntas adicionales ya definidas ====== */
     (function(){
       bulkAddQA([
         {
@@ -1019,7 +924,7 @@
       ]);
     })();
 
-    /* ====== Numerar preguntas automáticamente ====== */
+    /* ==== NUMERAR TODAS LAS PREGUNTAS AUTOMÁTICAMENTE ==== */
     (function(){
       const grid = document.getElementById('faqGrid');
       if (!grid) return;
@@ -1032,8 +937,10 @@
         });
       }
 
+      // Numerar inicialmente
       renumberFAQ();
 
+      // Parchear addQA y bulkAddQA para renumerar al agregar
       const oldAddQA = window.addQA;
       if (typeof oldAddQA === "function") {
         window.addQA = function(q, a){
@@ -1050,7 +957,7 @@
       }
     })();
 
-    /* ====== Parche robusto para Pausar/Detener (Web Speech) ====== */
+    /* ==== PARCHE ROBUSTO PARA PAUSAR / DETENER (Web Speech) ==== */
     (function(){
       if (!('speechSynthesis' in window)) return;
 
@@ -1071,7 +978,7 @@
       function hardCancel(){
         try { synth.cancel(); } catch {}
         setTalking(false);
-        if (window.stopAvatarVideo) window.stopAvatarVideo();   // seguro
+        stopAvatarVideo();   // ⏹️ detener video del avatar
         setBtnLabels();
       }
       function pauseResume(e){
@@ -1080,13 +987,13 @@
         if (synth.speaking && !synth.paused){
           try { synth.pause(); } catch {}
           setTalking(false);
-          if (window.pauseAvatarVideo) window.pauseAvatarVideo();
+          pauseAvatarVideo();      // ⏸️ pausa video
           setBtnLabels();
           return;
         }
         if (synth.paused){
           try { synth.resume(); } catch {}
-          setTimeout(()=>{ if (synth.speaking && !synth.paused) { setTalking(true); if (window.playAvatarVideo) window.playAvatarVideo(); } }, 30);
+          setTimeout(()=>{ if (synth.speaking && !synth.paused) { setTalking(true); playAvatarVideo(); } }, 30);
           setBtnLabels();
           return;
         }
@@ -1115,29 +1022,27 @@
 
       const visInterval = setInterval(setBtnLabels, 250);
       window.addEventListener('beforeunload', () => clearInterval(visInterval));
-
-      // Atajos R / S
-      document.addEventListener('keydown', (e) => {
-        const key = (e.key || '').toLowerCase();
-        if (key === 'r'){ e.preventDefault(); btnPause && btnPause.click(); }
-        if (key === 's'){ e.preventDefault(); btnStop  && btnStop.click(); }
-      });
     })();
   </script>
 
-  <!-- Música corporativa (preferencia persistente) -->
+  <!-- Música corporativa (reproductor sin UI con preferencia persistente) -->
   <script>
   (function(){
-    const bg  = document.getElementById('bgMusic');
-    const btn = document.getElementById('btnMusic');
+    const bg  = document.getElementById('bgMusic');   // <audio id="bgMusic">
+    const btn = document.getElementById('btnMusic');  // botón de cabecera "Música"
     if (!bg) return;
 
     const LS_KEY = 'bgMusicMuted';
+
+    // Estado inicial: por defecto con sonido (salvo preferencia guardada)
     const saved = localStorage.getItem(LS_KEY);
-    bg.muted = (saved === 'true');
+    bg.muted = (saved === 'true');   // null => false
     bg.volume = 0.18;
+
+    // Si por accidente el HTML tenía muted y NO hay preferencia guardada de silencio, lo quitamos
     if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
 
+    // Sincroniza botón
     function syncBtn(){
       if (!btn) return;
       btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
@@ -1146,6 +1051,7 @@
     }
     syncBtn();
 
+    // Desbloquear reproducción tras primer gesto (autoplay policy)
     async function tryPlay(){ try { await bg.play(); } catch(_) {} }
     const unlock = async () => {
       if (bg.paused) await tryPlay();
@@ -1155,6 +1061,7 @@
     window.addEventListener('click',  unlock, { once:true });
     window.addEventListener('keydown', unlock, { once:true });
 
+    // Toggle desde botón Música (y guarda preferencia)
     if (btn){
       btn.addEventListener('click', async () => {
         bg.muted = !bg.muted;
@@ -1162,6 +1069,8 @@
         syncBtn();
         if (!bg.muted && bg.paused) await tryPlay();
       });
+
+      // Salvavidas: Shift+clic limpia preferencia si quedó pegado en silencio
       btn.addEventListener('click', (e) => {
         if (e.shiftKey){
           localStorage.removeItem(LS_KEY);
@@ -1171,47 +1080,13 @@
       }, { capture:true });
     }
 
-    // Atajo M
+    // Atajo: tecla M
     document.addEventListener('keydown', async (e) => {
       if ((e.key || '').toLowerCase() === 'm'){
         bg.muted = !bg.muted;
         localStorage.setItem(LS_KEY, String(bg.muted));
         syncBtn();
         if (!bg.muted && bg.paused) await tryPlay();
-      }
-    });
-  })();
-  </script>
-
-  <!-- ✅ WATCHDOG anti “avatar pegado” por regresiones del Web Speech -->
-  <script>
-  (function(){
-    if (!('speechSynthesis' in window)) return;
-    const synth  = window.speechSynthesis;
-    const avatar = document.getElementById('avatar');
-    const thinking = document.getElementById('aiThinking');
-
-    function cleanup(){
-      if (avatar) avatar.classList.remove('talking');
-      if (thinking) thinking.style.display = 'none';
-      if (window.stopAvatarVideo) window.stopAvatarVideo();
-    }
-
-    if (!window._ttsLastActivity) window._ttsLastActivity = Date.now();
-
-    let wd = setInterval(() => {
-      const active = synth.speaking || synth.pending || synth.paused;
-      const talking = avatar && avatar.classList.contains('talking');
-      const idleFor = Date.now() - (window._ttsLastActivity || 0);
-
-      // Si el motor no está activo pero el UI quedó "hablando", limpiamos
-      if (!active && talking && idleFor > 800) cleanup();
-    }, 500);
-
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden){
-        try { synth.cancel(); } catch {}
-        cleanup();
       }
     });
   })();
