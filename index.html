@@ -16,8 +16,8 @@
       --viz-bg:#0f1216; --viz-stroke:#2e3640;
 
       /* Chips/leyendas legibles */
-      --chip-bg:#eef6f0;         /* fondo claro (oscuro) */
-      --chip-text:#0b0e11;       /* texto oscuro */
+      --chip-bg:#eef6f0;
+      --chip-text:#0b0e11;
       --chip-border:rgba(0,0,0,.16);
       --chip-bg-hover:#e4f2ea;
     }
@@ -201,10 +201,13 @@
     .viz{
       width:100%; height:260px; display:block
     }
-    /* Usamos una familia con soporte de emoji para banderas en SVG */
+    /* Soporte de emoji (banderas) en texto de SVG */
     .viz text{
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
     }
+    /* Clickable en 'Medios destacados por país' */
+    #chartBarsMedia{ cursor:pointer; }
+
     .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
 
     /* Chips/leyendas legibles */
@@ -396,7 +399,7 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
-          // etiqueta izquierda (banderita pequeña + texto)
+          // etiqueta izq.: banderita + nombre
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
@@ -436,7 +439,7 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
-          // interacción
+          // interacción hover (se mantiene)
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
             showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
@@ -457,7 +460,7 @@
           });
         });
 
-        // Leyenda (chips claros)
+        // Leyenda
         if(legend){
           legend.innerHTML = '';
           dataBars.forEach(d=>{
@@ -469,7 +472,7 @@
         }
       }
 
-      /* --- 2) DONA: 51/457 ≈ 11% --- */
+      /* --- 2) DONA: 51/457 ≈ 11% (hover) --- */
       const svgD = document.getElementById('chartDonut');
       function drawDonut(){
         if(!svgD) return;
@@ -522,7 +525,7 @@
         svgD.addEventListener('mouseleave', hideTip);
       }
 
-      /* --- 3) Medios destacados por país (con banderita y tooltip con ejemplos) --- */
+      /* --- 3) Medios destacados por país (tooltip por CLIC) --- */
       const dataMedia = [
         {label:'Costa Rica',    flag:'🇨🇷', val:4, medios:['El Financiero','La Nación','La República','Noticias Repretel'], color:'#22b36a'},
         {label:'Panamá',        flag:'🇵🇦', val:4, medios:['La Estrella','La Prensa','TVN','Telemetro'], color:'#1ea55a'},
@@ -532,6 +535,29 @@
       ];
       const svgM = document.getElementById('chartBarsMedia');
       const legendM = document.getElementById('legendBarsMedia');
+
+      // Estado de tooltip por clic
+      let openKeyMedia = null;
+
+      function hideTipMedia(){
+        hideTip();
+        openKeyMedia = null;
+        if(svgM){
+          svgM.querySelectorAll('rect').forEach(r=>{
+            const base = r.getAttribute('data-base');
+            if(base) r.setAttribute('fill', base);
+          });
+        }
+      }
+
+      // Cerrar al hacer clic fuera o con Escape
+      document.addEventListener('click', (e)=>{
+        if (!svgM) return;
+        if (!svgM.contains(e.target)) hideTipMedia();
+      });
+      document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape') hideTipMedia();
+      });
 
       function drawBarsMedia(){
         if(!svgM) return;
@@ -573,7 +599,8 @@
           bar.setAttribute('height', barH);
           bar.setAttribute('rx', 8);
           bar.setAttribute('fill', d.color);
-          bar.style.transition = 'width 420ms ease';
+          bar.setAttribute('data-base', d.color);
+          bar.style.transition = 'width 420ms ease, fill 120ms ease';
           g.appendChild(bar);
 
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
@@ -585,17 +612,42 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
-          // Tooltip con ejemplos de medios
-          g.addEventListener('mousemove', (e)=>{
+          // --- Interacción por CLIC (toggle) ---
+          function showTipAt(clientX, clientY){
             const sample = d.medios.slice(0,4).join(', ');
             const extra  = d.medios.length - Math.min(4, d.medios.length);
             const extras = extra > 0 ? ` +${extra} más` : '';
-            showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} medios<br><em>Ejemplos:</em> ${sample}${extras}`, e.clientX, e.clientY);
+            tip.innerHTML = `<strong>${d.flag} ${d.label}</strong><br>${d.val} medios<br><em>Ejemplos:</em> ${sample}${extras}`;
+            tip.style.left = (clientX + 12) + 'px';
+            tip.style.top  = (clientY + 12) + 'px';
+            tip.style.display = 'block';
+            tip.setAttribute('aria-hidden','false');
+          }
+
+          function activate(ev){
+            svgM.querySelectorAll('rect').forEach(r=>{
+              const base = r.getAttribute('data-base') || r.getAttribute('fill');
+              r.setAttribute('fill', base);
+            });
             bar.setAttribute('fill', '#35d07a');
+            openKeyMedia = i;
+            showTipAt(ev.clientX, ev.clientY);
+          }
+
+          function handleClick(ev){
+            if (openKeyMedia === i){
+              hideTipMedia();
+            } else {
+              activate(ev);
+            }
+          }
+
+          // Accesible: también con Enter/Espacio
+          g.setAttribute('tabindex', '0');
+          g.addEventListener('keydown', (e)=>{
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }
           });
-          g.addEventListener('mouseleave', ()=>{
-            hideTip(); bar.setAttribute('fill', d.color);
-          });
+          g.addEventListener('click', handleClick);
 
           svgM.appendChild(g);
 
@@ -618,11 +670,15 @@
         }
       }
 
-      // Pintar y responder a resize
-      drawBars();
-      drawDonut();
-      drawBarsMedia();
-      window.addEventListener('resize', ()=>{ drawBars(); drawDonut(); drawBarsMedia(); });
+      // Pintar y responder a resize (cerrando tooltip abierto si se redibuja)
+      function redrawAll(){
+        hideTipMedia();
+        drawBars();
+        drawDonut();
+        drawBarsMedia();
+      }
+      redrawAll();
+      window.addEventListener('resize', redrawAll);
     });
 
     /* ====== Q&A + TTS (typewriter cancelable, avatar suave) ====== */
@@ -735,7 +791,7 @@
 
       function speakNow(text){
         try{
-          synth.cancel(); // limpia cualquier lectura anterior
+          synth.cancel();
           const u = new SpeechSynthesisUtterance(text);
           const v = getSelectedVoice();
           if (v) u.voice = v;
@@ -754,7 +810,7 @@
         }
       }
 
-      // Clicks en preguntas (usamos onclick para permitir que el parche envuelva btnSpeak si hiciera falta)
+      // Clicks en preguntas
       faqGrid.querySelectorAll('.qbtn').forEach(btn => {
         btn.onclick = () => {
           const text = btn.dataset.answer || '';
@@ -839,6 +895,39 @@
           a: "El Marketplace Deloitte CA participa en importantes revistas regionales, entre ellas: Revista Summa, líder de negocios en Centroamérica, Colombia y República Dominicana; Estrategia y Negocios, especializada en economía, tecnología y temas empresariales; Revista Vida y Éxito, una de las más prestigiosas de la región; Mercados y Tendencias, enfocada en economía y negocios para emprendedores y tomadores de decisión; Forbes Centroamérica y República Dominicana, con cobertura en países como Guatemala, El Salvador, Honduras, Nicaragua, Panamá y Costa Rica; e IT Now, revista digital especializada en tecnología."
         }
       ]);
+    })();
+
+    /* ==== NUMERAR TODAS LAS PREGUNTAS AUTOMÁTICAMENTE ==== */
+    (function(){
+      const grid = document.getElementById('faqGrid');
+      if (!grid) return;
+
+      function renumberFAQ() {
+        const items = [...grid.querySelectorAll('.qbtn')];
+        items.forEach((btn, idx) => {
+          const text = btn.textContent.replace(/^\d+\.\s*/, "").trim();
+          btn.textContent = `${idx + 1}. ${text}`;
+        });
+      }
+
+      // Numerar inicialmente
+      renumberFAQ();
+
+      // Parchear addQA y bulkAddQA para renumerar al agregar
+      const oldAddQA = window.addQA;
+      if (typeof oldAddQA === "function") {
+        window.addQA = function(q, a){
+          oldAddQA(q, a);
+          renumberFAQ();
+        };
+      }
+      const oldBulk = window.bulkAddQA;
+      if (typeof oldBulk === "function") {
+        window.bulkAddQA = function(list){
+          oldBulk(list);
+          renumberFAQ();
+        };
+      }
     })();
 
     /* ==== PARCHE ROBUSTO PARA PAUSAR / DETENER (Web Speech) ==== */
