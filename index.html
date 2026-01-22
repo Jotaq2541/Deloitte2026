@@ -1073,5 +1073,154 @@
     }
     */
   </script>
+
+<!-- ===== PARCHE COMPAT: fondo claro + voces ES (no quita elementos) ===== -->
+<script>
+(() => {
+  "use strict";
+
+  /* 1) Fuerza tema claro homogéneo con CSS inyectado (sin tocar tu <style>) */
+  const css = `
+    :root{ color-scheme: light !important; }
+    body{ background:#f4f4f4 !important; color:#111 !important; }
+    header{ background:#ffffff !important; border-bottom-color:#1c8c3f !important; }
+    .left,.right{ border-color: rgba(0,0,0,.08) !important; }
+    .grid{ background:rgba(246,250,247,1) !important; }
+    .card{ background:#ffffff !important; color:#111 !important; }
+    .qbtn{ background:#ffffff !important; color:#111 !important; border-color: rgba(0,0,0,.08) !important; }
+    .answer{ background:#ffffff !important; color:#111 !important; border-color: rgba(0,0,0,.08) !important; }
+    .subtitle{
+      background: rgba(255,255,255,.82) !important; color:#0b0e11 !important;
+      border:1px solid rgba(0,0,0,.08) !important;
+    }
+    .fx-grid{ mix-blend-mode: normal !important; opacity:.75 !important; }
+    #vizTip{
+      background:#ffffff !important; color:#0b0e11 !important;
+      border-color: rgba(0,0,0,.15) !important; box-shadow:0 10px 24px rgba(0,0,0,.12) !important;
+    }
+    .viz text{ fill:#0b0e11 !important; }
+  `;
+  const style = document.createElement('style');
+  style.setAttribute('data-force-light','1');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  /* Evitar traducción automática (por si algún navegador fuerza traducción de UI) */
+  const metaNotranslate = document.createElement('meta');
+  metaNotranslate.name = 'google';
+  metaNotranslate.content = 'notranslate';
+  document.head.appendChild(metaNotranslate);
+
+  /* 2) TTS: mostrar SOLO voces en español y priorizar Centroamérica/LatAm */
+  const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
+  const voiceSel = document.getElementById('voiceSel');
+
+  function spanishFilter(list){
+    return (list||[]).filter(v=>{
+      const tag = (v.lang||'').toLowerCase();
+      const name= (v.name||'').toLowerCase();
+      return (
+        /^es(-|$)/.test(tag) ||                                     // es-*
+        /es-419|es-cr|es-mx|es-pa|es-gt|es-sv|es-ni|es-hn|es-do|es-co|es-ar|es-cl|es-pe|es-uy|es-bo|es-py|es-ec|es-ve/.test(tag) ||
+        /spanish|español/.test(name)
+      );
+    });
+  }
+  function score(v){
+    const t = ((v.lang||'') + ' ' + (v.name||'')).toLowerCase();
+    if (/es-cr/.test(t)) return 10;      // Costa Rica primero
+    if (/es-419/.test(t)) return 9;      // LatAm
+    if (/es-mx|es-pa|es-gt|es-sv|es-ni|es-hn|es-do/.test(t)) return 8; // C.A./MX/RD
+    if (/es-co|es-ar|es-cl|es-pe|es-uy|es-bo|es-py|es-ec|es-ve/.test(t)) return 7;
+    if (/^es/.test(t)) return 6;
+    return 0;
+  }
+
+  function refillSelect(){
+    if (!synth || !voiceSel) return;
+    const all = synth.getVoices() || [];
+    const es = spanishFilter(all).sort((a,b)=>score(b)-score(a));
+
+    // Si NO hay voces ES, mostrar un único ítem informativo y deshabilitar selector
+    if (!es.length){
+      voiceSel.innerHTML = '';
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'Español (automático)';
+      voiceSel.appendChild(opt);
+      voiceSel.disabled = true;
+      return;
+    }
+
+    // Llenar SOLO con voces ES
+    const prev = voiceSel.value;
+    voiceSel.innerHTML = '';
+    es.forEach(v=>{
+      const opt = document.createElement('option');
+      opt.value = v.name;
+      opt.textContent = `${v.name.replace(/Google\\s*|Microsoft\\s*/gi,'').trim()} — ${v.lang}`;
+      voiceSel.appendChild(opt);
+    });
+
+    // Seleccionar la mejor o conservar si existe
+    const found = es.find(v => v.name === prev) || es[0];
+    voiceSel.value = found.name;
+    voiceSel.disabled = false;
+  }
+
+  function ensureSpanishSelected(){
+    if (!voiceSel || voiceSel.disabled) return;
+    const selText = (voiceSel.options[voiceSel.selectedIndex]?.text || '').toLowerCase();
+    if (!/es-|spanish|español/.test(selText)){
+      voiceSel.selectedIndex = 0; // siempre una voz ES
+    }
+  }
+
+  // Ejecutar cuando el navegador informe voces y también con reintentos (algunos tardan)
+  if (synth){
+    synth.onvoiceschanged = () => { refillSelect(); ensureSpanishSelected(); };
+    let tries = 0;
+    const t = setInterval(()=>{
+      refillSelect(); ensureSpanishSelected();
+      if (++tries > 10 || (voiceSel && voiceSel.options.length)) clearInterval(t);
+    }, 250);
+  }
+
+  // Última defensa: antes de hablar (botón o FAQ) nos aseguramos voz ES seleccionada
+  document.addEventListener('click', (e)=>{
+    const target = e.target;
+    const id = target && target.id;
+    if (id === 'btnSpeak' || target.classList?.contains('qbtn')){
+      ensureSpanishSelected();
+    }
+  }, true);
+
+  /* 3) FORZAR por defecto 'es-419' (LatAm) en SpeechSynthesisUtterance SIN tocar tu speakNow
+        - Si tu speakNow no asigna una voz concreta o el navegador no tiene voces ES,
+          este shim pone lang='es-419' por defecto (en vez de 'es-ES').
+        - No interfiere si ya seleccionaste una voz ES concreta (respeta u.lang existente).
+  */
+  try{
+    if ('SpeechSynthesisUtterance' in window && !window.__ssu_es419_patched__){
+      const NativeSSU = window.SpeechSynthesisUtterance;
+      function PatchedSSU(text){
+        const u = new NativeSSU(text);
+        // Si no viene lang o no empieza por español, forzar es-419
+        if (!u.lang || !/^es(-|$)/i.test(u.lang)) {
+          u.lang = 'es-419';
+        }
+        return u;
+      }
+      // Mantener prototipo y propiedades
+      PatchedSSU.prototype = NativeSSU.prototype;
+      Object.setPrototypeOf(PatchedSSU, NativeSSU);
+      window.SpeechSynthesisUtterance = PatchedSSU;
+      window.__ssu_es419_patched__ = true;
+    }
+  } catch(_) {}
+})();
+</script>
+<!-- ===== FIN PARCHE ===== -->
 </body>
 </html>
+
