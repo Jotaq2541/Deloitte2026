@@ -16,10 +16,12 @@
       --viz-bg:#0f1216; --viz-stroke:#2e3640;
 
       /* Chips/leyendas legibles */
-      --chip-bg:#eef6f0;
-      --chip-text:#0b0e11;
-      --chip-border:rgba(0,0,0,.16);
+      --chip-bg:#eef6f0; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
       --chip-bg-hover:#e4f2ea;
+
+      /* “Tecnológico” */
+      --glow: rgba(34,179,106,.55);
+      --glow-soft: rgba(34,179,106,.18);
     }
     *{box-sizing:border-box}
 
@@ -28,21 +30,45 @@
       background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
       color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      position:relative; /* para capas del fondo tech */
-      min-height:100dvh; overflow-x:hidden;
+      position:relative; min-height:100dvh; overflow-x:hidden;
+      /* no cambia tu base */
     }
+
+    /* ====== FONDO TECNOLÓGICO (capas no intrusivas) ====== */
+    /* Capa 1: “grid” animado muy tenue */
+    .fx-grid{
+      position:fixed; inset:0; z-index:-2; pointer-events:none;
+      background:
+        radial-gradient(1200px 600px at 15% 0%, rgba(34,179,106,.12), transparent 60%),
+        repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
+      mix-blend-mode:screen; animation: bgShift 36s linear infinite;
+    }
+    /* Capa 2: “neblina” verde profunda */
+    .fx-glow{
+      position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(800px 400px at 80% 20%, rgba(34,179,106,.12), transparent 60%),
+        radial-gradient(700px 380px at 20% 80%, rgba(28,140,63,.10), transparent 60%);
+      filter: blur(14px);
+    }
+    @keyframes bgShift{ 0%{background-position:0 0,0 0} 100%{background-position:0 0,480px 280px} }
 
     /* === CABECERA === */
     header{
       padding:16px 20px;
       border-bottom:2px solid var(--brand);
-      background:#0f1317;
-      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
+      background:linear-gradient(180deg, rgba(15,19,23,.92), rgba(15,19,23,.78));
+      backdrop-filter: blur(6px);
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      box-shadow: 0 10px 24px rgba(0,0,0,.35);
     }
     .brand{display:flex;align-items:center;gap:10px}
     .logo{height:24px;width:auto;display:block}
     .logo-fallback{height:24px;display:none;align-items:center;color:#cfe9d5;font-weight:700}
-    header h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap}
+    header h1{
+      margin:0;font-size:18px;font-weight:700;white-space:nowrap;
+      text-shadow: 0 1px 0 rgba(0,0,0,.6);
+    }
 
     /* === CONTROLES CABECERA (ALTO CONTRASTE) === */
     .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -50,23 +76,41 @@
     select,button{
       background:#f1f5f3; color:#0b0e11;
       border:1px solid rgba(0,0,0,.18);
-      border-radius:8px; padding:8px 10px; font-size:14px;
-      box-shadow:0 1px 0 rgba(255,255,255,.15) inset; cursor:pointer;
+      border-radius:10px; padding:8px 10px; font-size:14px;
+      box-shadow:0 1px 0 rgba(255,255,255,.15) inset, 0 6px 14px rgba(0,0,0,.15);
+      cursor:pointer; transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+    }
+    select:hover,button:hover{
+      border-color: rgba(28,140,63,.35);
+      box-shadow: 0 0 0 1px rgba(34,179,106,.25), 0 10px 22px rgba(0,0,0,.22);
+      transform: translateY(-1px);
     }
     .btn-primary{
       background:linear-gradient(180deg,#27ae60,#1c8c3f);
       color:#ffffff;border:1px solid #1c8c3f
     }
     .btn-ghost{background:#e9efe9}
-    .controls select:hover,.controls .btn:hover{filter:brightness(1.06)}
     .controls select:focus-visible,.controls .btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
     .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
     @media (max-width:1100px){ .wrap{grid-template-columns:1fr} }
 
+    /* ====== CONTENEDORES: glass + borde iluminado (sutil) ====== */
     .left,.right{
-      background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 180px);
-      border:1px solid rgba(255,255,255,.08);border-radius:14px
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00) 200px);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      box-shadow:
+        0 14px 32px rgba(0,0,0,.38),
+        inset 0 1px 0 rgba(255,255,255,.06);
+      position:relative;
+      overflow:clip;
+    }
+    .left::before,.right::before{
+      content:""; position:absolute; inset:0; pointer-events:none;
+      border-radius:inherit;
+      box-shadow: 0 0 0 1px rgba(34,179,106,.12), 0 0 32px rgba(34,179,106,.08) inset;
     }
     .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
 
@@ -95,19 +139,33 @@
     }
     .panel h2{margin:0;font-size:16px}
 
+    /* ====== Tarjetas 3D sutil ====== */
     .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
+    .card{
+      background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
+      box-shadow: 0 18px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 24px 56px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.08);
+      border-color: rgba(34,179,106,.28);
+    }
+
     .qbtn{
       width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);
       background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35;
       transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .35s ease;
+      box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 8px 20px rgba(0,0,0,.25);
     }
     .qbtn:hover{
       border-color:rgba(32,163,74,.55);
-      box-shadow:0 0 6px rgba(32,163,74,.24), 0 0 18px rgba(32,163,74,.12) inset;
+      box-shadow:0 0 6px rgba(32,163,74,.24), 0 0 18px rgba(32,163,74,.12) inset, 0 10px 26px rgba(0,0,0,.35);
       transform: translateY(-1px);
     }
     .qbtn:active{
       background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.4) 50%, rgba(28,140,63,.15) 100%);
+      transform: translateY(0);
     }
     .qbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
@@ -197,23 +255,14 @@
       padding:12px 14px; background:rgba(0,0,0,.14); border-top:1px solid rgba(255,255,255,.08)
     }
     @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
-    .card{
-      background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
-    }
-    /* Títulos de gráficos bien visibles */
     .card h3{
-      margin:0 0 8px 0;
-      font-size:15px;
-      color:var(--viz-text);
+      margin:0 0 8px 0; font-size:15px; color:var(--viz-text);
+      text-shadow: 0 1px 0 rgba(0,0,0,.35);
     }
-    .viz{
-      width:100%; height:260px; display:block
-    }
-    /* Soporte de emoji (banderas) en texto de SVG */
+    .viz{ width:100%; height:260px; display:block }
     .viz text{
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
     }
-    /* Clickable en 'Medios destacados por país' */
     #chartBarsMedia{ cursor:pointer; }
 
     .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
@@ -257,44 +306,19 @@
       .card{ background:#ffffff }
     }
 
-    /* ===================== */
-    /*  EXTRAS SOLICITADOS   */
-    /* ===================== */
-
-    /* Fondo tecnológico 3D sutil (no tapa titulares ni gráficos) */
-    body::before{
-      content:""; position:fixed; inset:0; z-index:-2;
-      background:
-        radial-gradient(1200px 600px at 15% 0%, rgba(34,179,106,.14), transparent 60%),
-        repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
-      mix-blend-mode:screen; animation: bgShift 36s linear infinite; pointer-events:none;
-    }
-    body::after{
-      content:""; position:fixed; inset:0; z-index:-1;
-      background:
-        radial-gradient(800px 400px at 80% 20%, rgba(34,179,106,.10), transparent 60%),
-        radial-gradient(600px 300px at 20% 80%, rgba(28,140,63,.08), transparent 60%);
-      filter: blur(14px); pointer-events:none;
-    }
-    @keyframes bgShift{ 0%{background-position:0 0,0 0} 100%{background-position:0 0,480px 280px} }
-
-    /* Un poco más de profundidad a contenedores (sutil) */
-    .left,.right{ box-shadow: 0 8px 24px rgba(0,0,0,.35); }
-
-    /* OVERRIDES de fluidez en el avatar:
-       - NO animar ni transformar el <video> mientras habla (evita saltos/pegones)
-       - Se mantiene el ecualizador (::after) activo por .talking
-    */
+    /* ====== OVERRIDES de fluidez del AVATAR (no animar el <video>) ====== */
     #avatar video{ will-change:auto; transform:none; transition:filter .18s ease; }
     #avatar.talking video{ animation:none !important; transform:none !important; }
-
   </style>
 </head>
 
 <body>
+  <!-- Fondos tecnológicos (decorativos, no funcionales) -->
+  <div class="fx-grid" aria-hidden="true"></div>
+  <div class="fx-glow" aria-hidden="true"></div>
+
   <header>
     <div class="brand">
-      <!-- LOGO original + fallback si no carga -->
       <img id="logoImg" class="logo" src="./Deloitte-Emblem.png" alt="Deloitte" loading="eager" decoding="async" />
       <span id="logoFallback" class="logo-fallback" aria-hidden="true">Deloitte</span>
       <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
@@ -315,7 +339,7 @@
     <!-- Izquierda: AVATAR (VIDEO + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- VIDEO del avatar: sin autoplay para que solo “hable” con TTS -->
+        <!-- VIDEO del avatar: se mantiene tu MP4 -->
         <video id="avatarVideo"
                src="./Diseño sin título (5).mp4"
                muted
@@ -349,7 +373,7 @@
           <div class="legend" id="legendBars"></div>
         </div>
 
-        <!-- (ELIMINADO: tarjeta de “Empresas públicas auditadas”) -->
+        <!-- 🔥 Eliminada la tarjeta de Empresas públicas auditadas -->
 
         <div class="card">
           <h3>Medios destacados por país</h3>
@@ -358,14 +382,13 @@
         </div>
       </div>
 
-      <!-- Preguntas base (ELIMINADA la pregunta de empresas auditadas; se renumerará) -->
+      <!-- Preguntas base (eliminada la pregunta de empresas auditadas; renumeración automática) -->
       <div class="grid" id="faqGrid" role="list">
         <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
         <button class="qbtn" data-answer="Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región.">3. ¿En qué países opera el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113).">4. ¿Cuántos profesionales integran Deloitte en la región?</button>
         <button class="qbtn" data-answer="El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales.">5. ¿Qué áreas de servicio están representadas dentro del Marketplace?</button>
-        <!-- (eliminada la #6 de empresas auditadas) -->
         <button class="qbtn" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
         <button class="qbtn" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
         <button class="qbtn" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
@@ -382,7 +405,7 @@
     </section>
   </main>
 
-  <!-- Música corporativa (si no existe, la página funciona igual) -->
+  <!-- Música corporativa -->
   <audio id="bgMusic" src="./musica-corporativa.mp3" preload="auto" loop></audio>
 
   <!-- Tooltip global de gráficos -->
@@ -661,14 +684,14 @@
       function redrawAll(){
         hideTipMedia();
         drawBars();
-        /* drawDonut();  <-- eliminado */
+        /* drawDonut(); (eliminado) */
         drawBarsMedia();
       }
       redrawAll();
       window.addEventListener('resize', redrawAll);
     });
 
-    /* ====== Q&A + TTS (typewriter cancelable, avatar suave) ====== */
+    /* ====== Q&A + TTS (typewriter + avatar fluido) ====== */
     document.addEventListener('DOMContentLoaded', () => {
       const voiceSel   = document.getElementById('voiceSel');
       const btnSpeak   = document.getElementById('btnSpeak');
@@ -699,7 +722,7 @@
         btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
       }
 
-      // TYPEWRITER cancelable (evita duplicaciones)
+      // TYPEWRITER cancelable
       let typeSeq = 0;
       function typeText(target, text, speed=22){
         typeSeq++;
@@ -801,12 +824,9 @@
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          /* Handlers AJUSTADOS para fluidez:
-             - sin boosts por fonema (onboundary)
-             - sin animar el <video>: solo .talking (ecualizador) + play/pause del MP4
-          */
-          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); /* boostOnce(); (omitido) */ };
-          // u.onboundary= () => { boostOnce(); }; // (eliminado para evitar micro-janks)
+          /* Handlers de habla (sin boosts por fonema para máxima fluidez) */
+          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); /* boostOnce(); */ };
+          // u.onboundary= () => { boostOnce(); }; // (omitido a propósito)
           u.onend     = () => { setTalking(false); stopAvatarVideo(); };
           u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
 
