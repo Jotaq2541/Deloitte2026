@@ -22,10 +22,8 @@
       --chip-bg-hover:#e4f2ea;
     }
     *{box-sizing:border-box}
-<!-- Música corporativa -->
-<audio id="bgMusic" src="techno-sphere_88321.mp3" preload="auto" loop></audio>
-``
- body{
+
+    body{
       margin:0;
       background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
       color:var(--text);
@@ -76,7 +74,6 @@
       background:#07090d;border:1px solid rgba(32,163,74,.35);
       box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)
     }
-    /* ⬇️ Extiendo selectores a video para mantener el comportamiento original */
     .avatar img,
     .avatar video{
       position:absolute;inset:0;width:100%;height:100%;
@@ -281,11 +278,16 @@
   </header>
 
   <main class="wrap">
-    <!-- Izquierda: AVATAR (video + subtítulo) -->
+    <!-- Izquierda: AVATAR (VIDEO + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- ⬇️ Cambio ÚNICO: IMG → VIDEO con tu archivo -->
-        <video id="avatarVideo" src="./Diseño sin título (5).mp4" autoplay muted loop playsinline preload="auto"></video>
+        <!-- VIDEO del avatar: sin autoplay para que solo “hable” con TTS -->
+        <video id="avatarVideo"
+               src="./Diseño sin título (5).mp4"
+               muted
+               loop
+               playsinline
+               preload="auto"></video>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
@@ -352,7 +354,7 @@
     </section>
   </main>
 
-  <!-- Música corporativa (opcional; si no existe, la página funciona igual) -->
+  <!-- Música corporativa (si no existe, la página funciona igual) -->
   <audio id="bgMusic" src="./musica-corporativa.mp3" preload="auto" loop></audio>
 
   <!-- Tooltip global de gráficos -->
@@ -704,6 +706,7 @@
       const aiThinking = document.getElementById('aiThinking');
       const bg         = document.getElementById('bgMusic');
       const avatar     = document.getElementById('avatar');
+      const avatarVideo= document.getElementById('avatarVideo');
 
       if (!voiceSel || !btnSpeak || !btnPause || !btnStop || !faqGrid || !answerBox || !subtitleEl){
         if (answerBox) answerBox.textContent = 'Faltan nodos esenciales; verifica el HTML.';
@@ -737,6 +740,7 @@
         })();
       }
 
+      // Clase visual de "hablando"
       function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
       let boostTimer = null;
       function boostOnce(){
@@ -744,6 +748,20 @@
         avatar.classList.add('talking-boost');
         clearTimeout(boostTimer);
         boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
+      }
+
+      // 🎬 Control del video del avatar (solo habla cuando hay TTS)
+      function playAvatarVideo(){
+        if (!avatarVideo) return;
+        avatarVideo.play().catch(()=>{});
+      }
+      function pauseAvatarVideo(){
+        if (!avatarVideo) return;
+        avatarVideo.pause();
+      }
+      function stopAvatarVideo(){
+        if (!avatarVideo) return;
+        try { avatarVideo.pause(); avatarVideo.currentTime = 0; } catch {}
       }
 
       // TTS
@@ -808,10 +826,10 @@
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); boostOnce(); };
+          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); boostOnce(); };
           u.onboundary= () => { boostOnce(); };
-          u.onend     = () => { setTalking(false); };
-          u.onerror   = () => { setTalking(false); aiThinking.style.display='none'; };
+          u.onend     = () => { setTalking(false); stopAvatarVideo(); };
+          u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
 
           lastUtterance = u;
           synth.speak(u);
@@ -826,25 +844,25 @@
           const text = btn.dataset.answer || '';
           aiThinking.style.display='block';
           typeText(answerBox, text);
-          document.getElementById('subtitle').textContent = text;
+          subtitleEl.textContent = text;
           queueSpeak(text);
         };
       });
 
-      // Botón Reproducir
+      // Botón Reproducir (relee lo visible)
       btnSpeak.onclick = () => {
         const text = (answerBox.textContent || '').trim();
         if (text) queueSpeak(text);
       };
 
-      // Exponer helpers
+      // Exponer helpers (para addQA)
       window.typeText = typeText;
       window.queueSpeak = queueSpeak;
 
-      // Mensaje inicial
+      // Mensaje inicial (sin voz)
       const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
       typeText(answerBox, bienvenida);
-      document.getElementById('subtitle').textContent = bienvenida;
+      subtitleEl.textContent = bienvenida;
     });
 
     /* ====== Helpers para agregar preguntas sin tocar estructura ====== */
@@ -961,6 +979,7 @@
       function hardCancel(){
         try { synth.cancel(); } catch {}
         setTalking(false);
+        stopAvatarVideo();   // ⏹️ detener video del avatar
         setBtnLabels();
       }
       function pauseResume(e){
@@ -969,12 +988,13 @@
         if (synth.speaking && !synth.paused){
           try { synth.pause(); } catch {}
           setTalking(false);
+          pauseAvatarVideo();      // ⏸️ pausa video
           setBtnLabels();
           return;
         }
         if (synth.paused){
           try { synth.resume(); } catch {}
-          setTimeout(()=>{ if (synth.speaking && !synth.paused) setTalking(true); }, 30);
+          setTimeout(()=>{ if (synth.speaking && !synth.paused) { setTalking(true); playAvatarVideo(); } }, 30);
           setBtnLabels();
           return;
         }
@@ -1005,66 +1025,74 @@
       window.addEventListener('beforeunload', () => clearInterval(visInterval));
     })();
   </script>
-  
-<!-- Música corporativa (reproductor sin UI) -->
-<audio id="bgMusic" src="techno-sphere_88321.mp3" preload="auto" loop></audio>
 
-<script>
-(function(){
-  const bg  = document.getElementById('bgMusic');   // <audio id="bgMusic">
-  const btn = document.getElementById('btnMusic');  // botón de cabecera "Música"
-  if (!bg) return;
+  <!-- Música corporativa (reproductor sin UI con preferencia persistente) -->
+  <script>
+  (function(){
+    const bg  = document.getElementById('bgMusic');   // <audio id="bgMusic">
+    const btn = document.getElementById('btnMusic');  // botón de cabecera "Música"
+    if (!bg) return;
 
-  const LS_KEY = 'bgMusicMuted';
+    const LS_KEY = 'bgMusicMuted';
 
-  // Estado inicial: por defecto con sonido (salvo preferencia guardada)
-  const saved = localStorage.getItem(LS_KEY);
-  bg.muted = (saved === 'true');   // null => false
-  bg.volume = 0.18;
+    // Estado inicial: por defecto con sonido (salvo preferencia guardada)
+    const saved = localStorage.getItem(LS_KEY);
+    bg.muted = (saved === 'true');   // null => false
+    bg.volume = 0.18;
 
-  // Si por accidente el HTML tenía muted y NO hay preferencia guardada de silencio, lo quitamos
-  if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
+    // Si por accidente el HTML tenía muted y NO hay preferencia guardada de silencio, lo quitamos
+    if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
 
-  // Sincroniza botón
-  function syncBtn(){
-    if (!btn) return;
-    btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
-    btn.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
-    btn.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
-  }
-  syncBtn();
-
-  // Desbloquear reproducción tras primer gesto (autoplay policy)
-  async function tryPlay(){ try { await bg.play(); } catch(_) {} }
-  const unlock = async () => {
-    if (bg.paused) await tryPlay();
-    window.removeEventListener('click', unlock);
-    window.removeEventListener('keydown', unlock);
-  };
-  window.addEventListener('click',  unlock, { once:true });
-  window.addEventListener('keydown', unlock, { once:true });
-
-  // Toggle desde botón Música (y guarda preferencia)
- ventListener('click', (e) => {
-      if (e.shiftKey){
-        localStorage.removeItem(LS_KEY);
-        bg.muted = false;
-        syncBtn();
-      }
-    }, { capture:true });
-  }
-
-  // Atajo: tecla M
-  document.addEventListener('keydown', async (e) => {
-    if ((e.key || '').toLowerCase() === 'm'){
-      bg.muted = !bg.muted;
-      localStorage.setItem(LS_KEY, String(bg.muted));
-      syncBtn();
-      if (!bg.muted && bg.paused) await tryPlay();
+    // Sincroniza botón
+    function syncBtn(){
+      if (!btn) return;
+      btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
+      btn.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
+      btn.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
     }
-  });
-})();
-</script>
-  
+    syncBtn();
+
+    // Desbloquear reproducción tras primer gesto (autoplay policy)
+    async function tryPlay(){ try { await bg.play(); } catch(_) {} }
+    const unlock = async () => {
+      if (bg.paused) await tryPlay();
+      window.removeEventListener('click', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    window.addEventListener('click',  unlock, { once:true });
+    window.addEventListener('keydown', unlock, { once:true });
+
+    // Toggle desde botón Música (y guarda preferencia)
+    if (btn){
+      btn.addEventListener('click', async () => {
+        bg.muted = !bg.muted;
+        localStorage.setItem(LS_KEY, String(bg.muted));
+        syncBtn();
+        if (!bg.muted && bg.paused) await tryPlay();
+      });
+
+      // Salvavidas: Shift+clic limpia preferencia si quedó pegado en silencio
+      btn.addEventListener('click', (e) => {
+        if (e.shiftKey){
+          localStorage.removeItem(LS_KEY);
+          bg.muted = false;
+          syncBtn();
+        }
+      }, { capture:true });
+    }
+
+    // Atajo: tecla M
+    document.addEventListener('keydown', async (e) => {
+      if ((e.key || '').toLowerCase() === 'm'){
+        bg.muted = !bg.muted;
+        localStorage.setItem(LS_KEY, String(bg.muted));
+        syncBtn();
+        if (!bg.muted && bg.paused) await tryPlay();
+      }
+    });
+  })();
+  </script>
+
 </body>
 </html>
+``
