@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -26,7 +27,9 @@
       margin:0;
       background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
       color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      position:relative; /* para capas del fondo tech */
+      min-height:100dvh; overflow-x:hidden;
     }
 
     /* === CABECERA === */
@@ -253,6 +256,38 @@
       .answer{ background:#ffffff }
       .card{ background:#ffffff }
     }
+
+    /* ===================== */
+    /*  EXTRAS SOLICITADOS   */
+    /* ===================== */
+
+    /* Fondo tecnológico 3D sutil (no tapa titulares ni gráficos) */
+    body::before{
+      content:""; position:fixed; inset:0; z-index:-2;
+      background:
+        radial-gradient(1200px 600px at 15% 0%, rgba(34,179,106,.14), transparent 60%),
+        repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
+      mix-blend-mode:screen; animation: bgShift 36s linear infinite; pointer-events:none;
+    }
+    body::after{
+      content:""; position:fixed; inset:0; z-index:-1;
+      background:
+        radial-gradient(800px 400px at 80% 20%, rgba(34,179,106,.10), transparent 60%),
+        radial-gradient(600px 300px at 20% 80%, rgba(28,140,63,.08), transparent 60%);
+      filter: blur(14px); pointer-events:none;
+    }
+    @keyframes bgShift{ 0%{background-position:0 0,0 0} 100%{background-position:0 0,480px 280px} }
+
+    /* Un poco más de profundidad a contenedores (sutil) */
+    .left,.right{ box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+
+    /* OVERRIDES de fluidez en el avatar:
+       - NO animar ni transformar el <video> mientras habla (evita saltos/pegones)
+       - Se mantiene el ecualizador (::after) activo por .talking
+    */
+    #avatar video{ will-change:auto; transform:none; transition:filter .18s ease; }
+    #avatar.talking video{ animation:none !important; transform:none !important; }
+
   </style>
 </head>
 
@@ -313,15 +348,9 @@
           <svg id="chartBars" class="viz" role="img" aria-label="Barras de profesionales por país"></svg>
           <div class="legend" id="legendBars"></div>
         </div>
-        <div class="card">
-          <h3>Empresas públicas auditadas</h3>
-          <svg id="chartDonut" class="viz" role="img" aria-label="Dona de porcentaje de empresas públicas auditadas"></svg>
-          <div class="legend">
-            <span class="badge"><span class="dot" style="background:#22b36a"></span> Auditadas: 51</span>
-            <span class="badge"><span class="dot" style="background:#2e3640"></span> Total mercado: 457</span>
-            <span class="badge"><strong>Participación: 11%</strong></span>
-          </div>
-        </div>
+
+        <!-- (ELIMINADO: tarjeta de “Empresas públicas auditadas”) -->
+
         <div class="card">
           <h3>Medios destacados por país</h3>
           <svg id="chartBarsMedia" class="viz" role="img" aria-label="Barras de cantidad de medios por país"></svg>
@@ -329,14 +358,14 @@
         </div>
       </div>
 
-      <!-- Preguntas base -->
+      <!-- Preguntas base (ELIMINADA la pregunta de empresas auditadas; se renumerará) -->
       <div class="grid" id="faqGrid" role="list">
         <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
         <button class="qbtn" data-answer="Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región.">3. ¿En qué países opera el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113).">4. ¿Cuántos profesionales integran Deloitte en la región?</button>
         <button class="qbtn" data-answer="El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales.">5. ¿Qué áreas de servicio están representadas dentro del Marketplace?</button>
-        <button class="qbtn" data-answer="Deloitte audita el 11% de las compañías listadas en las bolsas de valores de los siete países del Marketplace, lo que representa 51 empresas auditadas de un total de 457 en 2025.">6. ¿Cuál es la participación de Deloitte en empresas públicas auditadas dentro del Marketplace CA?</button>
+        <!-- (eliminada la #6 de empresas auditadas) -->
         <button class="qbtn" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
         <button class="qbtn" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
         <button class="qbtn" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
@@ -481,59 +510,6 @@
             legend.appendChild(span);
           });
         }
-      }
-
-      /* --- 2) DONA: 51/457 ≈ 11% (hover) --- */
-      const svgD = document.getElementById('chartDonut');
-      function drawDonut(){
-        if(!svgD) return;
-        const w=svgD.clientWidth||600, h=svgD.clientHeight||260, cx=w/2, cy=h/2, r=Math.min(w,h)*0.32, sw=r*0.38;
-        svgD.setAttribute('viewBox', `0 0 ${w} ${h}`);
-        while(svgD.firstChild) svgD.removeChild(svgD.firstChild);
-
-        const total = 457, audited = 51, pct = audited/total;
-
-        const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
-        bg.setAttribute('fill','none'); bg.setAttribute('stroke','var(--viz-stroke)'); bg.setAttribute('stroke-width',sw);
-        svgD.appendChild(bg);
-
-        const arc = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        arc.setAttribute('cx',cx); arc.setAttribute('cy',cy); arc.setAttribute('r',r);
-        arc.setAttribute('fill','none'); arc.setAttribute('stroke', '#22b36a'); arc.setAttribute('stroke-width',sw);
-        arc.setAttribute('stroke-linecap','round');
-        arc.setAttribute('transform',`rotate(-90 ${cx} ${cy})`);
-        const C = 2*Math.PI*r;
-        arc.setAttribute('stroke-dasharray', `${C} ${C}`);
-        arc.setAttribute('stroke-dashoffset', C);
-        svgD.appendChild(arc);
-
-        const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
-        t1.setAttribute('x',cx); t1.setAttribute('y',cy-2);
-        t1.setAttribute('text-anchor','middle'); t1.setAttribute('fill','var(--viz-text)'); t1.setAttribute('font-size','26');
-        t1.textContent = `${Math.round(pct*100)}%`;
-        svgD.appendChild(t1);
-
-        const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
-        t2.setAttribute('x',cx); t2.setAttribute('y',cy+18);
-        t2.setAttribute('text-anchor','middle'); t2.setAttribute('fill','var(--viz-muted)'); t2.setAttribute('font-size','12');
-        t2.textContent = `51 de 457`;
-        svgD.appendChild(t2);
-
-        setTimeout(()=>{ arc.setAttribute('stroke-dashoffset', C*(1-pct)); arc.style.transition='stroke-dashoffset 900ms ease' }, 180);
-
-        svgD.addEventListener('mousemove', (e)=>{
-          const bb = svgD.getBoundingClientRect();
-          const x = e.clientX - bb.left - cx;
-          const y = e.clientY - bb.top  - cy;
-          const ang = (Math.atan2(y, x) + Math.PI/2 + 2*Math.PI) % (2*Math.PI);
-          const over = ang <= (2*Math.PI*pct);
-          const html = over
-            ? `<strong>Auditadas</strong><br>51 / 457 (${Math.round(pct*100)}%)`
-            : `<strong>No auditadas</strong><br>${457-51} / 457`;
-          showTip(html, e.clientX, e.clientY);
-        });
-        svgD.addEventListener('mouseleave', hideTip);
       }
 
       /* --- 3) Medios destacados por país (tooltip por CLIC) --- */
@@ -685,7 +661,7 @@
       function redrawAll(){
         hideTipMedia();
         drawBars();
-        drawDonut();
+        /* drawDonut();  <-- eliminado */
         drawBarsMedia();
       }
       redrawAll();
@@ -825,8 +801,12 @@
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); boostOnce(); };
-          u.onboundary= () => { boostOnce(); };
+          /* Handlers AJUSTADOS para fluidez:
+             - sin boosts por fonema (onboundary)
+             - sin animar el <video>: solo .talking (ecualizador) + play/pause del MP4
+          */
+          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); /* boostOnce(); (omitido) */ };
+          // u.onboundary= () => { boostOnce(); }; // (eliminado para evitar micro-janks)
           u.onend     = () => { setTalking(false); stopAvatarVideo(); };
           u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
 
