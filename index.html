@@ -1000,61 +1000,79 @@
   </script>
 
 <!-- Música corporativa (sólo el reproductor, sin UI) -->
-<audio id="bgMusic" src="techno-sphere_88321.mp3" preload="auto" loop></audio>
+techno-sphere_88321.mp3</audio>
+
 <script>
   (function(){
-    const bg       = document.getElementById('bgMusic');   // <audio id="bgMusic">
-    const btnMusic = document.getElementById('btnMusic');  // botón de cabecera "Música"
+    const bg  = document.getElementById('bgMusic');   // <audio id="bgMusic">
+    const btn = document.getElementById('btnMusic');  // botón de cabecera "Música"
     if (!bg) return;
 
-    // Recordar preferencia (mute) entre visitas
     const LS_KEY = 'bgMusicMuted';
-    const savedMuted = localStorage.getItem(LS_KEY);
-    if (savedMuted !== null) bg.muted = (savedMuted === 'true');
 
-    // Actualizar texto/estado del botón (sutil)
-    function updateBtn(){
-      if (!btnMusic) return;
-      btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
-      btnMusic.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
-      btnMusic.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
+    // Estado inicial: por defecto con sonido (salvo que el usuario lo haya silenciado antes)
+    const saved = localStorage.getItem(LS_KEY);
+    bg.muted = (saved === 'true');   // null => false
+    bg.volume = 0.18;
+
+    // Si por accidente quedó el atributo HTML muted y NO hay preferencia guardada de silencio, lo removemos
+    if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
+
+    // Sincroniza el botón
+    function syncBtn(){
+      if (!btn) return;
+      btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
+      btn.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
+      btn.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
     }
-    updateBtn();
+    syncBtn();
 
-    // Iniciar música en el primer gesto del usuario (exigencia de autoplay)
-    function unlockAudio(){
-      if (bg.paused) {
-        bg.volume = 0.18;   // volumen suave
-        bg.play().catch(() => {}); // si algún navegador exige más gestos, el botón cubrirá
-      }
-      document.removeEventListener('click', unlockAudio);
-      document.removeEventListener('keydown', unlockAudio);
-    }
-    document.addEventListener('click', unlockAudio, { once:true });
-    document.addEventListener('keydown', unlockAudio, { once:true });
+    // Desbloquear reproducción tras primer gesto (clic o tecla) por políticas de autoplay
+    async function tryPlay(){ try { await bg.play(); } catch(_) {} }
+    const unlock = async () => {
+      if (bg.paused) await tryPlay();
+      window.removeEventListener('click', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    window.addEventListener('click', unlock,  { once:true });
+    window.addEventListener('keydown', unlock, { once:true });
 
-    // Toggle de silencio desde el botón de cabecera
-    if (btnMusic){
-      btnMusic.addEventListener('click', () => {
+    // Toggle desde el botón de cabecera
+    if (btn){
+      // Click normal: alterna mute y guarda preferencia
+      btn.addEventListener('click', async (e) => {
         bg.muted = !bg.muted;
         localStorage.setItem(LS_KEY, String(bg.muted));
-        updateBtn();
+        syncBtn();
+        // Si activaste sonido y aún está pausado (p. ej., primera interacción), intenta reproducir
+        if (!bg.muted && bg.paused) await tryPlay();
       });
+
+      // Shift + clic: limpia la preferencia por si quedó “pegado” en silenciado
+      btn.addEventListener('click', (e) => {
+        if (e.shiftKey){
+          localStorage.removeItem(LS_KEY);
+          bg.muted = false;
+          syncBtn();
+        }
+      }, { capture:true });
     }
 
-    // Atajo de teclado anunciado en tu UI: tecla "M" para mutear/activar
-    document.addEventListener('keydown', (e) => {
-      if (e.key.toLowerCase() === 'm'){
+    // Atajo de teclado "M" (como ya indicas en la UI)
+    document.addEventListener('keydown', async (e) => {
+      if ((e.key || '').toLowerCase() === 'm'){
         bg.muted = !bg.muted;
         localStorage.setItem(LS_KEY, String(bg.muted));
-        updateBtn();
+        syncBtn();
+        if (!bg.muted && bg.paused) await tryPlay();
       }
     });
   })();
 </script>
-``
+  
 </body>
 </html>
+
 
 
 
