@@ -999,92 +999,90 @@
     })();
   </script>
 
-<!-- === MÚSICA CORPORATIVA: BLOQUE DE PRUEBA === -->
-<!-- 1) Audio. Asegúrate que techno-sphere_88321.mp3 esté en la misma carpeta del index.html -->
-<audio id="bgMusic"
-       src="techno-sphere_88321.mp3"
-       preload="auto"
-       loop
-       style="display:none"
-       onerror="document.getElementById('musicStatus').textContent='❌ No se encontró el archivo: techno-sphere_88321.mp3 (verifica el nombre o la carpeta)';">
-</audio>
-
-<!-- 2) Indicador de estado y botón de prueba (solo para ayudarte) -->
-<div id="musicDebug" style="position:fixed;bottom:10px;left:10px;z-index:99999;background:rgba(0,0,0,.6);color:#fff;padding:8px 10px;border-radius:8px;font-size:12px">
-  <button id="btnTestMusic" style="cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid #2a2a2a;background:#22b36a;color:#0b0e11;margin-right:8px">
-    ▶️ Probar música
-  </button>
-  <span id="musicStatus">⏳ Lista. Haz clic en “Probar música”.</span>
+<!-- === PRUEBA DEFINITIVA DE MÚSICA === -->
+<!-- 1) Reproductor visible SOLO para diagnosticar -->
+<div style="position:fixed;right:10px;bottom:10px;z-index:99999;background:#111;color:#fff;padding:10px 12px;border-radius:10px;font:12px/1.3 system-ui">
+  <div style="margin-bottom:6px"><strong>Prueba de música</strong></div>
+  <!-- Cambia el src si tu archivo está en otra carpeta -->
+  <audio id="bgMusic" src="techno-sphere_88321.mp3" preload="auto" loop controls style="width:260px"></audio>
+  <div id="musicDiag" style="margin-top:6px;opacity:.9">⏳ Listo. Pulsa ▶️ o el botón “Probar música”.</div>
+  <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+    <button id="btnTestMusic" style="cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid #2a2a2a;background:#22b36a;color:#0b0e11">▶️ Probar música</button>
+    <button id="btnMuteToggle" style="cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid #2a2a2a;background:#e9efe9;color:#0b0e11">🔈/🔇</button>
+  </div>
+  <div style="margin-top:6px">
+    <label>Volumen: <input id="volSlider" type="range" min="0" max="100" value="18" style="vertical-align:middle"></label>
+  </div>
 </div>
 
 <script>
-  (function(){
-    const bg       = document.getElementById('bgMusic');
-    const btnMusic = document.getElementById('btnMusic');     // botón del header (si existe)
-    const btnTest  = document.getElementById('btnTestMusic'); // botón de prueba visible
-    const statusEl = document.getElementById('musicStatus');
+(function(){
+  const bg   = document.getElementById('bgMusic');
+  const dbg  = document.getElementById('musicDiag');
+  const btnT = document.getElementById('btnTestMusic');
+  const btnM = document.getElementById('btnMuteToggle');
+  const vol  = document.getElementById('volSlider');
 
-    if (!bg) return;
+  if (!bg || !dbg) return;
 
-    function setStatus(msg){ if(statusEl) statusEl.textContent = msg; }
-    function labelMusicBtn(){
-      if (!btnMusic) return;
-      btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
+  function say(msg){ dbg.textContent = msg; }
+
+  // Mensajes útiles
+  bg.addEventListener('error', () => {
+    // Error típico: archivo no encontrado (ruta incorrecta)
+    const err = bg.error && bg.error.code;
+    if (err === 4) say('❌ No se pudo cargar el archivo. Revisa el nombre/ruta de "techno-sphere_88321.mp3".');
+    else           say('❌ Error al cargar el audio. Verifica el archivo.');
+  });
+
+  bg.addEventListener('play',  () => say('✅ Reproduciendo música.'));
+  bg.addEventListener('pause', () => say('⏸️ Música en pausa.'));
+  bg.addEventListener('volumechange', () => {
+    if (bg.muted) say('🔇 Silenciada. Pulsa el botón 🔈/🔇 para activar sonido.');
+  });
+
+  // Botón de prueba
+  btnT.addEventListener('click', async () => {
+    try{
+      bg.muted = false;
+      if (bg.paused) await bg.play();
+      bg.volume = (vol.value|0)/100;
+      say('✅ Intentando reproducir… si no suena, sube el volumen o revisa la ruta del archivo.');
+    }catch(e){
+      say('⚠️ El navegador pidió interacción. Vuelve a pulsar ▶️ o el botón de prueba.');
     }
+  });
 
-    // Intentar reproducir con volumen suave
-    async function tryPlay(){
-      try {
-        bg.volume = 0.18;
-        bg.muted  = false;
-        await bg.play();
-        setStatus('✅ Reproduciendo música de fondo.');
-        labelMusicBtn();
-      } catch(e){
-        setStatus('⚠️ El navegador pidió interacción para reproducir. Pulsa “Probar música”.');
-      }
-    }
+  // Mute/unmute
+  btnM.addEventListener('click', () => {
+    bg.muted = !bg.muted;
+    say(bg.muted ? '🔇 Música silenciada.' : '🔈 Música activa.');
+  });
 
-    // 1) Primer clic en la página: intentar reproducir (autoplay policy)
-    document.addEventListener('click', () => {
+  // Slider volumen
+  vol.addEventListener('input', () => {
+    bg.volume = (vol.value|0)/100;
+    if (!bg.muted && !bg.paused) say('🔊 Volumen ajustado.');
+  });
+
+  // Autoplay tras primer clic (por si quieres que suene apenas se interactúe)
+  document.addEventListener('click', async () => {
+    try{
       if (bg.paused){
-        tryPlay();
+        bg.muted = false;
+        bg.volume = (vol.value|0)/100;
+        await bg.play();
+        say('✅ Reproduciendo tras la primera interacción.');
       }
-    }, { once:true });
-
-    // 2) Botón visible de prueba (siempre funciona tras clic)
-    if (btnTest){
-      btnTest.addEventListener('click', () => {
-        if (bg.paused) {
-          tryPlay();
-        } else {
-          bg.pause();
-          setStatus('⏸️ Música en pausa. Pulsa de nuevo para reanudar.');
-        }
-      });
-    }
-
-    // 3) Botón “Música” del header (si lo tienes)
-    if (btnMusic){
-      btnMusic.addEventListener('click', () => {
-        bg.muted = !bg.muted;
-        labelMusicBtn();
-        setStatus(bg.muted ? '🔇 Música silenciada.' : '🔈 Música activa.');
-      });
-      labelMusicBtn();
-    }
-
-    // 4) Mensajes al cargar/estado
-    bg.addEventListener('play',   () => setStatus('✅ Reproduciendo música de fondo.'));
-    bg.addEventListener('pause',  () => setStatus('⏸️ Música en pausa.'));
-    bg.addEventListener('volumechange', () => labelMusicBtn());
-    bg.addEventListener('ended',  () => setStatus('🔁 Loop finalizó y se reinicia (loop activo).'));
-    setStatus('⏳ Lista. Haz clic en “Probar música”.');
-  })();
+    }catch(e){/* ignorar */}
+  }, { once:true });
+})();
 </script>
-<!-- === FIN BLOQUE === -->
+<!-- === FIN PRUEBA === -->
+
 </body>
 </html>
+
 
 
 
