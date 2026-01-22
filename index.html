@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,65 +15,45 @@
       --viz-bg:#0f1216; --viz-stroke:#2e3640;
 
       /* Chips/leyendas legibles */
-      --chip-bg:#eef6f0; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
+      --chip-bg:#eef6f0;
+      --chip-text:#0b0e11;
+      --chip-border:rgba(0,0,0,.16);
       --chip-bg-hover:#e4f2ea;
-
-      /* 3D helpers */
-      --glass-bg: rgba(255,255,255,.06);
-      --glass-border: rgba(255,255,255,.14);
-      --shadow-1: 0 8px 24px rgba(0,0,0,.35);
-      --shadow-2: 0 2px 10px rgba(0,0,0,.3);
     }
     *{box-sizing:border-box}
 
-    /* ==== FONDO AI TECNOLÓGICO ==== */
     body{
-      margin:0; color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      min-height:100dvh; overflow-x:hidden;
+      margin:0;
       background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
-      position:relative;
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif
     }
-    body::before{
-      content:""; position:fixed; inset:0; z-index:-2;
-      background:
-        radial-gradient(1200px 600px at 15% 0%, #0e1117 0%, var(--bg) 60%),
-        repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
-      background-blend-mode:screen;
-      animation: bgShift 36s linear infinite; opacity:.75; pointer-events:none;
-    }
-    body::after{
-      content:""; position:fixed; inset:0; z-index:-1;
-      background:
-        radial-gradient(800px 400px at 80% 20%, rgba(34,179,106,.12), transparent 60%),
-        radial-gradient(600px 300px at 20% 80%, rgba(28,140,63,.10), transparent 60%);
-      filter: blur(14px); pointer-events:none;
-    }
-    @keyframes bgShift{ 0%{background-position:0 0,0 0} 100%{background-position:0 0,480px 280px} }
 
     /* === CABECERA === */
     header{
-      padding:16px 20px; border-bottom:2px solid var(--brand);
-      background:rgba(15,19,23,.75); backdrop-filter: blur(6px);
-      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
-      box-shadow: var(--shadow-2);
+      padding:16px 20px;
+      border-bottom:2px solid var(--brand);
+      background:#0f1317;
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
     }
     .brand{display:flex;align-items:center;gap:10px}
     .logo{height:24px;width:auto;display:block}
     .logo-fallback{height:24px;display:none;align-items:center;color:#cfe9d5;font-weight:700}
-    header h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+    header h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap}
 
-    /* === CONTROLES CABECERA === */
+    /* === CONTROLES CABECERA (ALTO CONTRASTE) === */
     .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     label{display:flex;gap:6px;align-items:center}
     select,button{
       background:#f1f5f3; color:#0b0e11;
       border:1px solid rgba(0,0,0,.18);
       border-radius:8px; padding:8px 10px; font-size:14px;
-      box-shadow:0 1px 0 rgba(255,255,255,.15) inset, 0 1px 8px rgba(0,0,0,.12);
-      cursor:pointer;
+      box-shadow:0 1px 0 rgba(255,255,255,.15) inset; cursor:pointer;
     }
-    .btn-primary{ background:linear-gradient(180deg,#27ae60,#1c8c3f); color:#fff; border:1px solid #1c8c3f }
+    .btn-primary{
+      background:linear-gradient(180deg,#27ae60,#1c8c3f);
+      color:#ffffff;border:1px solid #1c8c3f
+    }
     .btn-ghost{background:#e9efe9}
     .controls select:hover,.controls .btn:hover{filter:brightness(1.06)}
     .controls select:focus-visible,.controls .btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -82,74 +61,87 @@
     .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
     @media (max-width:1100px){ .wrap{grid-template-columns:1fr} }
 
-    /* ==== CONTENEDORES GLASSMORPHISM ==== */
     .left,.right{
-      background: var(--glass-bg); border:1px solid var(--glass-border); border-radius:14px;
-      backdrop-filter: blur(10px); box-shadow: var(--shadow-1);
+      background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 180px);
+      border:1px solid rgba(255,255,255,.08);border-radius:14px
     }
     .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
-    .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
 
+    /* === AVATAR === */
+    .avatar{
+      position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
+      background:#07090d;border:1px solid rgba(32,163,74,.35);
+      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)
+    }
+    .avatar img,
+    .avatar video{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;object-position:center;display:block
+    }
+    .subtitle{
+      position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
+      backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
+    }
+
+    .muted{color:var(--muted);font-size:12px}
+
+    .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
     .panel{
-      padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
-      background:linear-gradient(180deg, rgba(255,255,255,.06), transparent);
-      border-top-left-radius:14px; border-top-right-radius:14px;
+      padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
     }
     .panel h2{margin:0;font-size:16px}
 
     .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
-    .card{
-      background:rgba(8,12,15,.6); border:1px solid rgba(255,255,255,.08);
-      border-radius:12px; padding:12px; position:relative;
-      box-shadow: 0 18px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
-      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-      perspective:800px; transform-style:preserve-3d;
-    }
-    .card:hover{ transform: translateY(-3px); box-shadow: 0 24px 56px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08); border-color: rgba(34,179,106,.28) }
-
     .qbtn{
       width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);
       background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35;
       transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .35s ease;
-      box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 8px 20px rgba(0,0,0,.25);
     }
     .qbtn:hover{
       border-color:rgba(32,163,74,.55);
-      box-shadow:0 0 6px rgba(32,163,74,.24), 0 0 18px rgba(32,163,74,.12) inset, 0 10px 26px rgba(0,0,0,.35);
+      box-shadow:0 0 6px rgba(32,163,74,.24), 0 0 18px rgba(32,163,74,.12) inset;
       transform: translateY(-1px);
     }
-    .qbtn:active{ background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.4) 50%, rgba(28,140,63,.15) 100%); transform: translateY(0) }
+    .qbtn:active{
+      background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.4) 50%, rgba(28,140,63,.15) 100%);
+    }
     .qbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
     .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
     footer{padding:10px 16px;color:var(--muted)}
     .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
 
-    /* === AVATAR === */
-    .avatar{
-      position:relative; aspect-ratio:4/5; border-radius:12px; overflow:hidden;
-      background:#07090d; border:1px solid rgba(32,163,74,.35);
-      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35);
-      /* Mantener estable (sin animar transform del contenedor) */
-      will-change: transform; transform: translateZ(0);
+    /* === AVATAR: VIDA MIENTRAS HABLA === */
+    #avatar img,
+    #avatar video{will-change:transform,filter;transition:transform .18s ease, filter .18s ease}
+    #avatar.talking img,
+    #avatar.talking video{
+      transform-origin:50% 28%;
+      animation: headBobSmooth 1.25s ease-in-out infinite, fadeAI .25s ease forwards;
     }
-    .avatar .media{
-      position:absolute; inset:0; width:100%; height:100%;
-      object-fit:cover; object-position:center; display:block;
-      will-change: auto; transform: translateZ(0);
-      transition: filter .18s ease; /* NO animamos transform del video */
+    @keyframes headBobSmooth{
+      0%   { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
+      25%  { transform: translateY(-0.6%)   rotate(-0.12deg)  scale(1.002); filter: brightness(1.02); }
+      50%  { transform: translateY(0.15%)   rotate(0.08deg)   scale(1.001); filter: brightness(1.01); }
+      75%  { transform: translateY(-0.4%)   rotate(0.10deg)   scale(1.003); filter: brightness(1.015); }
+      100% { transform: translateY(0)       rotate(0deg)      scale(1.000); filter: brightness(1); }
     }
-    .subtitle{
-      position:absolute; bottom:8px; left:8px; right:8px; background:rgba(0,0,0,.45);
-      backdrop-filter:blur(4px); padding:8px; border-radius:8px; font-size:12px; max-height:38%; overflow:auto
-    }
+    @keyframes fadeAI{from{opacity:.65} to{opacity:1}}
 
-    /* === AVATAR: SOLO ECUALIZADOR (sin “cabeceo” para evitar saltos) === */
-    #avatar.talking{ /* sin animaciones de movimiento */ }
-    /* Desactivamos halo animado para máxima estabilidad */
-    #avatar::before{ content:""; position:absolute; inset:-3%; border-radius:12px; opacity:0; }
-    /* Ecualizador (se mantiene) */
+    /* Halo/respiración */
+    #avatar::before{
+      content:""; position:absolute; inset:-3%; border-radius:12px;
+      background:
+        radial-gradient(65% 60% at 50% 40%, rgba(32,163,74,.25), rgba(32,163,74,0) 60%),
+        radial-gradient(60% 55% at 50% 70%, rgba(28,140,63,.18), rgba(28,140,63,0) 70%);
+      opacity:0; pointer-events:none; filter: blur(6px); transform: scale(1);
+      transition: opacity .15s ease;
+    }
+    #avatar.talking::before{opacity:.65; animation: haloBreath 1.25s ease-in-out infinite}
+    @keyframes haloBreath{0%{transform:scale(1); filter:blur(6px)} 50%{transform:scale(1.03); filter:blur(7px)} 100%{transform:scale(1); filter:blur(6px)}}
+
+    /* Ecualizador */
     #avatar::after{
       content:""; position:absolute; left:8%; bottom:10%;
       width:26%; height:16%; pointer-events:none; opacity:0; transition: opacity .15s ease;
@@ -161,6 +153,9 @@
       filter: drop-shadow(0 0 4px rgba(36,167,93,.35));
     }
     #avatar.talking::after{opacity:.95; animation: vuDance .24s linear infinite}
+    #avatar.talking.talking-boost::after{ animation-duration:.16s }
+    #avatar.talking.talking-boost img,
+    #avatar.talking.talking-boost video{ animation-duration:1.05s }
     @keyframes vuDance{
       0%{   background-size:10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22% }
       25%{  background-size:10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48% }
@@ -171,6 +166,9 @@
 
     /* Accesibilidad: menos movimiento */
     @media (prefers-reduced-motion: reduce){
+      #avatar.talking img,
+      #avatar.talking video{ animation:none }
+      #avatar.talking::before{ animation:none }
       #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6 }
     }
 
@@ -196,12 +194,23 @@
       padding:12px 14px; background:rgba(0,0,0,.14); border-top:1px solid rgba(255,255,255,.08)
     }
     @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
-
-    .card h3{ margin:0 0 8px 0; font-size:15px; color:var(--viz-text); text-shadow: 0 1px 0 rgba(0,0,0,.35) }
-    .viz{ width:100%; height:260px; display:block }
+    .card{
+      background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
+    }
+    /* Títulos de gráficos bien visibles */
+    .card h3{
+      margin:0 0 8px 0;
+      font-size:15px;
+      color:var(--viz-text);
+    }
+    .viz{
+      width:100%; height:260px; display:block
+    }
+    /* Soporte de emoji (banderas) en texto de SVG */
     .viz text{
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
     }
+    /* Clickable en 'Medios destacados por país' */
     #chartBarsMedia{ cursor:pointer; }
 
     .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
@@ -238,7 +247,7 @@
         --chip-bg-hover:#f2f7f4;
       }
       body{ background:#f4f4f4; color:#111 }
-      header{ background:rgba(255,255,255,.8); border-bottom-color:#1c8c3f; backdrop-filter: blur(6px) }
+      header{ background:#ffffff; border-bottom-color:#1c8c3f }
       .left,.right{ border-color: rgba(0,0,0,.08) }
       .qbtn{ background:#ffffff; color:#111 }
       .answer{ background:#ffffff }
@@ -271,12 +280,13 @@
     <!-- Izquierda: AVATAR (VIDEO + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <!-- Video estable (sin animar transform); ecualizador aparte -->
-        <video id="avatarVideo" class="media" muted playsinline preload="auto" loop
-               poster="./741349c8be401dbf3728fc41f925c741.jpg">
-          <source src="./Diseño sin título (5).mp4" type="video/mp4" />
-          <!-- (opcional) <source src="./avatar.webm" type="video/webm" /> -->
-        </video>
+        <!-- VIDEO del avatar: sin autoplay para que solo “hable” con TTS -->
+        <video id="avatarVideo"
+               src="./Diseño sin título (5).mp4"
+               muted
+               loop
+               playsinline
+               preload="auto"></video>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
@@ -303,9 +313,15 @@
           <svg id="chartBars" class="viz" role="img" aria-label="Barras de profesionales por país"></svg>
           <div class="legend" id="legendBars"></div>
         </div>
-
-        <!-- (ELIMINADA la tarjeta de “Empresas públicas auditadas”) -->
-
+        <div class="card">
+          <h3>Empresas públicas auditadas</h3>
+          <svg id="chartDonut" class="viz" role="img" aria-label="Dona de porcentaje de empresas públicas auditadas"></svg>
+          <div class="legend">
+            <span class="badge"><span class="dot" style="background:#22b36a"></span> Auditadas: 51</span>
+            <span class="badge"><span class="dot" style="background:#2e3640"></span> Total mercado: 457</span>
+            <span class="badge"><strong>Participación: 11%</strong></span>
+          </div>
+        </div>
         <div class="card">
           <h3>Medios destacados por país</h3>
           <svg id="chartBarsMedia" class="viz" role="img" aria-label="Barras de cantidad de medios por país"></svg>
@@ -313,17 +329,18 @@
         </div>
       </div>
 
-      <!-- Preguntas base (sin la pregunta de empresas auditadas; re-numeración automática) -->
+      <!-- Preguntas base -->
       <div class="grid" id="faqGrid" role="list">
         <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
         <button class="qbtn" data-answer="Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región.">3. ¿En qué países opera el Marketplace Deloitte Centroamérica?</button>
         <button class="qbtn" data-answer="Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113).">4. ¿Cuántos profesionales integran Deloitte en la región?</button>
         <button class="qbtn" data-answer="El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales.">5. ¿Qué áreas de servicio están representadas dentro del Marketplace?</button>
-        <button class="qbtn" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">6. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
-        <button class="qbtn" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">7. ¿Qué certificaciones posee Deloitte en la región?</button>
-        <button class="qbtn" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">8. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
-        <button class="qbtn" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados &amp; Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">9. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
+        <button class="qbtn" data-answer="Deloitte audita el 11% de las compañías listadas en las bolsas de valores de los siete países del Marketplace, lo que representa 51 empresas auditadas de un total de 457 en 2025.">6. ¿Cuál es la participación de Deloitte en empresas públicas auditadas dentro del Marketplace CA?</button>
+        <button class="qbtn" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
+        <button class="qbtn" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
+        <button class="qbtn" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
+        <button class="qbtn" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados &amp; Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
       </div>
 
       <div id="answerBox" class="answer" aria-live="polite">
@@ -366,7 +383,7 @@
       };
       const hideTip = () => { tip.style.display='none'; tip.setAttribute('aria-hidden','true'); };
 
-      /* --- 1) BARRAS: Profesionales por país (gradiente + sombra) --- */
+      /* --- 1) BARRAS: Profesionales por país (con banderita) --- */
       const dataBars = [
         {label:'Guatemala',       flag:'🇬🇹', val:242, color:'#1ea55a'},
         {label:'Honduras',        flag:'🇭🇳', val:62,  color:'#24c06a'},
@@ -379,25 +396,11 @@
       const svgB = document.getElementById('chartBars');
       const legend = document.getElementById('legendBars');
 
-      function ensureDefs(svg){
-        let defs = svg.querySelector('defs');
-        if(!defs){ defs = document.createElementNS('http://www.w3.org/2000/svg','defs'); svg.appendChild(defs); }
-        if(!defs.querySelector('#dropSoft')){
-          const f = document.createElementNS('http://www.w3.org/2000/svg','filter');
-          f.setAttribute('id','dropSoft'); f.setAttribute('x','-20%'); f.setAttribute('y','-20%'); f.setAttribute('width','140%'); f.setAttribute('height','140%');
-          f.innerHTML = `<feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,.4)" flood-opacity="1"/>`;
-          defs.appendChild(f);
-        }
-        return defs;
-      }
-
       function drawBars(){
         if(!svgB) return;
         const w = svgB.clientWidth || 600, h = svgB.clientHeight || 260, pad = {t:10,r:16,b:30,l:110};
         svgB.setAttribute('viewBox', `0 0 ${w} ${h}`);
         while(svgB.firstChild) svgB.removeChild(svgB.firstChild);
-
-        const defs = ensureDefs(svgB);
 
         const max = Math.max(...dataBars.map(d=>d.val));
         const rowH = (h - pad.t - pad.b) / dataBars.length;
@@ -407,54 +410,59 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
-          // Gradiente por barra
-          const gid = `gradB_${i}`;
-          const grad = document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
-          grad.setAttribute('id', gid); grad.setAttribute('x1','0'); grad.setAttribute('y1','0'); grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
-          grad.innerHTML = `
-            <stop offset="0%" stop-color="${d.color}" stop-opacity="1"/>
-            <stop offset="60%" stop-color="${d.color}" stop-opacity=".9"/>
-            <stop offset="100%" stop-color="${d.color}" stop-opacity=".75"/>
-          `;
-          defs.appendChild(grad);
-
-          // etiqueta
+          // etiqueta izq.: banderita + nombre
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
           label.setAttribute('text-anchor','end');
           label.setAttribute('fill','var(--viz-text)');
           label.setAttribute('font-size','12');
+
           const tFlag = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tFlag.setAttribute('font-size','11'); tFlag.textContent = d.flag + ' '; label.appendChild(tFlag);
+          tFlag.setAttribute('font-size','11');
+          tFlag.textContent = d.flag + ' ';
+          label.appendChild(tFlag);
+
           const tName = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tName.textContent = d.label; label.appendChild(tName);
+          tName.textContent = d.label;
+          label.appendChild(tName);
+
           g.appendChild(label);
 
           // barra
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
-          bar.setAttribute('x', pad.l); bar.setAttribute('y', y);
-          bar.setAttribute('width', 0); bar.setAttribute('height', barH); bar.setAttribute('rx', 8);
-          bar.setAttribute('fill', `url(#${gid})`); bar.setAttribute('filter', 'url(#dropSoft)');
+          bar.setAttribute('x', pad.l);
+          bar.setAttribute('y', y);
+          bar.setAttribute('width', 0);
+          bar.setAttribute('height', barH);
+          bar.setAttribute('rx', 8);
+          bar.setAttribute('fill', d.color);
           bar.style.transition = 'width 420ms ease';
           g.appendChild(bar);
 
           // valor
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
-          val.setAttribute('x', pad.l + 6); val.setAttribute('y', y + barH/2 + 4);
-          val.setAttribute('fill','var(--viz-text)'); val.setAttribute('font-size','12');
-          val.textContent = d.val; val.style.opacity = 0;
+          val.setAttribute('x', pad.l + 6);
+          val.setAttribute('y', y + barH/2 + 4);
+          val.setAttribute('fill','var(--viz-text)');
+          val.setAttribute('font-size','12');
+          val.textContent = d.val;
+          val.style.opacity = 0;
           g.appendChild(val);
 
-          // interacción
+          // interacción hover (se mantiene)
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
             showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
+            bar.setAttribute('fill', '#35d07a');
           });
-          g.addEventListener('mouseleave', hideTip);
+          g.addEventListener('mouseleave', ()=>{
+            hideTip(); bar.setAttribute('fill', d.color);
+          });
 
           svgB.appendChild(g);
 
+          // animación
           requestAnimationFrame(()=>{
             const wBar = (w - pad.l - pad.r) * (d.val/max);
             bar.setAttribute('width', wBar);
@@ -475,7 +483,60 @@
         }
       }
 
-      /* --- 2) Medios destacados por país (gradiente + sombra) --- */
+      /* --- 2) DONA: 51/457 ≈ 11% (hover) --- */
+      const svgD = document.getElementById('chartDonut');
+      function drawDonut(){
+        if(!svgD) return;
+        const w=svgD.clientWidth||600, h=svgD.clientHeight||260, cx=w/2, cy=h/2, r=Math.min(w,h)*0.32, sw=r*0.38;
+        svgD.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        while(svgD.firstChild) svgD.removeChild(svgD.firstChild);
+
+        const total = 457, audited = 51, pct = audited/total;
+
+        const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
+        bg.setAttribute('fill','none'); bg.setAttribute('stroke','var(--viz-stroke)'); bg.setAttribute('stroke-width',sw);
+        svgD.appendChild(bg);
+
+        const arc = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        arc.setAttribute('cx',cx); arc.setAttribute('cy',cy); arc.setAttribute('r',r);
+        arc.setAttribute('fill','none'); arc.setAttribute('stroke', '#22b36a'); arc.setAttribute('stroke-width',sw);
+        arc.setAttribute('stroke-linecap','round');
+        arc.setAttribute('transform',`rotate(-90 ${cx} ${cy})`);
+        const C = 2*Math.PI*r;
+        arc.setAttribute('stroke-dasharray', `${C} ${C}`);
+        arc.setAttribute('stroke-dashoffset', C);
+        svgD.appendChild(arc);
+
+        const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t1.setAttribute('x',cx); t1.setAttribute('y',cy-2);
+        t1.setAttribute('text-anchor','middle'); t1.setAttribute('fill','var(--viz-text)'); t1.setAttribute('font-size','26');
+        t1.textContent = `${Math.round(pct*100)}%`;
+        svgD.appendChild(t1);
+
+        const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t2.setAttribute('x',cx); t2.setAttribute('y',cy+18);
+        t2.setAttribute('text-anchor','middle'); t2.setAttribute('fill','var(--viz-muted)'); t2.setAttribute('font-size','12');
+        t2.textContent = `51 de 457`;
+        svgD.appendChild(t2);
+
+        setTimeout(()=>{ arc.setAttribute('stroke-dashoffset', C*(1-pct)); arc.style.transition='stroke-dashoffset 900ms ease' }, 180);
+
+        svgD.addEventListener('mousemove', (e)=>{
+          const bb = svgD.getBoundingClientRect();
+          const x = e.clientX - bb.left - cx;
+          const y = e.clientY - bb.top  - cy;
+          const ang = (Math.atan2(y, x) + Math.PI/2 + 2*Math.PI) % (2*Math.PI);
+          const over = ang <= (2*Math.PI*pct);
+          const html = over
+            ? `<strong>Auditadas</strong><br>51 / 457 (${Math.round(pct*100)}%)`
+            : `<strong>No auditadas</strong><br>${457-51} / 457`;
+          showTip(html, e.clientX, e.clientY);
+        });
+        svgD.addEventListener('mouseleave', hideTip);
+      }
+
+      /* --- 3) Medios destacados por país (tooltip por CLIC) --- */
       const dataMedia = [
         {label:'Costa Rica',    flag:'🇨🇷', val:4, medios:['El Financiero','La Nación','La República','Noticias Repretel'], color:'#22b36a'},
         {label:'Panamá',        flag:'🇵🇦', val:4, medios:['La Estrella','La Prensa','TVN','Telemetro'], color:'#1ea55a'},
@@ -489,9 +550,9 @@
       // Estado de tooltip por clic
       let openKeyMedia = null;
 
-      function hideTip(){ tip.style.display='none'; tip.setAttribute('aria-hidden','true'); }
       function hideTipMedia(){
-        hideTip(); openKeyMedia = null;
+        hideTip();
+        openKeyMedia = null;
         if(svgM){
           svgM.querySelectorAll('rect').forEach(r=>{
             const base = r.getAttribute('data-base');
@@ -499,28 +560,21 @@
           });
         }
       }
-      document.addEventListener('click', (e)=>{ if (svgM && !svgM.contains(e.target)) hideTipMedia(); });
-      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') hideTipMedia(); });
 
-      function ensureDefs(svg){
-        let defs = svg.querySelector('defs');
-        if(!defs){ defs = document.createElementNS('http://www.w3.org/2000/svg','defs'); svg.appendChild(defs); }
-        if(!defs.querySelector('#dropSoft')){
-          const f = document.createElementNS('http://www.w3.org/2000/svg','filter');
-          f.setAttribute('id','dropSoft'); f.setAttribute('x','-20%'); f.setAttribute('y','-20%'); f.setAttribute('width','140%'); f.setAttribute('height','140%');
-          f.innerHTML = `<feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,.4)" flood-opacity="1"/>`;
-          defs.appendChild(f);
-        }
-        return defs;
-      }
+      // Cerrar al hacer clic fuera o con Escape
+      document.addEventListener('click', (e)=>{
+        if (!svgM) return;
+        if (!svgM.contains(e.target)) hideTipMedia();
+      });
+      document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape') hideTipMedia();
+      });
 
       function drawBarsMedia(){
         if(!svgM) return;
         const w = svgM.clientWidth || 600, h = svgM.clientHeight || 260, pad = {t:10,r:16,b:30,l:126};
         svgM.setAttribute('viewBox', `0 0 ${w} ${h}`);
         while(svgM.firstChild) svgM.removeChild(svgM.firstChild);
-
-        const defs = ensureDefs(svgM);
 
         const max = Math.max(...dataMedia.map(d=>d.val));
         const rowH = (h - pad.t - pad.b) / dataMedia.length;
@@ -532,40 +586,44 @@
 
           // etiqueta izquierda con banderita
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-          label.setAttribute('x', pad.l - 12); label.setAttribute('y', y + barH*0.72);
-          label.setAttribute('text-anchor','end'); label.setAttribute('fill','var(--viz-text)'); label.setAttribute('font-size','12');
+          label.setAttribute('x', pad.l - 12);
+          label.setAttribute('y', y + barH*0.72);
+          label.setAttribute('text-anchor','end');
+          label.setAttribute('fill','var(--viz-text)');
+          label.setAttribute('font-size','12');
+
           const tFlag = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tFlag.setAttribute('font-size','11'); tFlag.textContent = d.flag + ' '; label.appendChild(tFlag);
+          tFlag.setAttribute('font-size','11');
+          tFlag.textContent = d.flag + ' ';
+          label.appendChild(tFlag);
+
           const tName = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tName.textContent = d.label; label.appendChild(tName);
+          tName.textContent = d.label;
+          label.appendChild(tName);
+
           g.appendChild(label);
 
-          // Gradiente
-          const gid = `gradM_${i}`;
-          const grad = document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
-          grad.setAttribute('id', gid); grad.setAttribute('x1','0'); grad.setAttribute('y1','0'); grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
-          grad.innerHTML = `
-            <stop offset="0%" stop-color="${d.color}" stop-opacity="1"/>
-            <stop offset="70%" stop-color="${d.color}" stop-opacity=".88"/>
-            <stop offset="100%" stop-color="${d.color}" stop-opacity=".72"/>
-          `;
-          defs.appendChild(grad);
-
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
-          bar.setAttribute('x', pad.l); bar.setAttribute('y', y);
-          bar.setAttribute('width', 0); bar.setAttribute('height', barH); bar.setAttribute('rx', 8);
-          bar.setAttribute('fill', `url(#${gid})`); bar.setAttribute('data-base', `url(#${gid})`);
-          bar.setAttribute('filter', 'url(#dropSoft)');
+          bar.setAttribute('x', pad.l);
+          bar.setAttribute('y', y);
+          bar.setAttribute('width', 0);
+          bar.setAttribute('height', barH);
+          bar.setAttribute('rx', 8);
+          bar.setAttribute('fill', d.color);
+          bar.setAttribute('data-base', d.color);
           bar.style.transition = 'width 420ms ease, fill 120ms ease';
           g.appendChild(bar);
 
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
-          val.setAttribute('x', pad.l + 6); val.setAttribute('y', y + barH/2 + 4);
-          val.setAttribute('fill','var(--viz-text)'); val.setAttribute('font-size','12');
-          val.textContent = d.val; val.style.opacity = 0;
+          val.setAttribute('x', pad.l + 6);
+          val.setAttribute('y', y + barH/2 + 4);
+          val.setAttribute('fill','var(--viz-text)');
+          val.setAttribute('font-size','12');
+          val.textContent = d.val;
+          val.style.opacity = 0;
           g.appendChild(val);
 
-          // CLIC = tooltip
+          // --- Interacción por CLIC (toggle) ---
           function showTipAt(clientX, clientY){
             const sample = d.medios.slice(0,4).join(', ');
             const extra  = d.medios.length - Math.min(4, d.medios.length);
@@ -576,18 +634,30 @@
             tip.style.display = 'block';
             tip.setAttribute('aria-hidden','false');
           }
+
           function activate(ev){
             svgM.querySelectorAll('rect').forEach(r=>{
               const base = r.getAttribute('data-base') || r.getAttribute('fill');
               r.setAttribute('fill', base);
             });
             bar.setAttribute('fill', '#35d07a');
-            openKeyMedia = i; showTipAt(ev.clientX, ev.clientY);
+            openKeyMedia = i;
+            showTipAt(ev.clientX, ev.clientY);
           }
-          function handleClick(ev){ if (openKeyMedia === i){ hideTipMedia(); } else { activate(ev); } }
 
+          function handleClick(ev){
+            if (openKeyMedia === i){
+              hideTipMedia();
+            } else {
+              activate(ev);
+            }
+          }
+
+          // Accesible: también con Enter/Espacio
           g.setAttribute('tabindex', '0');
-          g.addEventListener('keydown', (e)=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }});
+          g.addEventListener('keydown', (e)=>{
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }
+          });
           g.addEventListener('click', handleClick);
 
           svgM.appendChild(g);
@@ -611,16 +681,18 @@
         }
       }
 
-      // Pintar y responder a resize
+      // Pintar y responder a resize (cerrando tooltip abierto si se redibuja)
       function redrawAll(){
+        hideTipMedia();
         drawBars();
+        drawDonut();
         drawBarsMedia();
       }
       redrawAll();
       window.addEventListener('resize', redrawAll);
     });
 
-    /* ====== Q&A + TTS ====== */
+    /* ====== Q&A + TTS (typewriter cancelable, avatar suave) ====== */
     document.addEventListener('DOMContentLoaded', () => {
       const voiceSel   = document.getElementById('voiceSel');
       const btnSpeak   = document.getElementById('btnSpeak');
@@ -640,7 +712,7 @@
         return;
       }
 
-      // Música: primer clic para iniciar (autoplay policy)
+      // Música: primer clic para iniciar (política de navegadores)
       document.addEventListener("click", ()=>{
         if(bg && bg.paused){
           bg.volume = 0.18;
@@ -651,38 +723,62 @@
         btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
       }
 
-      // TYPEWRITER cancelable
+      // TYPEWRITER cancelable (evita duplicaciones)
       let typeSeq = 0;
       function typeText(target, text, speed=22){
-        typeSeq++; const mySeq = typeSeq;
-        target.textContent = ""; let i = 0;
-        (function step(){ if(mySeq !== typeSeq) return; if(i < text.length){ target.textContent += text[i++]; setTimeout(step, speed); } })();
+        typeSeq++;
+        const mySeq = typeSeq;
+        target.textContent = "";
+        let i = 0;
+        (function step(){
+          if(mySeq !== typeSeq) return;
+          if(i < text.length){
+            target.textContent += text[i++];
+            setTimeout(step, speed);
+          }
+        })();
       }
 
-      // Clase visual “hablando” (solo activa ecualizador)
+      // Clase visual de "hablando"
       function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
+      let boostTimer = null;
+      function boostOnce(){
+        if(!avatar) return;
+        avatar.classList.add('talking-boost');
+        clearTimeout(boostTimer);
+        boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
+      }
 
-      // Control del video del avatar (solo habla con TTS)
-      function playAvatarVideo(){ if (avatarVideo) avatarVideo.play().catch(()=>{}); }
-      function pauseAvatarVideo(){ if (avatarVideo) avatarVideo.pause(); }
-      function stopAvatarVideo(){ if (avatarVideo){ try{ avatarVideo.pause(); avatarVideo.currentTime = 0; }catch{} } }
+      // 🎬 Control del video del avatar (solo habla cuando hay TTS)
+      function playAvatarVideo(){
+        if (!avatarVideo) return;
+        avatarVideo.play().catch(()=>{});
+      }
+      function pauseAvatarVideo(){
+        if (!avatarVideo) return;
+        avatarVideo.pause();
+      }
+      function stopAvatarVideo(){
+        if (!avatarVideo) return;
+        try { avatarVideo.pause(); avatarVideo.currentTime = 0; } catch {}
+      }
 
       // TTS
       const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
-      let voices = [], voicesReady = false, queuedText = null;
+      let voices = [], voicesReady = false, lastUtterance = null, queuedText = null;
 
       function loadVoices(){
         voiceSel.innerHTML = '';
         if (!synth){
           const opt = document.createElement('option');
           opt.textContent = 'TTS no disponible'; opt.value = '';
-          voiceSel.appendChild(opt); voiceSel.disabled = true; return;
+          voiceSel.appendChild(opt); voiceSel.disabled = true; voicesReady = false; return;
         }
         voices = synth.getVoices() || [];
         if (!voices.length){
           const opt = document.createElement('option');
           opt.textContent = 'Cargando voces…'; opt.value = '';
-          voiceSel.appendChild(opt); return;
+          voiceSel.appendChild(opt); voicesReady = false; return;
         }
         voices.forEach(v => {
           const opt = document.createElement('option');
@@ -700,6 +796,7 @@
           const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
           if (match) { voiceSel.value = match.name; break; }
         }
+        voicesReady = true;
         if (queuedText){ const t = queuedText; queuedText = null; speakNow(t); }
       }
       loadVoices();
@@ -715,7 +812,7 @@
 
       function queueSpeak(text){
         if (!synth || !text) return;
-        if (!voices.length){ queuedText = text; setTimeout(loadVoices, 250); return; }
+        if (!voicesReady){ queuedText = text; setTimeout(loadVoices, 250); return; }
         speakNow(text);
       }
 
@@ -728,11 +825,12 @@
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          u.onstart = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); };
-          /* SIN onboundary para evitar micro janks */
-          u.onend   = () => { setTalking(false); stopAvatarVideo(); };
-          u.onerror = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
+          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); boostOnce(); };
+          u.onboundary= () => { boostOnce(); };
+          u.onend     = () => { setTalking(false); stopAvatarVideo(); };
+          u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
 
+          lastUtterance = u;
           synth.speak(u);
         } catch(e){
           aiThinking.style.display='none';
@@ -755,9 +853,18 @@
         const text = (answerBox.textContent || '').trim();
         if (text) queueSpeak(text);
       };
+
+      // Exponer helpers (para addQA)
+      window.typeText = typeText;
+      window.queueSpeak = queueSpeak;
+
+      // Mensaje inicial (sin voz)
+      const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
+      typeText(answerBox, bienvenida);
+      subtitleEl.textContent = bienvenida;
     });
 
-    /* ====== Helpers para agregar preguntas ====== */
+    /* ====== Helpers para agregar preguntas sin tocar estructura ====== */
     (function(){
       const grid = document.getElementById('faqGrid');
       if(!grid) return;
@@ -791,7 +898,7 @@
       window.bulkAddQA = function(list){ (list || []).forEach(item => addQA(item.q, item.a)); };
     })();
 
-    /* ====== Preguntas adicionales ====== */
+    /* ====== Agregar las preguntas adicionales ya definidas ====== */
     (function(){
       bulkAddQA([
         {
@@ -817,7 +924,7 @@
       ]);
     })();
 
-    /* ==== Numerar preguntas automáticamente ==== */
+    /* ==== NUMERAR TODAS LAS PREGUNTAS AUTOMÁTICAMENTE ==== */
     (function(){
       const grid = document.getElementById('faqGrid');
       if (!grid) return;
@@ -829,8 +936,11 @@
           btn.textContent = `${idx + 1}. ${text}`;
         });
       }
+
+      // Numerar inicialmente
       renumberFAQ();
 
+      // Parchear addQA y bulkAddQA para renumerar al agregar
       const oldAddQA = window.addQA;
       if (typeof oldAddQA === "function") {
         window.addQA = function(q, a){
@@ -847,7 +957,7 @@
       }
     })();
 
-    /* ==== PARCHE PAUSA / DETENER (Web Speech) ==== */
+    /* ==== PARCHE ROBUSTO PARA PAUSAR / DETENER (Web Speech) ==== */
     (function(){
       if (!('speechSynthesis' in window)) return;
 
@@ -857,19 +967,18 @@
       const btnSpeak = document.getElementById('btnSpeak');
       const answerBox  = document.getElementById('answerBox');
       const avatarEl   = document.getElementById('avatar');
-      const v          = document.getElementById('avatarVideo');
 
       function setTalking(on){ avatarEl && avatarEl.classList.toggle('talking', !!on); }
       function setBtnLabels(){
         if (!btnPause) return;
-        if (synth.paused)       btnPause.textContent = '▶️ Reanudar';
+        if (synth.paused)       btnPause.textContent = '▶ Reanudar';
         else if (synth.speaking)btnPause.textContent = '⏸️ Pausar';
         else                    btnPause.textContent = '⏸️ Pausar';
       }
       function hardCancel(){
         try { synth.cancel(); } catch {}
         setTalking(false);
-        if (v){ try { v.pause(); v.currentTime = 0; } catch {} }
+        stopAvatarVideo();   // ⏹️ detener video del avatar
         setBtnLabels();
       }
       function pauseResume(e){
@@ -878,16 +987,17 @@
         if (synth.speaking && !synth.paused){
           try { synth.pause(); } catch {}
           setTalking(false);
-          if (v) v.pause();
+          pauseAvatarVideo();      // ⏸️ pausa video
           setBtnLabels();
           return;
         }
         if (synth.paused){
           try { synth.resume(); } catch {}
-          setTimeout(()=>{ if (synth.speaking && !synth.paused) { setTalking(true); if (v) v.play().catch(()=>{}); } }, 30);
+          setTimeout(()=>{ if (synth.speaking && !synth.paused) { setTalking(true); playAvatarVideo(); } }, 30);
           setBtnLabels();
           return;
         }
+        // Si no hay nada sonando, repetir la última respuesta visible
         const last = (answerBox && (answerBox.textContent||'').trim()) || '';
         if (last && typeof window.queueSpeak === 'function'){
           window.queueSpeak(last);
@@ -905,7 +1015,7 @@
       if (btnSpeak){
         const orig = btnSpeak.onclick;
         btnSpeak.onclick = function(ev){
-          hardCancel();
+          hardCancel();                 // limpia para evitar bloqueos
           if (typeof orig === 'function') orig.call(this, ev);
         };
       }
@@ -915,17 +1025,24 @@
     })();
   </script>
 
-  <!-- Música corporativa (control persistente) -->
+  <!-- Música corporativa (reproductor sin UI con preferencia persistente) -->
   <script>
   (function(){
-    const bg  = document.getElementById('bgMusic');
-    const btn = document.getElementById('btnMusic');
+    const bg  = document.getElementById('bgMusic');   // <audio id="bgMusic">
+    const btn = document.getElementById('btnMusic');  // botón de cabecera "Música"
     if (!bg) return;
 
     const LS_KEY = 'bgMusicMuted';
-    const saved = localStorage.getItem(LS_KEY);
-    bg.muted = (saved === 'true'); bg.volume = 0.18;
 
+    // Estado inicial: por defecto con sonido (salvo preferencia guardada)
+    const saved = localStorage.getItem(LS_KEY);
+    bg.muted = (saved === 'true');   // null => false
+    bg.volume = 0.18;
+
+    // Si por accidente el HTML tenía muted y NO hay preferencia guardada de silencio, lo quitamos
+    if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
+
+    // Sincroniza botón
     function syncBtn(){
       if (!btn) return;
       btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
@@ -934,6 +1051,7 @@
     }
     syncBtn();
 
+    // Desbloquear reproducción tras primer gesto (autoplay policy)
     async function tryPlay(){ try { await bg.play(); } catch(_) {} }
     const unlock = async () => {
       if (bg.paused) await tryPlay();
@@ -943,6 +1061,7 @@
     window.addEventListener('click',  unlock, { once:true });
     window.addEventListener('keydown', unlock, { once:true });
 
+    // Toggle desde botón Música (y guarda preferencia)
     if (btn){
       btn.addEventListener('click', async () => {
         bg.muted = !bg.muted;
@@ -951,6 +1070,7 @@
         if (!bg.muted && bg.paused) await tryPlay();
       });
 
+      // Salvavidas: Shift+clic limpia preferencia si quedó pegado en silencio
       btn.addEventListener('click', (e) => {
         if (e.shiftKey){
           localStorage.removeItem(LS_KEY);
@@ -960,6 +1080,7 @@
       }, { capture:true });
     }
 
+    // Atajo: tecla M
     document.addEventListener('keydown', async (e) => {
       if ((e.key || '').toLowerCase() === 'm'){
         bg.muted = !bg.muted;
@@ -971,7 +1092,5 @@
   })();
   </script>
 
-  <!-- Onda AI decorativa -->
-  <div id="aiWave" aria-hidden="true"></div>
 </body>
 </html>
