@@ -3,9 +3,10 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Asistente Virtual – Marketplace Deloitte CA</title>
   <meta name="description" content="Asistente con voz neutral latinoamericana. Preguntas y respuestas sobre el Marketplace Deloitte Centroamérica." />
+  <meta name="theme-color" content="#0b0e11" />
 
   <style>
     :root{
@@ -15,47 +16,69 @@
       --viz-text:#eaf7ef; --viz-muted:#b9c0c7;
       --viz-bg:#0f1216; --viz-stroke:#2e3640;
 
+      /* Chips/leyendas legibles */
       --chip-bg:#eef6f0; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
       --chip-bg-hover:#e4f2ea;
 
+      /* “Tecnológico” */
       --glow: rgba(34,179,106,.55);
       --glow-soft: rgba(34,179,106,.18);
+
+      /* Safe area iOS */
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
     }
     *{box-sizing:border-box}
 
     body{
       margin:0;
-      background:radial-gradient(1200px 600px at 20% 0%,#0e1117 0%,var(--bg) 60%);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, #0e1117 0%, var(--bg) 60%),
+        linear-gradient(180deg, rgba(28,140,63,.06), rgba(28,140,63,0));
       color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       position:relative; min-height:100dvh; overflow-x:hidden;
+      padding-bottom:var(--safe-bottom);
     }
 
-    /* ====== FONDO TECNOLÓGICO (capas no intrusivas) ====== */
+    /* ====== FONDOS TECNOLÓGICOS (capas) ====== */
+    /* Capa 1: “grid” animado tenue */
     .fx-grid{
-      position:fixed; inset:0; z-index:-2; pointer-events:none;
+      position:fixed; inset:0; z-index:-3; pointer-events:none;
       background:
-        radial-gradient(1200px 600px at 15% 0%, rgba(34,179,106,.12), transparent 60%),
+        radial-gradient(1200px 600px at 15% 0%, rgba(34,179,106,.10), transparent 60%),
         repeating-linear-gradient(135deg, rgba(34,179,106,.06) 0 2px, transparent 2px 18px);
       mix-blend-mode:screen; animation: bgShift 36s linear infinite;
     }
+    /* Capa 2: “neblina” verde profunda */
     .fx-glow{
-      position:fixed; inset:0; z-index:-1; pointer-events:none;
+      position:fixed; inset:0; z-index:-2; pointer-events:none;
       background:
         radial-gradient(800px 400px at 80% 20%, rgba(34,179,106,.12), transparent 60%),
         radial-gradient(700px 380px at 20% 80%, rgba(28,140,63,.10), transparent 60%);
       filter: blur(14px);
     }
-    @keyframes bgShift{ 0%{background-position:0 0,0 0} 100%{background-position:0 0,480px 280px} }
+    /* Capa 3: patrón hex sutil */
+    .fx-hex{
+      position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.08;
+      background:
+        radial-gradient( circle at 10px 6px, rgba(255,255,255,.25) 2px, transparent 2.2px ) 0 0/20px 17.5px,
+        radial-gradient( circle at 0 6px, rgba(255,255,255,.25) 2px, transparent 2.2px ) 10px 8.8px/20px 17.5px;
+      mix-blend-mode:soft-light;
+    }
+    @keyframes bgShift{ from{background-position:0 0,0 0} to{background-position:0 0,480px 280px} }
 
     /* === CABECERA === */
     header{
-      padding:16px 20px;
+      padding:calc(8px + var(--safe-top)) 20px 16px 20px;
       border-bottom:2px solid var(--brand);
       background:linear-gradient(180deg, rgba(15,19,23,.92), rgba(15,19,23,.78));
       backdrop-filter: blur(6px);
       display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
       box-shadow: 0 10px 24px rgba(0,0,0,.35);
+      position:sticky; top:0; z-index:10;
     }
     .brand{display:flex;align-items:center;gap:10px}
     .logo{height:24px;width:auto;display:block}
@@ -87,68 +110,84 @@
     .btn-ghost{background:#e9efe9}
     .controls select:focus-visible,.controls .btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
-    /* ====== LAYOUT ====== */
-    .wrap{display:grid;grid-template-columns:380px 1fr;gap:18px;padding:18px}
-    @media (max-width:1200px){ .wrap{grid-template-columns:1fr} }
+    .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
+    @media (max-width:1100px){ .wrap{grid-template-columns:1fr} }
 
-    /* Contenedores con glass + luz de borde */
+    /* ====== CONTENEDORES: glass + borde iluminado ====== */
     .left,.right{
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0) 200px);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00) 200px);
       border:1px solid rgba(255,255,255,.08);
-      border-radius:16px;
-      box-shadow: 0 14px 32px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06);
+      border-radius:14px;
+      box-shadow:
+        0 14px 32px rgba(0,0,0,.38),
+        inset 0 1px 0 rgba(255,255,255,.06);
       position:relative; overflow:clip;
     }
     .left::before,.right::before{
-      content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+      content:""; position:absolute; inset:0; pointer-events:none;
+      border-radius:inherit;
       box-shadow: 0 0 0 1px rgba(34,179,106,.12), 0 0 32px rgba(34,179,106,.08) inset;
     }
+    /* Esquinas holográficas */
+    .left::after,.right::after{
+      content:""; position:absolute; width:120px; height:120px; pointer-events:none;
+      background: conic-gradient(from 180deg at 50% 50%, rgba(34,179,106,.0), rgba(34,179,106,.45), rgba(34,179,106,.0) 70%);
+      filter: blur(18px); opacity:.18;
+      right:-40px; top:-40px; border-radius:50%;
+    }
 
-    .left{padding:14px;display:grid;grid-template-rows:auto auto 1fr;gap:14px}
-    .right{display:grid;grid-template-rows:auto auto auto 1fr auto; position:relative;}
+    .left{padding:14px;display:grid;grid-template-rows:auto auto auto 1fr;gap:14px}
 
+    /* === AVATAR === */
+    .avatar{
+      position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
+      background:#07090d;border:1px solid rgba(32,163,74,.35);
+      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)
+    }
+    .avatar img,
+    .avatar video{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;object-position:center;display:block
+    }
+    .subtitle{
+      position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
+      backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
+    }
+
+    .muted{color:var(--muted);font-size:12px}
+
+    /* ===== Slots/espacios en blanco para futuros elementos ===== */
+    .slots{
+      display:grid; grid-template-columns:1fr; gap:10px;
+    }
+    .slot{
+      min-height:72px; border:1px dashed rgba(139,216,169,.45); border-radius:10px;
+      background:linear-gradient(180deg, rgba(34,179,106,.05), rgba(34,179,106,.02));
+      color:#bfe9cf; display:flex; align-items:center; justify-content:space-between;
+      padding:10px 12px; font-size:13px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+      transition: border-color .15s ease, box-shadow .18s ease, transform .12s ease;
+    }
+    .slot:hover{
+      border-color: rgba(34,179,106,.75);
+      box-shadow: 0 6px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.1);
+      transform: translateY(-1px);
+    }
+    .slot .tag{
+      padding:4px 8px; border-radius:999px; background:#0f1216; border:1px solid rgba(139,216,169,.35);
+      color:#dff6e7; font-size:11px;
+    }
+
+    .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
     .panel{
       padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);
       display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap
     }
     .panel h2{margin:0;font-size:16px}
 
-    /* ====== AVATAR ====== */
-    .avatar{
-      position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
-      background:#07090d;border:1px solid rgba(32,163,74,.35);
-      box-shadow:0 0 0 1px rgba(32,163,74,.12),0 18px 60px rgba(0,0,0,.35)
-    }
-    .avatar video,
-    .avatar img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block }
-    .subtitle{
-      position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,.45);
-      backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
-    }
-    .muted{color:var(--muted);font-size:12px}
-
-    /* ====== CINTILLO DE FILTROS (UI) ====== */
-    .filters{
-      display:flex; gap:8px; align-items:center; padding:10px 14px;
-      border-bottom:1px dashed rgba(255,255,255,.08);
-      background: linear-gradient(180deg, rgba(255,255,255,.02), transparent);
-    }
-    .chip{
-      display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px;
-      background:var(--chip-bg); color:var(--chip-text); border:1px solid var(--chip-border);
-      font-size:12px; cursor:pointer; transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 6px 14px rgba(0,0,0,.12);
-    }
-    .chip:hover{ background:var(--chip-bg-hover); transform: translateY(-1px); }
-    .chip.active{ box-shadow: 0 0 0 2px rgba(34,179,106,.28), 0 6px 14px rgba(0,0,0,.14); }
-
-    /* ====== INSIGHTS (GRÁFICOS) ====== */
-    .insights{
-      display:grid; grid-template-columns:1fr 1fr; gap:12px;
-      padding:12px 14px; background:rgba(0,0,0,.14); border-top:1px solid rgba(255,255,255,.08)
-    }
-    @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
-
+    /* ====== Tarjetas ====== */
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;background:rgba(0,0,0,.18)}
     .card{
       background:var(--viz-bg); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; position:relative;
       box-shadow: 0 18px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
@@ -159,50 +198,12 @@
       box-shadow: 0 24px 56px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.08);
       border-color: rgba(34,179,106,.28);
     }
-    .card h3{
-      margin:0 0 8px 0; font-size:15px; color:var(--viz-text);
-      text-shadow: 0 1px 0 rgba(0,0,0,.35);
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .viz{ width:100%; height:260px; display:block }
-    .viz text{
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-    }
-    #chartBarsMedia{ cursor:pointer; }
-    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
-
-    .badge{
-      display:inline-flex; align-items:center; gap:6px;
-      background:var(--chip-bg); color:var(--chip-text);
-      border:1px solid var(--chip-border);
-      border-radius:999px; padding:6px 10px;
-      transition: background .15s ease, transform .12s ease;
-    }
-    .badge:hover{ background:var(--chip-bg-hover); transform:translateY(-1px) }
-    .badge:focus-visible{ outline:2px solid var(--focus); outline-offset:2px }
-    .dot{width:10px;height:10px;border-radius:50%}
-
-    /* ====== FAQ en 2 columnas ====== */
-    .faq-wrap{
-      padding:12px 14px; background:rgba(0,0,0,.12); border-top:1px solid rgba(255,255,255,.08);
-    }
-    .faq-title{ margin:0 0 10px 0; font-size:14px; color:var(--muted) }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr; /* 2 columnas en desktop */
-      gap:10px 12px;
-    }
-    @media (max-width:1000px){
-      .grid{ grid-template-columns:1fr; } /* 1 columna en móvil/tablet */
-    }
 
     .qbtn{
       width:100%;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.06);
       background:#12151b;border-radius:10px;cursor:pointer;line-height:1.35;
-      transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease, background .25s ease;
-      box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 8px 20px rgba(0,0,0,.20);
-      min-height: 44px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .35s ease;
+      box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 8px 20px rgba(0,0,0,.25);
     }
     .qbtn:hover{
       border-color:rgba(32,163,74,.55);
@@ -210,25 +211,20 @@
       transform: translateY(-1px);
     }
     .qbtn:active{
-      background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.35) 50%, rgba(28,140,63,.15) 100%);
+      background: linear-gradient(90deg, rgba(28,140,63,.15) 0%, rgba(32,163,74,.4) 50%, rgba(28,140,63,.15) 100%);
       transform: translateY(0);
     }
     .qbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
-    .answer{
-      margin-top:12px;
-      padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px;
-      border-radius:10px;
-    }
+    .answer{padding:16px;border-top:1px solid rgba(255,255,255,.08);background:#101419;min-height:160px}
     footer{padding:10px 16px;color:var(--muted)}
     .kbd{border:1px solid rgba(255,255,255,.2);padding:0 6px;border-radius:6px;background:#0f1216}
 
-    /* ====== AVATAR: vida mientras habla (SIN mover el <video>) ====== */
+    /* === AVATAR: VIDA MIENTRAS HABLA === */
     #avatar img,
     #avatar video{will-change:transform,filter;transition:transform .18s ease, filter .18s ease}
     #avatar.talking img,
     #avatar.talking video{
-      /* mantenemos la misma animación para la capa, pero se verá sutil por el override de transform:none en video */
       transform-origin:50% 28%;
       animation: headBobSmooth 1.25s ease-in-out infinite, fadeAI .25s ease forwards;
     }
@@ -241,7 +237,7 @@
     }
     @keyframes fadeAI{from{opacity:.65} to{opacity:1}}
 
-    /* Halo/respiración + Ecualizador */
+    /* Halo/respiración */
     #avatar::before{
       content:""; position:absolute; inset:-3%; border-radius:12px;
       background:
@@ -252,16 +248,22 @@
     }
     #avatar.talking::before{opacity:.65; animation: haloBreath 1.25s ease-in-out infinite}
     @keyframes haloBreath{0%{transform:scale(1); filter:blur(6px)} 50%{transform:scale(1.03); filter:blur(7px)} 100%{transform:scale(1); filter:blur(6px)}}
+
+    /* Ecualizador */
     #avatar::after{
       content:""; position:absolute; left:8%; bottom:10%;
       width:26%; height:16%; pointer-events:none; opacity:0; transition: opacity .15s ease;
       --bar: linear-gradient(180deg, #5ff5a2 0%, #22b36a 100%);
       background: var(--bar), var(--bar), var(--bar), var(--bar), var(--bar);
-      background-repeat:no-repeat; background-position:0% 100%, 25% 100%, 50% 100%, 75% 100%, 100% 100%;
+      background-repeat:no-repeat;
+      background-position:0% 100%, 25% 100%, 50% 100%, 75% 100%, 100% 100%;
       background-size:10% 22%, 10% 32%, 10% 18%, 10% 28%, 10% 24%;
       filter: drop-shadow(0 0 4px rgba(36,167,93,.35));
     }
     #avatar.talking::after{opacity:.95; animation: vuDance .24s linear infinite}
+    #avatar.talking.talking-boost::after{ animation-duration:.16s }
+    #avatar.talking.talking-boost img,
+    #avatar.talking.talking-boost video{ animation-duration:1.05s }
     @keyframes vuDance{
       0%{   background-size:10% 24%, 10% 30%, 10% 18%, 10% 28%, 10% 22% }
       25%{  background-size:10% 70%, 10% 42%, 10% 38%, 10% 80%, 10% 48% }
@@ -270,18 +272,21 @@
       100%{ background-size:10% 28%, 10% 60%, 10% 26%, 10% 68%, 10% 32% }
     }
 
-    /* Accesibilidad */
+    /* Accesibilidad: menos movimiento */
     @media (prefers-reduced-motion: reduce){
-      #avatar.talking img, #avatar.talking video{ animation:none }
+      #avatar.talking img,
+      #avatar.talking video{ animation:none }
       #avatar.talking::before{ animation:none }
       #avatar.talking::after{ animation: vuDance .5s linear infinite; opacity:.6 }
+      .fx-grid{ animation: none }
     }
 
     /* Onda AI inferior */
     #aiWave{
       position:fixed;left:0;right:0;bottom:0;height:4px;z-index:9999;
       background:linear-gradient(90deg, rgba(32,163,74,.2), rgba(32,163,74,.4), rgba(32,163,74,.2));
-      background-size:400% 100%; animation: wave 4s infinite linear;
+      background-size:400% 100%;
+      animation: wave 4s infinite linear;
     }
     @keyframes wave{ from{background-position:0 0} to{background-position:400% 0} }
 
@@ -292,6 +297,44 @@
       background:rgba(0,0,0,.35); border:1px solid rgba(139,216,169,.5); border-radius:8px;
     }
 
+    /* === INFOGRÁFICOS === */
+    .insights{
+      display:grid; grid-template-columns:1fr 1fr; gap:12px;
+      padding:12px 14px; background:rgba(0,0,0,.14); border-top:1px solid rgba(255,255,255,.08)
+    }
+    @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
+    .card h3{
+      margin:0 0 8px 0; font-size:15px; color:var(--viz-text);
+      text-shadow: 0 1px 0 rgba(0,0,0,.35);
+    }
+    .viz{ width:100%; height:260px; display:block }
+    .viz text{
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    }
+    #chartBarsMedia{ cursor:pointer; }
+
+    .legend{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; margin-top:8px}
+
+    /* Chips/leyendas legibles */
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--chip-bg); color:var(--chip-text);
+      border:1px solid var(--chip-border);
+      border-radius:999px; padding:6px 10px;
+      transition: background .15s ease, transform .12s ease;
+    }
+    .badge:hover{ background:var(--chip-bg-hover); transform:translateY(-1px) }
+    .badge:focus-visible{ outline:2px solid var(--focus); outline-offset:2px }
+    .dot{width:10px;height:10px;border-radius:50%}
+
+    /* Tooltip para SVG */
+    #vizTip{
+      position:fixed; z-index:99999; pointer-events:none;
+      background:#0f1216; color:#eaf7ef; border:1px solid rgba(255,255,255,.15);
+      padding:6px 8px; font-size:12px; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.35);
+      display:none; white-space:nowrap;
+    }
+
     /* Modo claro */
     @media (prefers-color-scheme: light){
       :root{
@@ -299,6 +342,7 @@
         --brand:#1c8c3f; --muted:#47515a; --focus:#22b36a;
         --viz-text:#0b0e11; --viz-muted:#47515a;
         --viz-bg:#ffffff; --viz-stroke:#d7dde3;
+
         --chip-bg:#ffffff; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
         --chip-bg-hover:#f2f7f4;
       }
@@ -308,22 +352,23 @@
       .qbtn{ background:#ffffff; color:#111 }
       .answer{ background:#ffffff }
       .card{ background:#ffffff }
+      .slots .tag{ background:#f8faf8; color:#0b0e11; }
     }
 
-    /* OVERRIDES de fluidez del video */
+    /* ====== OVERRIDES de fluidez del AVATAR (no animar el <video>) ====== */
     #avatar video{ will-change:auto; transform:none; transition:filter .18s ease; }
     #avatar.talking video{ animation:none !important; transform:none !important; }
   </style>
 </head>
 
 <body>
-  <!-- Fondos tecnológicos -->
+  <!-- Fondos tecnológicos (decorativos, no funcionales) -->
   <div class="fx-grid" aria-hidden="true"></div>
   <div class="fx-glow" aria-hidden="true"></div>
+  <div class="fx-hex" aria-hidden="true"></div>
 
   <header>
     <div class="brand">
-      <!-- LOGO original + fallback si no carga -->
       <img id="logoImg" class="logo" src="./Deloitte-Emblem.png" alt="Deloitte" loading="eager" decoding="async" />
       <span id="logoFallback" class="logo-fallback" aria-hidden="true">Deloitte</span>
       <h1>Asistente Virtual – Marketplace Deloitte CA</h1>
@@ -341,16 +386,38 @@
   </header>
 
   <main class="wrap">
-    <!-- Izquierda: AVATAR -->
+    <!-- Izquierda: AVATAR (VIDEO + subtítulo) -->
     <section class="left">
       <div id="avatar" class="avatar" aria-label="Avatar holográfico">
-        <video id="avatarVideo" src="./Diseño sin título (5).mp4" muted loop playsinline preload="auto"></video>
+        <!-- VIDEO del avatar: se mantiene tu MP4 -->
+        <video id="avatarVideo"
+               src="./Diseño sin título (5).mp4"
+               muted
+               loop
+               playsinline
+               preload="auto"></video>
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
-      <div class="muted">
+      <div class="muted" id="helpLine">
         Sugerencia: usa <span class="kbd">R</span> para reproducir/pausar,
         <span class="kbd">S</span> para detener y <span class="kbd">M</span> para silenciar música.
+      </div>
+
+      <!-- Espacios/slots listos para colocar elementos sin tocar la lógica -->
+      <div class="slots" aria-label="Espacios disponibles">
+        <div class="slot" data-slot="1">
+          <span>Espacio reservado (Widget / Imagen / KPIs)</span>
+          <span class="tag">Slot #1</span>
+        </div>
+        <div class="slot" data-slot="2">
+          <span>Espacio reservado (Notas / Accesos rápidos)</span>
+          <span class="tag">Slot #2</span>
+        </div>
+        <div class="slot" data-slot="3">
+          <span>Espacio reservado (Calendario / Agenda)</span>
+          <span class="tag">Slot #3</span>
+        </div>
       </div>
     </section>
 
@@ -358,16 +425,10 @@
     <section class="right">
       <div class="panel">
         <h2>Preguntas frecuentes – Marketplace Deloitte CA</h2>
-        <small class="muted">Haz clic en una pregunta para ver la respuesta y reproducirla.</small>
+        <div class="controls">
+          <small class="muted">Haz clic en una pregunta para ver la respuesta y reproducirla.</small>
+        </div>
         <div id="aiThinking" aria-live="polite">Procesando…</div>
-      </div>
-
-      <!-- Cintillo de filtros (UI visual) -->
-      <div class="filters" aria-label="Filtros visuales">
-        <button class="chip active" type="button">Todos</button>
-        <button class="chip" type="button">General</button>
-        <button class="chip" type="button">Reputación / ESG</button>
-        <button class="chip" type="button">Medios</button>
       </div>
 
       <!-- INFOGRÁFICOS -->
@@ -378,8 +439,6 @@
           <div class="legend" id="legendBars"></div>
         </div>
 
-        <!-- Eliminada tarjeta de “Empresas públicas auditadas” -->
-
         <div class="card">
           <h3>Medios destacados por país</h3>
           <svg id="chartBarsMedia" class="viz" role="img" aria-label="Barras de cantidad de medios por país"></svg>
@@ -387,25 +446,21 @@
         </div>
       </div>
 
-      <!-- FAQ 2 columnas -->
-      <div class="faq-wrap">
-        <p class="faq-title">Selecciona una pregunta</p>
-        <div class="grid" id="faqGrid" role="list">
-          <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
-          <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
-          <button class="qbtn" data-answer="Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región.">3. ¿En qué países opera el Marketplace Deloitte Centroamérica?</button>
-          <button class="qbtn" data-answer="Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113).">4. ¿Cuántos profesionales integran Deloitte en la región?</button>
-          <button class="qbtn" data-answer="El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales.">5. ¿Qué áreas de servicio están representadas dentro del Marketplace?</button>
-          <!-- (Eliminada la pregunta de empresas públicas auditadas) -->
-          <button class="qbtn" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
-          <button class="qbtn" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
-          <button class="qbtn" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
-          <button class="qbtn" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados &amp; Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
-        </div>
+      <!-- Preguntas base -->
+      <div class="grid" id="faqGrid" role="list">
+        <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
+        <button class="qbtn" data-answer="El Marketplace se creó para responder a las oportunidades y exigencias del mercado centroamericano, fortaleciendo la estructura societaria y ampliando las capacidades técnicas. Durante 2025 se incorporaron 25 nuevos socios, sumándose a los 60 existentes, lo que expandió significativamente las competencias disponibles.">2. ¿Por qué se creó el Marketplace regional en 2025?</button>
+        <button class="qbtn" data-answer="Opera en siete países: Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. La plataforma integra talento, capacidades sectoriales y servicios de toda la región.">3. ¿En qué países opera el Marketplace Deloitte Centroamérica?</button>
+        <button class="qbtn" data-answer="Más de 80 socios y un sólido equipo de profesionales distribuidos así: Guatemala (242), Honduras (62), El Salvador (93), Nicaragua (28), Costa Rica (421), Panamá (229) y República Dominicana (113).">4. ¿Cuántos profesionales integran Deloitte en la región?</button>
+        <button class="qbtn" data-answer="El Marketplace integra capacidades de auditoría, impuestos, servicios legales, consultoría, riesgos y asesoría financiera, facilitando el acceso unificado a las competencias regionales.">5. ¿Qué áreas de servicio están representadas dentro del Marketplace?</button>
+        <button class="qbtn" data-answer="Las firmas de la región han recibido múltiples reconocimientos Merco: Deloitte Costa Rica lidera rankings en Auditoría y Consultoría, Responsabilidad ESG y Talento; Honduras encabeza rankings de Auditoría; Panamá lidera rankings de Consultoría ESG. Estos respaldos fortalecen la credibilidad del Marketplace.">7. ¿Qué reconocimientos y reputación respaldan al Marketplace CA?</button>
+        <button class="qbtn" data-answer="Entre las certificaciones destacan: ISO/IEC 27001:2022 (seguridad de la información), Bandera Azul Ecológica 2024 en Costa Rica, Panamá y Guatemala, y certificación LEED Gold (ID+C v4) para oficinas de Deloitte Costa Rica.">8. ¿Qué certificaciones posee Deloitte en la región?</button>
+        <button class="qbtn" data-answer="El Marketplace publica contenido en medios Tier 1 de forma gratuita y con aprobación de Deloitte Spanish Latin America. La firma mantiene presencia en medios líderes de la región, fortaleciendo su posicionamiento.">9. ¿Cómo contribuye Deloitte CA a los medios y la generación de eminencia?</button>
+        <button class="qbtn" data-answer="Presencia en revistas como Summa, Estrategia y Negocios, Vida y Éxito, Mercados &amp; Tendencias, Forbes Centroamérica y República Dominicana, e IT Now, lo cual potencia la visibilidad de sus capacidades y liderazgo.">10. ¿Qué revistas regionales amplifican la presencia del Marketplace Deloitte CA?</button>
+      </div>
 
-        <div id="answerBox" class="answer" aria-live="polite">
-          Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.
-        </div>
+      <div id="answerBox" class="answer" aria-live="polite">
+        Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.
       </div>
 
       <footer>
@@ -426,7 +481,7 @@
   <script>
     "use strict";
 
-    /* ====== Fallback logo ====== */
+    /* ====== Fallback del logo si el PNG no existe ====== */
     (function(){
       const img = document.getElementById('logoImg');
       const fb  = document.getElementById('logoFallback');
@@ -435,7 +490,7 @@
       if (img.complete && !img.naturalWidth){ img.style.display='none'; fb.style.display='inline-flex'; }
     })();
 
-    /* ====== INFOGRÁFICOS ====== */
+    /* ====== INFOGRÁFICOS (SVG + interacción/tooltip) ====== */
     document.addEventListener('DOMContentLoaded', () => {
       const tip = document.getElementById('vizTip');
       const showTip = (html, x, y) => {
@@ -444,7 +499,7 @@
       };
       const hideTip = () => { tip.style.display='none'; tip.setAttribute('aria-hidden','true'); };
 
-      /* Barras: Profesionales por país */
+      /* --- 1) BARRAS: Profesionales por país (con banderita) --- */
       const dataBars = [
         {label:'Guatemala',       flag:'🇬🇹', val:242, color:'#1ea55a'},
         {label:'Honduras',        flag:'🇭🇳', val:62,  color:'#24c06a'},
@@ -471,6 +526,7 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
+          // etiqueta izq.: banderita + nombre
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
@@ -489,6 +545,7 @@
 
           g.appendChild(label);
 
+          // barra
           const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
           bar.setAttribute('x', pad.l);
           bar.setAttribute('y', y);
@@ -499,6 +556,7 @@
           bar.style.transition = 'width 420ms ease';
           g.appendChild(bar);
 
+          // valor
           const val = document.createElementNS('http://www.w3.org/2000/svg','text');
           val.setAttribute('x', pad.l + 6);
           val.setAttribute('y', y + barH/2 + 4);
@@ -508,6 +566,7 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
+          // interacción hover
           g.addEventListener('mousemove', (e)=>{
             const pct = Math.round(d.val/max*100);
             showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
@@ -519,6 +578,7 @@
 
           svgB.appendChild(g);
 
+          // animación
           requestAnimationFrame(()=>{
             const wBar = (w - pad.l - pad.r) * (d.val/max);
             bar.setAttribute('width', wBar);
@@ -527,6 +587,7 @@
           });
         });
 
+        // Leyenda
         if(legend){
           legend.innerHTML = '';
           dataBars.forEach(d=>{
@@ -538,7 +599,7 @@
         }
       }
 
-      /* Medios destacados por país */
+      /* --- 3) Medios destacados por país (tooltip por CLIC) --- */
       const dataMedia = [
         {label:'Costa Rica',    flag:'🇨🇷', val:4, medios:['El Financiero','La Nación','La República','Noticias Repretel'], color:'#22b36a'},
         {label:'Panamá',        flag:'🇵🇦', val:4, medios:['La Estrella','La Prensa','TVN','Telemetro'], color:'#1ea55a'},
@@ -549,11 +610,12 @@
       const svgM = document.getElementById('chartBarsMedia');
       const legendM = document.getElementById('legendBarsMedia');
 
+      // Estado de tooltip por clic
       let openKeyMedia = null;
 
-      function hideTip(){ tip.style.display='none'; tip.setAttribute('aria-hidden','true'); }
       function hideTipMedia(){
-        hideTip(); openKeyMedia = null;
+        hideTip();
+        openKeyMedia = null;
         if(svgM){
           svgM.querySelectorAll('rect').forEach(r=>{
             const base = r.getAttribute('data-base');
@@ -561,8 +623,15 @@
           });
         }
       }
-      document.addEventListener('click', (e)=>{ if (svgM && !svgM.contains(e.target)) hideTipMedia(); });
-      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') hideTipMedia(); });
+
+      // Cerrar al hacer clic fuera o con Escape
+      document.addEventListener('click', (e)=>{
+        if (!svgM) return;
+        if (!svgM.contains(e.target)) hideTipMedia();
+      });
+      document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape') hideTipMedia();
+      });
 
       function drawBarsMedia(){
         if(!svgM) return;
@@ -578,6 +647,7 @@
           const y = pad.t + i*(barH+gap);
           const g = document.createElementNS('http://www.w3.org/2000/svg','g');
 
+          // etiqueta izquierda con banderita
           const label = document.createElementNS('http://www.w3.org/2000/svg','text');
           label.setAttribute('x', pad.l - 12);
           label.setAttribute('y', y + barH*0.72);
@@ -616,6 +686,7 @@
           val.style.opacity = 0;
           g.appendChild(val);
 
+          // --- Interacción por CLIC (toggle) ---
           function showTipAt(clientX, clientY){
             const sample = d.medios.slice(0,4).join(', ');
             const extra  = d.medios.length - Math.min(4, d.medios.length);
@@ -645,8 +716,11 @@
             }
           }
 
+          // Accesible: también con Enter/Espacio
           g.setAttribute('tabindex', '0');
-          g.addEventListener('keydown', (e)=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }});
+          g.addEventListener('keydown', (e)=>{
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e); }
+          });
           g.addEventListener('click', handleClick);
 
           svgM.appendChild(g);
@@ -670,6 +744,7 @@
         }
       }
 
+      // Pintar y responder a resize (cerrando tooltip abierto si se redibuja)
       function redrawAll(){
         hideTipMedia();
         drawBars();
@@ -679,7 +754,7 @@
       window.addEventListener('resize', redrawAll);
     });
 
-    /* ====== Q&A + TTS ====== */
+    /* ====== Q&A + TTS (typewriter + avatar fluido) ====== */
     document.addEventListener('DOMContentLoaded', () => {
       const voiceSel   = document.getElementById('voiceSel');
       const btnSpeak   = document.getElementById('btnSpeak');
@@ -699,7 +774,7 @@
         return;
       }
 
-      // Música: primer gesto
+      // Música: primer clic para iniciar (política de navegadores)
       document.addEventListener("click", ()=>{
         if(bg && bg.paused){
           bg.volume = 0.18;
@@ -710,26 +785,51 @@
         btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
       }
 
-      // TYPEWRITER
+      // TYPEWRITER cancelable + autoscroll del subtítulo
       let typeSeq = 0;
       function typeText(target, text, speed=22){
-        typeSeq++; const mySeq = typeSeq;
-        target.textContent = ""; let i = 0;
-        (function step(){ if(mySeq !== typeSeq) return;
-          if(i < text.length){ target.textContent += text[i++]; setTimeout(step, speed); }
+        typeSeq++;
+        const mySeq = typeSeq;
+        target.textContent = "";
+        let i = 0;
+        (function step(){
+          if(mySeq !== typeSeq) return;
+          if(i < text.length){
+            target.textContent += text[i++];
+            if (subtitleEl){ subtitleEl.scrollTop = subtitleEl.scrollHeight; } // autoscroll
+            setTimeout(step, speed);
+          }
         })();
       }
 
+      // Clase visual de "hablando"
       function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
-      // boostOnce omitido; evitemos micro-janks
+      let boostTimer = null;
+      function boostOnce(){
+        if(!avatar) return;
+        avatar.classList.add('talking-boost');
+        clearTimeout(boostTimer);
+        boostTimer = setTimeout(()=> avatar.classList.remove('talking-boost'), 120);
+      }
 
-      function playAvatarVideo(){ if (avatarVideo) avatarVideo.play().catch(()=>{}); }
-      function pauseAvatarVideo(){ if (avatarVideo) avatarVideo.pause(); }
-      function stopAvatarVideo(){ if (avatarVideo){ try{ avatarVideo.pause(); avatarVideo.currentTime = 0; }catch{} } }
+      // 🎬 Control del video del avatar (solo habla cuando hay TTS)
+      function playAvatarVideo(){
+        if (!avatarVideo) return;
+        avatarVideo.play().catch(()=>{});
+      }
+      function pauseAvatarVideo(){
+        if (!avatarVideo) return;
+        avatarVideo.pause();
+      }
+      function stopAvatarVideo(){
+        if (!avatarVideo) return;
+        try { avatarVideo.pause(); avatarVideo.currentTime = 0; } catch {}
+      }
 
       // TTS
       const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
       let voices = [], voicesReady = false, lastUtterance = null, queuedText = null;
+      const VOICE_LS = 'preferredVoiceName';
 
       function loadVoices(){
         voiceSel.innerHTML = '';
@@ -744,27 +844,41 @@
           opt.textContent = 'Cargando voces…'; opt.value = '';
           voiceSel.appendChild(opt); voicesReady = false; return;
         }
+        const savedName = localStorage.getItem(VOICE_LS) || '';
         voices.forEach(v => {
           const opt = document.createElement('option');
           opt.value = v.name;
           opt.textContent = `${v.name} — ${v.lang}${v.default ? ' (predeterminada)' : ''}`;
           voiceSel.appendChild(opt);
         });
-        const preferred = [
-          /spanish.*(mexico|latin|latino)/i,
-          /esmx|ar|cl|co|pe|uy|bo|py|ec|ve/i,
-          /spanish.*(united states)/i,
-          /spanish|es/i
-        ];
-        for (const rx of preferred) {
-          const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
-          if (match) { voiceSel.value = match.name; break; }
+
+        // Preferencia guardada o heurística para español LATAM
+        if (savedName && voices.find(v => v.name === savedName)){
+          voiceSel.value = savedName;
+        } else {
+          const preferred = [
+            /spanish.*(mexico|latin|latino)/i,
+            /esmx|ar|cl|co|pe|uy|bo|py|ec|ve/i,
+            /spanish.*(united states)/i,
+            /spanish|es/i
+          ];
+          for (const rx of preferred) {
+            const match = voices.find(v => rx.test(`${v.name} ${v.lang}`));
+            if (match) { voiceSel.value = match.name; break; }
+          }
         }
+
         voicesReady = true;
         if (queuedText){ const t = queuedText; queuedText = null; speakNow(t); }
       }
       loadVoices();
       if (synth && 'onvoiceschanged' in synth) synth.onvoiceschanged = loadVoices;
+
+      // Persistencia de voz
+      voiceSel.addEventListener('change', () => {
+        const name = voiceSel.value || '';
+        try { localStorage.setItem(VOICE_LS, name); } catch {}
+      });
 
       function getSelectedVoice(){
         if (!voices.length) return null;
@@ -789,7 +903,9 @@
           u.lang = (v && v.lang) ? v.lang : 'es-ES';
           u.rate = 1; u.pitch = 1; u.volume = 1;
 
-          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); };
+          /* Handlers de habla (sin boosts por fonema para máxima fluidez) */
+          u.onstart   = () => { aiThinking.style.display='none'; setTalking(true); playAvatarVideo(); /* boostOnce(); */ };
+          // u.onboundary= () => { boostOnce(); }; // (omitido a propósito)
           u.onend     = () => { setTalking(false); stopAvatarVideo(); };
           u.onerror   = () => { setTalking(false); stopAvatarVideo(); aiThinking.style.display='none'; };
 
@@ -807,27 +923,28 @@
           aiThinking.style.display='block';
           typeText(answerBox, text);
           subtitleEl.textContent = text;
+          subtitleEl.scrollTop = subtitleEl.scrollHeight;
           queueSpeak(text);
         };
       });
 
-      // Reproducir lo visible
+      // Botón Reproducir (relee lo visible)
       btnSpeak.onclick = () => {
         const text = (answerBox.textContent || '').trim();
         if (text) queueSpeak(text);
       };
 
-      // Exponer helpers (por si usas addQA)
+      // Exponer helpers (para addQA)
       window.typeText = typeText;
       window.queueSpeak = queueSpeak;
 
-      // Mensaje inicial
+      // Mensaje inicial (sin voz)
       const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
       typeText(answerBox, bienvenida);
       subtitleEl.textContent = bienvenida;
     });
 
-    /* ====== Helpers addQA ====== */
+    /* ====== Helpers para agregar preguntas sin tocar estructura ====== */
     (function(){
       const grid = document.getElementById('faqGrid');
       if(!grid) return;
@@ -850,6 +967,7 @@
             if (typeof window.typeText === 'function'){ window.typeText(answerBox, text); }
             else { answerBox.textContent = text; }
             subtitleEl.textContent = text;
+            subtitleEl.scrollTop = subtitleEl.scrollHeight;
           }
           if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
           if (aiThinking) setTimeout(()=> aiThinking.style.display='none', 100);
@@ -861,7 +979,7 @@
       window.bulkAddQA = function(list){ (list || []).forEach(item => addQA(item.q, item.a)); };
     })();
 
-    /* ====== Preguntas adicionales (ya en tu base) ====== */
+    /* ====== Agregar las preguntas adicionales ya definidas ====== */
     (function(){
       bulkAddQA([
         {
@@ -887,7 +1005,7 @@
       ]);
     })();
 
-    /* ====== Numeración automática del FAQ ====== */
+    /* ==== NUMERAR TODAS LAS PREGUNTAS AUTOMÁTICAMENTE ==== */
     (function(){
       const grid = document.getElementById('faqGrid');
       if (!grid) return;
@@ -899,8 +1017,11 @@
           btn.textContent = `${idx + 1}. ${text}`;
         });
       }
+
+      // Numerar inicialmente
       renumberFAQ();
 
+      // Parchear addQA y bulkAddQA para renumerar al agregar
       const oldAddQA = window.addQA;
       if (typeof oldAddQA === "function") {
         window.addQA = function(q, a){
@@ -917,7 +1038,7 @@
       }
     })();
 
-    /* ====== Pausa / Detener (Web Speech) ====== */
+    /* ==== PARCHE ROBUSTO PARA PAUSAR / DETENER (Web Speech) ==== */
     (function(){
       if (!('speechSynthesis' in window)) return;
 
@@ -938,27 +1059,26 @@
       function hardCancel(){
         try { synth.cancel(); } catch {}
         setTalking(false);
-        const v = document.getElementById('avatarVideo');
-        if (v){ try { v.pause(); v.currentTime = 0; } catch {} }
+        stopAvatarVideo();   // ⏹️ detener video del avatar
         setBtnLabels();
       }
       function pauseResume(e){
         e && e.preventDefault();
         if (!synth) return;
-        const v = document.getElementById('avatarVideo');
         if (synth.speaking && !synth.paused){
           try { synth.pause(); } catch {}
           setTalking(false);
-          if (v) v.pause();
+          pauseAvatarVideo();      // ⏸️ pausa video
           setBtnLabels();
           return;
         }
         if (synth.paused){
           try { synth.resume(); } catch {}
-          setTimeout(()=>{ if (synth.speaking && !synth.paused) { setTalking(true); if (v) v.play().catch(()=>{}); } }, 30);
+          setTimeout(()=>{ if (synth.speaking && !synth.paused) { setTalking(true); playAvatarVideo(); } }, 30);
           setBtnLabels();
           return;
         }
+        // Si no hay nada sonando, repetir la última respuesta visible
         const last = (answerBox && (answerBox.textContent||'').trim()) || '';
         if (last && typeof window.queueSpeak === 'function'){
           window.queueSpeak(last);
@@ -976,59 +1096,89 @@
       if (btnSpeak){
         const orig = btnSpeak.onclick;
         btnSpeak.onclick = function(ev){
-          hardCancel();
+          hardCancel();                 // limpia para evitar bloqueos
           if (typeof orig === 'function') orig.call(this, ev);
         };
       }
 
       const visInterval = setInterval(setBtnLabels, 250);
       window.addEventListener('beforeunload', () => clearInterval(visInterval));
-    })();
 
-    /* Música (preferencia persistente) */
-    (function(){
-      const bg  = document.getElementById('bgMusic');
-      const btn = document.getElementById('btnMusic');
-      if (!bg) return;
-      const LS_KEY = 'bgMusicMuted';
-      const saved = localStorage.getItem(LS_KEY);
-      bg.muted = (saved === 'true'); bg.volume = 0.18;
-
-      function syncBtn(){
-        if (!btn) return;
-        btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
-        btn.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
-        btn.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
-      }
-      syncBtn();
-
-      async function tryPlay(){ try { await bg.play(); } catch(_) {} }
-      const unlock = async () => {
-        if (bg.paused) await tryPlay();
-        window.removeEventListener('click', unlock);
-        window.removeEventListener('keydown', unlock);
-      };
-      window.addEventListener('click',  unlock, { once:true });
-      window.addEventListener('keydown', unlock, { once:true });
-
-      if (btn){
-        btn.addEventListener('click', async () => {
-          bg.muted = !bg.muted;
-          localStorage.setItem(LS_KEY, String(bg.muted));
-          syncBtn();
-          if (!bg.muted && bg.paused) await tryPlay();
-        });
-      }
-
-      document.addEventListener('keydown', async (e) => {
-        if ((e.key || '').toLowerCase() === 'm'){
-          bg.muted = !bg.muted;
-          localStorage.setItem(LS_KEY, String(bg.muted));
-          syncBtn();
-          if (!bg.muted && bg.paused) await tryPlay();
-        }
+      /* ---- Atajos de teclado R / S (además de M ya implementada abajo) ---- */
+      document.addEventListener('keydown', (e) => {
+        const key = (e.key || '').toLowerCase();
+        if (key === 'r'){ e.preventDefault(); btnPause && btnPause.click(); }
+        if (key === 's'){ e.preventDefault(); btnStop  && btnStop.click(); }
       });
     })();
   </script>
+
+  <!-- Música corporativa (reproductor sin UI con preferencia persistente) -->
+  <script>
+  (function(){
+    const bg  = document.getElementById('bgMusic');   // <audio id="bgMusic">
+    const btn = document.getElementById('btnMusic');  // botón de cabecera "Música"
+    if (!bg) return;
+
+    const LS_KEY = 'bgMusicMuted';
+
+    // Estado inicial: por defecto con sonido (salvo preferencia guardada)
+    const saved = localStorage.getItem(LS_KEY);
+    bg.muted = (saved === 'true');   // null => false
+    bg.volume = 0.18;
+
+    // Si por accidente el HTML tenía muted y NO hay preferencia guardada de silencio, lo quitamos
+    if (bg.hasAttribute('muted') && saved !== 'true') bg.removeAttribute('muted');
+
+    // Sincroniza botón
+    function syncBtn(){
+      if (!btn) return;
+      btn.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
+      btn.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
+      btn.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
+    }
+    syncBtn();
+
+    // Desbloquear reproducción tras primer gesto (autoplay policy)
+    async function tryPlay(){ try { await bg.play(); } catch(_) {} }
+    const unlock = async () => {
+      if (bg.paused) await tryPlay();
+      window.removeEventListener('click', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    window.addEventListener('click',  unlock, { once:true });
+    window.addEventListener('keydown', unlock, { once:true });
+
+    // Toggle desde botón Música (y guarda preferencia)
+    if (btn){
+      btn.addEventListener('click', async () => {
+        bg.muted = !bg.muted;
+        localStorage.setItem(LS_KEY, String(bg.muted));
+        syncBtn();
+        if (!bg.muted && bg.paused) await tryPlay();
+      });
+
+      // Salvavidas: Shift+clic limpia preferencia si quedó pegado en silencio
+      btn.addEventListener('click', (e) => {
+        if (e.shiftKey){
+          localStorage.removeItem(LS_KEY);
+          bg.muted = false;
+          syncBtn();
+        }
+      }, { capture:true });
+    }
+
+    // Atajos: tecla M (ya documentado en UI)
+    document.addEventListener('keydown', async (e) => {
+      if ((e.key || '').toLowerCase() === 'm'){
+        bg.muted = !bg.muted;
+        localStorage.setItem(LS_KEY, String(bg.muted));
+        syncBtn();
+        if (!bg.muted && bg.paused) await tryPlay();
+      }
+    });
+  })();
+  </script>
+
 </body>
 </html>
