@@ -999,89 +999,63 @@
     })();
   </script>
 
-<!-- === PRUEBA DEFINITIVA DE MÚSICA === -->
-<!-- 1) Reproductor visible SOLO para diagnosticar -->
-<div style="position:fixed;right:10px;bottom:10px;z-index:99999;background:#111;color:#fff;padding:10px 12px;border-radius:10px;font:12px/1.3 system-ui">
-  <div style="margin-bottom:6px"><strong>Prueba de música</strong></div>
-  <!-- Cambia el src si tu archivo está en otra carpeta -->
-  <audio id="bgMusic" src="techno-sphere_88321.mp3" preload="auto" loop controls style="width:260px"></audio>
-  <div id="musicDiag" style="margin-top:6px;opacity:.9">⏳ Listo. Pulsa ▶️ o el botón “Probar música”.</div>
-  <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
-    <button id="btnTestMusic" style="cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid #2a2a2a;background:#22b36a;color:#0b0e11">▶️ Probar música</button>
-    <button id="btnMuteToggle" style="cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid #2a2a2a;background:#e9efe9;color:#0b0e11">🔈/🔇</button>
-  </div>
-  <div style="margin-top:6px">
-    <label>Volumen: <input id="volSlider" type="range" min="0" max="100" value="18" style="vertical-align:middle"></label>
-  </div>
-</div>
-
+<!-- Música corporativa (sólo el reproductor, sin UI) -->
+<audio id="bgMusic" src="techno-sphere_88321.mp3" preload="auto" loop></audio>
 <script>
-(function(){
-  const bg   = document.getElementById('bgMusic');
-  const dbg  = document.getElementById('musicDiag');
-  const btnT = document.getElementById('btnTestMusic');
-  const btnM = document.getElementById('btnMuteToggle');
-  const vol  = document.getElementById('volSlider');
+  (function(){
+    const bg       = document.getElementById('bgMusic');   // <audio id="bgMusic">
+    const btnMusic = document.getElementById('btnMusic');  // botón de cabecera "Música"
+    if (!bg) return;
 
-  if (!bg || !dbg) return;
+    // Recordar preferencia (mute) entre visitas
+    const LS_KEY = 'bgMusicMuted';
+    const savedMuted = localStorage.getItem(LS_KEY);
+    if (savedMuted !== null) bg.muted = (savedMuted === 'true');
 
-  function say(msg){ dbg.textContent = msg; }
-
-  // Mensajes útiles
-  bg.addEventListener('error', () => {
-    // Error típico: archivo no encontrado (ruta incorrecta)
-    const err = bg.error && bg.error.code;
-    if (err === 4) say('❌ No se pudo cargar el archivo. Revisa el nombre/ruta de "techno-sphere_88321.mp3".');
-    else           say('❌ Error al cargar el audio. Verifica el archivo.');
-  });
-
-  bg.addEventListener('play',  () => say('✅ Reproduciendo música.'));
-  bg.addEventListener('pause', () => say('⏸️ Música en pausa.'));
-  bg.addEventListener('volumechange', () => {
-    if (bg.muted) say('🔇 Silenciada. Pulsa el botón 🔈/🔇 para activar sonido.');
-  });
-
-  // Botón de prueba
-  btnT.addEventListener('click', async () => {
-    try{
-      bg.muted = false;
-      if (bg.paused) await bg.play();
-      bg.volume = (vol.value|0)/100;
-      say('✅ Intentando reproducir… si no suena, sube el volumen o revisa la ruta del archivo.');
-    }catch(e){
-      say('⚠️ El navegador pidió interacción. Vuelve a pulsar ▶️ o el botón de prueba.');
+    // Actualizar texto/estado del botón (sutil)
+    function updateBtn(){
+      if (!btnMusic) return;
+      btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música';
+      btnMusic.setAttribute('aria-pressed', bg.muted ? 'true' : 'false');
+      btnMusic.setAttribute('aria-label', bg.muted ? 'Música silenciada' : 'Música activa');
     }
-  });
+    updateBtn();
 
-  // Mute/unmute
-  btnM.addEventListener('click', () => {
-    bg.muted = !bg.muted;
-    say(bg.muted ? '🔇 Música silenciada.' : '🔈 Música activa.');
-  });
-
-  // Slider volumen
-  vol.addEventListener('input', () => {
-    bg.volume = (vol.value|0)/100;
-    if (!bg.muted && !bg.paused) say('🔊 Volumen ajustado.');
-  });
-
-  // Autoplay tras primer clic (por si quieres que suene apenas se interactúe)
-  document.addEventListener('click', async () => {
-    try{
-      if (bg.paused){
-        bg.muted = false;
-        bg.volume = (vol.value|0)/100;
-        await bg.play();
-        say('✅ Reproduciendo tras la primera interacción.');
+    // Iniciar música en el primer gesto del usuario (exigencia de autoplay)
+    function unlockAudio(){
+      if (bg.paused) {
+        bg.volume = 0.18;   // volumen suave
+        bg.play().catch(() => {}); // si algún navegador exige más gestos, el botón cubrirá
       }
-    }catch(e){/* ignorar */}
-  }, { once:true });
-})();
-</script>
-<!-- === FIN PRUEBA === -->
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('keydown', unlockAudio);
+    }
+    document.addEventListener('click', unlockAudio, { once:true });
+    document.addEventListener('keydown', unlockAudio, { once:true });
 
+    // Toggle de silencio desde el botón de cabecera
+    if (btnMusic){
+      btnMusic.addEventListener('click', () => {
+        bg.muted = !bg.muted;
+        localStorage.setItem(LS_KEY, String(bg.muted));
+        updateBtn();
+      });
+    }
+
+    // Atajo de teclado anunciado en tu UI: tecla "M" para mutear/activar
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'm'){
+        bg.muted = !bg.muted;
+        localStorage.setItem(LS_KEY, String(bg.muted));
+        updateBtn();
+      }
+    });
+  })();
+</script>
+``
 </body>
 </html>
+
 
 
 
