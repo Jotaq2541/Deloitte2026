@@ -652,7 +652,8 @@
 </div>
 
 <script>
-  // JS local para el accordion — SOLO afecta a #taxServices
+ 
+<script>
   (function(){
     const card = document.getElementById('taxServices');
     if(!card) return;
@@ -665,32 +666,29 @@
       }catch(_){}
     }
 
-    const ro = ('ResizeObserver' in window) ? new ResizeObserver((entries)=>{
-      for (const entry of entries){
-        const panel = entry.target;
-        if (panel.classList.contains('open')){
-          panel.style.maxHeight = panel.scrollHeight + 'px';
-        }
-      }
-    }) : null;
-
+    // Hace que los paneles NUNCA se corten
     function openPanel(panel){
       panel.classList.add('open');
-      panel.style.maxHeight = panel.scrollHeight + 'px';
-      if (ro) ro.observe(panel);
+      panel.style.maxHeight = panel.scrollHeight + "px";
+
+      // Después de abrir, permitir que crezca libremente
+      setTimeout(()=>{
+        panel.style.maxHeight = "none";
+      }, 300);
     }
 
     function closePanel(panel){
-      if (ro) ro.unobserve(panel);
-      panel.style.maxHeight = panel.scrollHeight + 'px';
-      panel.getBoundingClientRect(); // forzar reflow
-      panel.style.maxHeight = '0px';
+      // Vuelve a bloquear para animar
+      panel.style.maxHeight = panel.scrollHeight + "px";
+      panel.getBoundingClientRect(); // truco para que funcione la animación
+      panel.style.maxHeight = "0px";
       panel.classList.remove('open');
     }
 
     card.addEventListener('click', (e)=>{
       const btn = e.target.closest('.acc-q');
-      if(!btn || !card.contains(btn)) return;
+      if(!btn) return;
+
       const panelId = btn.getAttribute('aria-controls');
       const panel = document.getElementById(panelId);
       if (!panel) return;
@@ -699,34 +697,32 @@
       btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
 
       if (!expanded){
+        // Cierra otros paneles
+        card.querySelectorAll('.acc-a.open').forEach(p=>{
+          if (p !== panel){
+            const otherBtn = card.querySelector('[aria-controls="'+p.id+'"]');
+            if (otherBtn) otherBtn.setAttribute('aria-expanded','false');
+            closePanel(p);
+          }
+        });
+
         openPanel(panel);
-        const text = (panel.textContent || '').trim();
+
+        const text = (panel.textContent || "").trim();
         if (text) speakIfAvailable(text);
+
       } else {
         closePanel(panel);
       }
     });
 
-    // Accesibilidad: Enter/Espacio activan
-    card.addEventListener('keydown', (e)=>{
-      const btn = e.target.closest('.acc-q');
-      if(!btn) return;
-      if (e.key === 'Enter' || e.key === ' '){
-        e.preventDefault();
-        btn.click();
-      }
-    });
-
-    // Estado inicial cerrado
-    card.querySelectorAll('.acc-a').forEach(p => { p.style.maxHeight = '0px'; });
-
-    // Recalcula cuando cambia el layout
-    window.addEventListener('resize', ()=>{
-      card.querySelectorAll('.acc-a.open').forEach(p=>{
-        p.style.maxHeight = p.scrollHeight + 'px';
-      });
+    // Al inicio, todos cerrados
+    card.querySelectorAll('.acc-a').forEach(p => {
+      p.style.maxHeight = "0px";
     });
   })();
+</script>
+
 </script>
 <!-- ===== FIN CARD: Servicio de Impuestos ===== -->
 
@@ -1651,6 +1647,7 @@
 </body>
 </html>
 ``
+
 
 
 
