@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -396,243 +395,290 @@
         </div>
       </div>
 
-     
-<!-- ========= NUEVA TARJETA: Servicio de Impuestos (accordion) ========= -->
-<!-- Fondo claro, acordeón moderno; se integra sin tocar el resto -->
-<style>
-  /* Estilos locales del accordion (fondo claro) */
-  .tax-card{
-    background:#ffffff !important; color:#0b0e11 !important;
-    border:1px solid rgba(0,0,0,.08) !important; border-radius:12px;
-    box-shadow: 0 18px 40px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.06);
-    margin:14px; padding:14px;
-  }
-  .tax-card .tax-header{
-    display:flex; align-items:baseline; justify-content:space-between; gap:12px;
-    padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,.08);
-  }
-  .tax-card .tax-header h3{ margin:0; font-size:16px; color:#0b0e11; }
-  .tax-card .tax-header p{ margin:6px 0 0 0; color:#47515a; font-size:13px; }
-  .tax-group{ margin-top:12px; }
-  .tax-group h4{ margin:14px 0 6px 0; font-size:14px; color:#0b0e11; }
+      <!-- ========= NUEVA TARJETA: Servicio de Impuestos (accordion) ========= -->
+      <!-- Fondo claro, acordeón moderno; se integra sin tocar el resto -->
+      <style>
+        /* Estilos locales del accordion (fondo claro) */
+        .tax-card{
+          background:#ffffff !important; color:#0b0e11 !important;
+          border:1px solid rgba(0,0,0,.08) !important; border-radius:12px;
+          box-shadow: 0 18px 40px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.06);
+          margin:14px; padding:14px;
+        }
+        .tax-card .tax-header{
+          display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+          padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,.08);
+        }
+        .tax-card .tax-header h3{ margin:0; font-size:16px; color:#0b0e11; }
+        .tax-card .tax-header p{ margin:6px 0 0 0; color:#47515a; font-size:13px; }
+        .tax-group{ margin-top:12px; }
+        .tax-group h4{ margin:14px 0 6px 0; font-size:14px; color:#0b0e11; }
 
-  .accordion{ display:block; }
-  .acc-q{
-    width:100%; background:#ffffff; color:#0b0e11;
-    border:1px solid rgba(0,0,0,.12); border-radius:10px;
-    padding:12px; margin:6px 0; text-align:left; cursor:pointer;
-    display:flex; justify-content:space-between; align-items:center;
-    font-weight:600;
-    box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 6px 14px rgba(0,0,0,.06);
-    transition: box-shadow .18s ease, border-color .18s ease, background .18s ease;
-  }
-  .acc-q:hover{
-    border-color: rgba(28,140,63,.35);
-    box-shadow: 0 0 0 1px rgba(34,179,106,.18), 0 10px 22px rgba(0,0,0,.08);
-    background:#f7faf8;
-  }
-  .acc-q .chev{ color:#1c8c3f; margin-left:12px; transition: transform .18s ease; }
-  .acc-q[aria-expanded="true"] .chev{ transform: rotate(90deg); }
+        .accordion{ display:block; }
+        .acc-q{
+          width:100%; background:#ffffff; color:#0b0e11;
+          border:1px solid rgba(0,0,0,.12); border-radius:10px;
+          padding:12px; margin:6px 0; text-align:left; cursor:pointer;
+          display:flex; justify-content:space-between; align-items:center;
+          font-weight:600;
+          box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 6px 14px rgba(0,0,0,.06);
+          transition: box-shadow .18s ease, border-color .18s ease, background .18s ease;
+        }
+        .acc-q:hover{
+          border-color: rgba(28,140,63,.35);
+          box-shadow: 0 0 0 1px rgba(34,179,106,.18), 0 10px 22px rgba(0,0,0,.08);
+          background:#f7faf8;
+        }
+        .acc-q .chev{ color:#1c8c3f; margin-left:12px; transition: transform .18s ease; }
+        .acc-q[aria-expanded="true"] .chev{ transform: rotate(90deg); }
 
-  .acc-a{
-    overflow:hidden; max-height:0; padding:0 12px;
-    background:#ffffff; color:#111;
-    border:1px solid rgba(0,0,0,.08); border-radius:10px;
-    margin: -2px 0 8px 0;
-    transition:max-height .28s ease, padding .18s ease, border-color .18s ease;
-  }
-  /* Clave: cuando está abierta, quitamos límite para NO recortar después de la animación */
-  .acc-a.open{ padding:12px; max-height:none; }
-  .acc-a p{ margin:0; }
-</style>
+        .acc-a{
+          overflow:hidden; max-height:0; padding:0 12px;
+          background:#ffffff; color:#111;
+          border:1px solid rgba(0,0,0,.08); border-radius:10px;
+          margin: -2px 0 8px 0;
+          transition:max-height .24s ease, padding .18s ease, border-color .18s ease;
+        }
+        .acc-a.open{ padding:12px; }
+        .acc-a p{ margin:0; }
+      </style>
 
-<div id="taxServices" class="card tax-card" role="region" aria-label="Servicio de Impuestos">
-  <div class="tax-header">
-    <h3>Servicio de Impuestos</h3>
-    <p class="muted">Explora áreas clave y despliega cada pregunta para ver su respuesta.</p>
-  </div>
+      <div id="taxServices" class="card tax-card" role="region" aria-label="Servicio de Impuestos">
+        <div class="tax-header">
+          <h3>Servicio de Impuestos</h3>
+          <p class="muted">Explora áreas clave y despliega cada pregunta para ver su respuesta.</p>
+        </div>
 
-  <!-- 🧾 Impuestos Corporativos (Business Tax) -->
-  <div class="tax-group">
-    <h4>🧾 Impuestos Corporativos (Business Tax)</h4>
-    <div class="accordion">
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-corp-1" id="acc-corp-1-btn">
-        <span>¿Cómo ayuda Deloitte a optimizar el impuesto corporativo?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-corp-1" role="region" aria-labelledby="acc-corp-1-btn">
-        <p>Ayudamos a tomar decisiones fiscales alineadas con la estrategia del negocio, reduciendo riesgos y mejorando la eficiencia tributaria.</p>
+        <!-- 🧾 Impuestos Corporativos (Business Tax) -->
+        <div class="tax-group">
+          <h4>🧾 Impuestos Corporativos (Business Tax)</h4>
+          <div class="accordion">
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-corp-1" id="acc-corp-1-btn">
+              <span>¿Cómo ayuda Deloitte a optimizar el impuesto corporativo?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-corp-1" role="region" aria-labelledby="acc-corp-1-btn">
+              <p>Ayudamos a tomar decisiones fiscales alineadas con la estrategia del negocio, reduciendo riesgos y mejorando la eficiencia tributaria.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-corp-2" id="acc-corp-2-btn">
+              <span>¿Qué valor aporta más allá del cumplimiento?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-corp-2" role="region" aria-labelledby="acc-corp-2-btn">
+              <p>Convertimos el impuesto en una herramienta de planificación y no solo en una obligación anual.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-corp-3" id="acc-corp-3-btn">
+              <span>¿Para qué tipo de empresas es este servicio?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-corp-3" role="region" aria-labelledby="acc-corp-3-btn">
+              <p>Para empresas locales y multinacionales que buscan crecimiento sostenible y control fiscal.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🌍 Impuestos Internacionales -->
+        <div class="tax-group">
+          <h4>🌍 Impuestos Internacionales</h4>
+          <div class="accordion">
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-intl-1" id="acc-intl-1-btn">
+              <span>¿Cómo gestiona Deloitte la complejidad fiscal internacional?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-intl-1" role="region" aria-labelledby="acc-intl-1-btn">
+              <p>Diseñamos estructuras fiscales globales coherentes con la operación real y las normas locales.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-intl-2" id="acc-intl-2-btn">
+              <span>¿Cuál es el beneficio clave para empresas multinacionales?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-intl-2" role="region" aria-labelledby="acc-intl-2-btn">
+              <p>Menor riesgo de doble tributación y mayor claridad frente a autoridades fiscales.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-intl-3" id="acc-intl-3-btn">
+              <span>¿Por qué es clave hoy la asesoría fiscal internacional?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-intl-3" role="region" aria-labelledby="acc-intl-3-btn">
+              <p>Porque los países comparten más información y las reglas cambian constantemente.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🔄 Impuestos Indirectos -->
+        <div class="tax-group">
+          <h4>🔄 Impuestos Indirectos (IVA, ventas, consumo)</h4>
+          <div class="accordion">
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-ind-1" id="acc-ind-1-btn">
+              <span>¿Cómo ayuda Deloitte con el IVA y otros impuestos indirectos?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-ind-1" role="region" aria-labelledby="acc-ind-1-btn">
+              <p>Optimizamos procesos para mejorar el flujo de caja y asegurar el correcto cumplimiento.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-ind-2" id="acc-ind-2-btn">
+              <span>¿Qué problemas previene este servicio?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-ind-2" role="region" aria-labelledby="acc-ind-2-btn">
+              <p>Errores recurrentes, multas y contingencias que afectan la rentabilidad.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-ind-3" id="acc-ind-3-btn">
+              <span>¿Dónde se genera mayor valor?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-ind-3" role="region" aria-labelledby="acc-ind-3-btn">
+              <p>En empresas con alto volumen de transacciones o cadenas de suministro complejas.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 📊 Precios de Transferencia -->
+        <div class="tax-group">
+          <h4>📊 Precios de Transferencia</h4>
+          <div class="accordion">
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-tp-1" id="acc-tp-1-btn">
+              <span>¿Por qué son críticos los precios de transferencia?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-tp-1" role="region" aria-labelledby="acc-tp-1-btn">
+              <p>Porque definen cómo se reparten los ingresos entre países y son foco de fiscalización.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-tp-2" id="acc-tp-2-btn">
+              <span>¿Qué hace diferente el enfoque de Deloitte?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-tp-2" role="region" aria-labelledby="acc-tp-2-btn">
+              <p>Integramos análisis económico, documentación y estrategia de negocio.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-tp-3" id="acc-tp-3-btn">
+              <span>¿Qué gana la empresa?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-tp-3" role="region" aria-labelledby="acc-tp-3-btn">
+              <p>Defensa sólida ante auditorías y coherencia fiscal global.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🤝 Fusiones y Adquisiciones (M&A Tax) -->
+        <div class="tax-group">
+          <h4>🤝 Fusiones y Adquisiciones (M&A Tax)</h4>
+          <div class="accordion">
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-ma-1" id="acc-ma-1-btn">
+              <span>¿Cómo acompaña Deloitte procesos de M&A desde impuestos?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-ma-1" role="region" aria-labelledby="acc-ma-1-btn">
+              <p>Evaluamos riesgos, oportunidades y estructuras fiscales antes y después de la transacción.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-ma-2" id="acc-ma-2-btn">
+              <span>¿Qué impacto tiene una mala planificación fiscal en una compra o venta?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-ma-2" role="region" aria-labelledby="acc-ma-2-btn">
+              <p>Puede reducir significativamente el valor real de la operación.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-ma-3" id="acc-ma-3-btn">
+              <span>¿En qué momento se debe involucrar al equipo fiscal?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-ma-3" role="region" aria-labelledby="acc-ma-3-btn">
+              <p>Desde el inicio del proceso, no al cierre.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 💻 Tecnología y Transformación Fiscal -->
+        <div class="tax-group">
+          <h4>💻 Tecnología y Transformación Fiscal</h4>
+          <div class="accordion">
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-tech-1" id="acc-tech-1-btn">
+              <span>¿Qué es la transformación digital en impuestos?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-tech-1" role="region" aria-labelledby="acc-tech-1-btn">
+              <p>Es automatizar, integrar y hacer más eficientes los procesos fiscales.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-tech-2" id="acc-tech-2-btn">
+              <span>¿Qué problemas resuelve?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-tech-2" role="region" aria-labelledby="acc-tech-2-btn">
+              <p>Procesos manuales, errores humanos y falta de visibilidad.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-tech-3" id="acc-tech-3-btn">
+              <span>¿Cuál es el valor estratégico?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-tech-3" role="region" aria-labelledby="acc-tech-3-btn">
+              <p>Un área fiscal más ágil, predictiva y alineada al negocio.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Cumplimiento Fiscal -->
+        <div class="tax-group">
+          <h4>✅ Cumplimiento Fiscal</h4>
+          <div class="accordion">
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-comp-1" id="acc-comp-1-btn">
+              <span>¿Cómo simplifica Deloitte el cumplimiento fiscal?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-comp-1" role="region" aria-labelledby="acc-comp-1-btn">
+              <p>Gestionamos declaraciones, reportes y obligaciones con precisión y consistencia.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-comp-2" id="acc-comp-2-btn">
+              <span>¿Qué gana la empresa al externalizar este servicio?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-comp-2" role="region" aria-labelledby="acc-comp-2-btn">
+              <p>Tiempo, tranquilidad y reducción de riesgos regulatorios.</p>
+            </div>
+
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-comp-3" id="acc-comp-3-btn">
+              <span>¿Es solo para grandes empresas?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-comp-3" role="region" aria-labelledby="acc-comp-3-btn">
+              <p>No, se adapta a empresas de distintos tamaños y sectores.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-corp-2" id="acc-corp-2-btn">
-        <span>¿Qué valor aporta más allá del cumplimiento?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-corp-2" role="region" aria-labelledby="acc-corp-2-btn">
-        <p>Convertimos el impuesto en una herramienta de planificación y no solo en una obligación anual.</p>
-      </div>
+      <script>
+        // JS local para el accordion (no interfiere con tus scripts)
+        (function(){
+          const card = document.getElementById('taxServices');
+          if(!card) return;
 
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-corp-3" id="acc-corp-3-btn">
-        <span>¿Para qué tipo de empresas es este servicio?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-corp-3" role="region" aria-labelledby="acc-corp-3-btn">
-        <p>Para empresas locales y multinacionales que buscan crecimiento sostenible y control fiscal.</p>
-      </div>
-    </div>
-  </div>
+          function speakIfAvailable(text){
+            try{
+              const subtitle = document.getElementById('subtitle');
+              if (subtitle) subtitle.textContent = text;
+              if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
+            }catch(_){}
+          }
 
-  <!-- 🌍 Impuestos Internacionales -->
-  <div class="tax-group">
-    <h4>🌍 Impuestos Internacionales</h4>
-    <div class="accordion">
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-intl-1" id="acc-intl-1-btn">
-        <span>¿Cómo gestiona Deloitte la complejidad fiscal internacional?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-intl-1" role="region" aria-labelledby="acc-intl-1-btn">
-        <p>Diseñamos estructuras fiscales globales coherentes con la operación real y las normas locales.</p>
-      </div>
+          card.addEventListener('click', (e)=>{
+            const btn = e.target.closest('.acc-q');
+            if(!btn || !card.contains(btn)) return;
+            const panelId = btn.getAttribute('aria-controls');
+            const panel = document.getElementById(panelId);
+            if (!panel) return;
 
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-intl-2" id="acc-intl-2-btn">
-        <span>¿Cuál es el beneficio clave para empresas multinacionales?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-intl-2" role="region" aria-labelledby="acc-intl-2-btn">
-        <p>Menor riesgo de doble tributación y mayor claridad frente a autoridades fiscales.</p>
-      </div>
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
 
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-intl-3" id="acc-intl-3-btn">
-        <span>¿Por qué es clave hoy la asesoría fiscal internacional?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-intl-3" role="region" aria-labelledby="acc-intl-3-btn">
-        <p>Porque los países comparten más información y las reglas cambian constantemente.</p>
-      </div>
-    </div>
-  </div>
+            if (!expanded){
+              panel.classList.add('open');
+              panel.style.maxHeight = panel.scrollHeight + 'px';
+              const text = (panel.textContent || '').trim();
+              if (text) speakIfAvailable(text);
+            } else {
+              panel.style.maxHeight = '0px';
+              panel.classList.remove('open');
+            }
+          });
 
-  <!-- 🔄 Impuestos Indirectos -->
-  <div class="tax-group">
-    <h4>🔄 Impuestos Indirectos (IVA, ventas, consumo)</h4>
-    <div class="accordion">
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-ind-1" id="acc-ind-1-btn">
-        <span>¿Cómo ayuda Deloitte con el IVA y otros impuestos indirectos?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-ind-1" role="region" aria-labelledby="acc-ind-1-btn">
-        <p>Optimizamos procesos para mejorar el flujo de caja y asegurar el correcto cumplimiento.</p>
-      </div>
-
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-ind-2" id="acc-ind-2-btn">
-        <span>¿Qué problemas previene este servicio?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-ind-2" role="region" aria-labelledby="acc-ind-2-btn">
-        <p>Errores recurrentes, multas y contingencias que afectan la rentabilidad.</p>
-      </div>
-
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-ind-3" id="acc-ind-3-btn">
-        <span>¿Dónde se genera mayor valor?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-ind-3" role="region" aria-labelledby="acc-ind-3-btn">
-        <p>En empresas con alto volumen de transacciones o cadenas de suministro complejas.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 📊 Precios de Transferencia -->
-  <div class="tax-group">
-    <h4>📊 Precios de Transferencia</h4>
-    <div class="accordion">
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-tp-1" id="acc-tp-1-btn">
-        <span>¿Por qué son críticos los precios de transferencia?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-tp-1" role="region" aria-labelledby="acc-tp-1-btn">
-        <p>Porque definen cómo se reparten los ingresos entre países y son foco de fiscalización.</p>
-      </div>
-
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-tp-2" id="acc-tp-2-btn">
-        <span>¿Qué hace diferente el enfoque de Deloitte?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-tp-2" role="region" aria-labelledby="acc-tp-2-btn">
-        <p>Integramos análisis económico, documentación y estrategia de negocio.</p>
-      </div>
-
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-tp-3" id="acc-tp-3-btn">
-        <span>¿Qué gana la empresa?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-tp-3" role="region" aria-labelledby="acc-tp-3-btn">
-        <p>Defensa sólida ante auditorías y coherencia fiscal global.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 🤝 Fusiones y Adquisiciones (M&A Tax) -->
-  <div class="tax-group">
-    <h4>🤝 Fusiones y Adquisiciones (M&A Tax)</h4>
-    <div class="accordion">
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-ma-1" id="acc-ma-1-btn">
-        <span>¿Cómo acompaña Deloitte procesos de M&A desde impuestos?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-ma-1" role="region" aria-labelledby="acc-ma-1-btn">
-        <p>Evaluamos riesgos, oportunidades y estructuras fiscales antes y después de la transacción.</p>
-      </div>
-
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-ma-2" id="acc-ma-2-btn">
-        <span>¿Qué impacto tiene una mala planificación fiscal en una compra o venta?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-ma-2" role="region" aria-labelledby="acc-ma-2-btn">
-        <p>Puede reducir significativamente el valor real de la operación.</p>
-      </div>
-
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-ma-3" id="acc-ma-3-btn">
-        <span>¿En qué momento se debe involucrar al equipo fiscal?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-ma-3" role="region" aria-labelledby="acc-ma-3-btn">
-        <p>Desde el inicio del proceso, no al cierre.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 💻 Tecnología y Transformación Fiscal -->
-  <div class="tax-group">
-    <h4>💻 Tecnología y Transformación Fiscal</h4>
-    <div class="accordion">
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-tech-1" id="acc-tech-1-btn">
-        <span>¿Qué es la transformación digital en impuestos?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-tech-1" role="region" aria-labelledby="acc-tech-1-btn">
-        <p>Es automatizar, integrar y hacer más eficientes los procesos fiscales.</p>
-      </div>
-
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-tech-2" id="acc-tech-2-btn">
-        <span>¿Qué problemas resuelve?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-tech-2" role="region" aria-labelledby="acc-tech-2-btn">
-        <p>Procesos manuales, errores humanos y falta de visibilidad.</p>
-      </div>
-
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-tech-3" id="acc-tech-3-btn">
-        <span>¿Cuál es el valor estratégico?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-tech-3" role="region" aria-labelledby="acc-tech-3-btn">
-        <p>Un área fiscal más ágil, predictiva y alineada al negocio.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ✅ Cumplimiento Fiscal -->
-  <div class="tax-group">
-    <h4>✅ Cumplimiento Fiscal</h4>
-    <div class="accordion">
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-comp-1" id="acc-comp-1-btn">
-        <span>¿Cómo simplifica Deloitte el cumplimiento fiscal?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-comp-1" role="region" aria-labelledby="acc-comp-1-btn">
-        <p>Gestionamos declaraciones, reportes y obligaciones con precisión y consistencia.</p>
-      </div>
-
-      <button class="acc-q" aria-expanded="false" aria-controls="acc-comp-2" id="acc-comp-2-btn">
-        <span>¿Qué gana la empresa al externalizar este servicio?</span><span class="chev">▶</span>
-      </button>
-      <div class="acc-a" id="acc-comp-2" role="region" aria-labelledby="acc-comp-2-btn">
-        <p>Tiempo, tranquilidad y reducción de riesgos regulatorios.</p>
-      </div>
-
-
+          // Inicial: cerradas
+          card.querySelectorAll('.acc-a').forEach(p => { p.style.maxHeight = '0px'; });
+        })();
+      </script>
+      <!-- ======== FIN NUEVA TARJETA: Servicio de Impuestos ======== -->
 
       <!-- Preguntas base (eliminada la pregunta de empresas auditadas; renumeración automática) -->
       <div class="grid" id="faqGrid" role="list">
@@ -1554,4 +1600,5 @@
 </body>
 </html>
 ``
+
 
