@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -395,10 +396,11 @@
         </div>
       </div>
 
-   
-<!-- ===== INICIO CARD: Servicio de Impuestos ===== -->
+ 
+<!-- ========= NUEVA TARJETA: Servicio de Impuestos (accordion) ========= -->
+<!-- Fondo claro, acordeón moderno; se integra sin tocar el resto -->
 <style>
-  /* ===== Accordion (fondo claro) — SOLO esta tarjeta ===== */
+  /* Estilos locales del accordion (fondo claro) */
   .tax-card{
     background:#ffffff !important; color:#0b0e11 !important;
     border:1px solid rgba(0,0,0,.08) !important; border-radius:12px;
@@ -432,27 +434,19 @@
   .acc-q .chev{ color:#1c8c3f; margin-left:12px; transition: transform .18s ease; }
   .acc-q[aria-expanded="true"] .chev{ transform: rotate(90deg); }
 
+  /* ⬇️ CAMBIO CLAVE PARA QUE NUNCA SE CORTEN (sin animación) */
   .acc-a{
-    overflow:hidden;          /* oculta mientras anima */
-    max-height:0;             /* estado cerrado */
-    padding:0 12px;           /* sin padding cerrado */
+    display:none;            /* cerrado por defecto */
+    padding:0 12px;
     background:#ffffff; color:#111;
     border:1px solid rgba(0,0,0,.08); border-radius:10px;
     margin: -2px 0 8px 0;
-    box-sizing:border-box;    /* garantiza cálculo correcto */
-    will-change:max-height;   /* ayuda a la animación */
-    transition:max-height .24s ease, padding .18s ease, border-color .18s ease;
   }
   .acc-a.open{
-    padding:12px;             /* padding cuando abre */
-    overflow:clip;            /* previene “sangrados” durante animación */
+    display:block;           /* abierto: se ve completo */
+    padding:12px;
   }
   .acc-a p{ margin:0; }
-
-  @media (prefers-reduced-motion: reduce){
-    .acc-a{ transition:none !important; }
-    .acc-q{ transition:none !important; }
-  }
 </style>
 
 <div id="taxServices" class="card tax-card" role="region" aria-label="Servicio de Impuestos">
@@ -652,72 +646,66 @@
 </div>
 
 <script>
- 
-<script>
+  // JS local para el accordion (simple, sin animación; no se corta en ningún dispositivo)
+  (function(){
+    const card = document.getElementById('taxServices');
+    if(!card) return;
 
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  // 1) Ubicar la tarjeta de impuestos
-  const card = document.getElementById('taxServices');
-  if (!card) return;
-
-  // 2) Iniciar todos los paneles CERRADOS (no visibles)
-  card.querySelectorAll('.acc-a').forEach(panel => {
-    panel.style.display = 'none';
-    panel.classList.remove('open');
-  });
-
-  // 3) Gestionar clicks en las preguntas
-  card.addEventListener('click', function(e){
-    const btn = e.target.closest('.acc-q');
-    if (!btn || !card.contains(btn)) return;
-
-    const panelId = btn.getAttribute('aria-controls');
-    const panel = document.getElementById(panelId);
-    if (!panel) return;
-
-    const isOpen = panel.style.display !== 'none';
-
-    // Actualizar estado aria
-    btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-
-    if (isOpen) {
-      // Cerrar panel actual
-      panel.style.display = 'none';
-      panel.classList.remove('open');
-    } else {
-      // (Opcional) Cerrar otros paneles tipo acordeón
-      card.querySelectorAll('.acc-a').forEach(p => {
-        if (p !== panel) {
-          p.style.display = 'none';
-          p.classList.remove('open');
-          const otherBtn = card.querySelector('[aria-controls="'+p.id+'"]');
-          if (otherBtn) otherBtn.setAttribute('aria-expanded','false');
-        }
-      });
-
-      // Abrir panel seleccionado
-      panel.style.display = 'block';
-      panel.classList.add('open');
-
-      // 4) Narrar texto si existe queueSpeak y actualizar #subtitle si existe
-      try {
-        const text = (panel.textContent || '').trim();
+    function speakIfAvailable(text){
+      try{
         const subtitle = document.getElementById('subtitle');
         if (subtitle) subtitle.textContent = text;
-        if (typeof window.queueSpeak === 'function') {
-          window.queueSpeak(text);
-        }
-      } catch(_) {}
+        if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
+      }catch(_){}
     }
-  });
-});
-</script>
 
-</script>
+    // Inicial: todos cerrados
+    card.querySelectorAll('.acc-a').forEach(p => {
+      p.style.display = 'none';
+      p.classList.remove('open');
+    });
 
+    // Click para abrir/cerrar
+    card.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.acc-q');
+      if(!btn || !card.contains(btn)) return;
+
+      const panelId = btn.getAttribute('aria-controls');
+      const panel = document.getElementById(panelId);
+      if (!panel) return;
+
+      const isOpen = panel.classList.contains('open');
+
+      // Estado visual y accesibilidad
+      btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+
+      if (isOpen){
+        // Cerrar actual
+        panel.classList.remove('open');
+        panel.style.display = 'none';
+      } else {
+        // (Opcional) Modo acordeón exclusivo: cierra otros
+        card.querySelectorAll('.acc-a.open').forEach(p=>{
+          if (p !== panel){
+            p.classList.remove('open');
+            p.style.display = 'none';
+            const otherBtn = card.querySelector('[aria-controls="'+p.id+'"]');
+            if (otherBtn) otherBtn.setAttribute('aria-expanded','false');
+          }
+        });
+
+        // Abrir seleccionado
+        panel.style.display = 'block';
+        panel.classList.add('open');
+
+        // Narrar contenido si hay soporte
+        const text = (panel.textContent || '').trim();
+        if (text) speakIfAvailable(text);
+      }
+    });
+  })();
 </script>
-<!-- ===== FIN CARD: Servicio de Impuestos ===== -->
+<!-- ======== FIN NUEVA TARJETA: Servicio de Impuestos ======== -->
 
 
       <!-- Preguntas base (eliminada la pregunta de empresas auditadas; renumeración automática) -->
@@ -1640,8 +1628,3 @@ document.addEventListener('DOMContentLoaded', function(){
 </body>
 </html>
 ``
-
-
-
-
-
