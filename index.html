@@ -654,73 +654,66 @@
 <script>
  
 <script>
-  (function(){
-    const card = document.getElementById('taxServices');
-    if(!card) return;
 
-    function speakIfAvailable(text){
-      try{
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // 1) Ubicar la tarjeta de impuestos
+  const card = document.getElementById('taxServices');
+  if (!card) return;
+
+  // 2) Iniciar todos los paneles CERRADOS (no visibles)
+  card.querySelectorAll('.acc-a').forEach(panel => {
+    panel.style.display = 'none';
+    panel.classList.remove('open');
+  });
+
+  // 3) Gestionar clicks en las preguntas
+  card.addEventListener('click', function(e){
+    const btn = e.target.closest('.acc-q');
+    if (!btn || !card.contains(btn)) return;
+
+    const panelId = btn.getAttribute('aria-controls');
+    const panel = document.getElementById(panelId);
+    if (!panel) return;
+
+    const isOpen = panel.style.display !== 'none';
+
+    // Actualizar estado aria
+    btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+
+    if (isOpen) {
+      // Cerrar panel actual
+      panel.style.display = 'none';
+      panel.classList.remove('open');
+    } else {
+      // (Opcional) Cerrar otros paneles tipo acordeón
+      card.querySelectorAll('.acc-a').forEach(p => {
+        if (p !== panel) {
+          p.style.display = 'none';
+          p.classList.remove('open');
+          const otherBtn = card.querySelector('[aria-controls="'+p.id+'"]');
+          if (otherBtn) otherBtn.setAttribute('aria-expanded','false');
+        }
+      });
+
+      // Abrir panel seleccionado
+      panel.style.display = 'block';
+      panel.classList.add('open');
+
+      // 4) Narrar texto si existe queueSpeak y actualizar #subtitle si existe
+      try {
+        const text = (panel.textContent || '').trim();
         const subtitle = document.getElementById('subtitle');
         if (subtitle) subtitle.textContent = text;
-        if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
-      }catch(_){}
+        if (typeof window.queueSpeak === 'function') {
+          window.queueSpeak(text);
+        }
+      } catch(_) {}
     }
+  });
+});
+</script>
 
-    // Hace que los paneles NUNCA se corten
-    function openPanel(panel){
-      panel.classList.add('open');
-      panel.style.maxHeight = panel.scrollHeight + "px";
-
-      // Después de abrir, permitir que crezca libremente
-      setTimeout(()=>{
-        panel.style.maxHeight = "none";
-      }, 300);
-    }
-
-    function closePanel(panel){
-      // Vuelve a bloquear para animar
-      panel.style.maxHeight = panel.scrollHeight + "px";
-      panel.getBoundingClientRect(); // truco para que funcione la animación
-      panel.style.maxHeight = "0px";
-      panel.classList.remove('open');
-    }
-
-    card.addEventListener('click', (e)=>{
-      const btn = e.target.closest('.acc-q');
-      if(!btn) return;
-
-      const panelId = btn.getAttribute('aria-controls');
-      const panel = document.getElementById(panelId);
-      if (!panel) return;
-
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-
-      if (!expanded){
-        // Cierra otros paneles
-        card.querySelectorAll('.acc-a.open').forEach(p=>{
-          if (p !== panel){
-            const otherBtn = card.querySelector('[aria-controls="'+p.id+'"]');
-            if (otherBtn) otherBtn.setAttribute('aria-expanded','false');
-            closePanel(p);
-          }
-        });
-
-        openPanel(panel);
-
-        const text = (panel.textContent || "").trim();
-        if (text) speakIfAvailable(text);
-
-      } else {
-        closePanel(panel);
-      }
-    });
-
-    // Al inicio, todos cerrados
-    card.querySelectorAll('.acc-a').forEach(p => {
-      p.style.maxHeight = "0px";
-    });
-  })();
 </script>
 
 </script>
@@ -1647,6 +1640,7 @@
 </body>
 </html>
 ``
+
 
 
 
