@@ -597,6 +597,131 @@
       </div>
       <!-- ========= FIN SERVICIO DE IMPUESTOS ========= -->
 
+      <!-- ========= SERVICIOS LEGALES (Acordeón doble nivel) ========= -->
+      <style>
+        .legal-card{
+          background:#ffffff !important; color:#0b0e11 !important;
+          border:1px solid rgba(0,0,0,.08) !important; border-radius:12px;
+          box-shadow: 0 18px 40px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.06);
+          margin:14px; padding:14px;
+        }
+        .legal-header{
+          display:flex; gap:12px; align-items:center; justify-content:space-between;
+          padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,.08);
+        }
+        .legal-title{
+          margin:0; font-size:16px; color:#0b0e11; display:flex; align-items:center; gap:8px;
+        }
+        .legal-toggle{
+          margin-left:auto;
+          background:#ffffff; color:#0b0e11; border:1px solid rgba(0,0,0,.12);
+          border-radius:10px; padding:8px 10px; cursor:pointer;
+        }
+        .legal-toggle:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+        .legal-desc{ margin:6px 0 0 0; color:#47515a; font-size:13px; }
+
+        .legal-body{ display:none; margin-top:12px; }
+        .legal-body.open{ display:block; }
+      </style>
+
+      <div id="legalServices" class="card legal-card" role="region" aria-label="Servicios Legales">
+        <div class="legal-header">
+          <h3 class="legal-title">Servicios Legales</h3>
+          <button id="legalMasterToggle" class="legal-toggle" aria-expanded="false" aria-controls="legalBody">▶ Ver preguntas</button>
+        </div>
+        <p class="legal-desc">Haz clic en “Servicios Legales” para desplegar las preguntas. Luego selecciona una pregunta para ver su respuesta.</p>
+
+        <div id="legalBody" class="legal-body" role="region" aria-labelledby="legalMasterToggle">
+          <div class="accordion">
+            <!-- 1 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-1" id="acc-legal-1-btn">
+              <span>¿Qué propone Deloitte Legal con sus soluciones?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-1" role="region" aria-labelledby="acc-legal-1-btn">
+              <p>Deloitte Legal ofrece soluciones que fortalecen el negocio al combinar experiencia legal con un enfoque empresarial, ayudando a los departamentos jurídicos a contribuir al crecimiento, gestión de riesgos y reducción de costos.</p>
+            </div>
+            <!-- 2 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-2" id="acc-legal-2-btn">
+              <span>¿Cómo puede Deloitte mejorar mi gestión de contratos?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-2" role="region" aria-labelledby="acc-legal-2-btn">
+              <p>Deloitte ayuda a las empresas a gestionar sus relaciones contractuales de negocio para mejorar la efectividad y desbloquear valor a lo largo de todo el ciclo de vida de los contratos.</p>
+            </div>
+            <!-- 3 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-3" id="acc-legal-3-btn">
+              <span>¿Qué significa asesoría en intangibles, datos y tecnología?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-3" role="region" aria-labelledby="acc-legal-3-btn">
+              <p>Este servicio se enfoca en que las empresas comprendan, protejan, desarrollen y exploten activos intangibles (como datos, software o propiedad intelectual) que son cada vez más críticos para su valor competitivo.</p>
+            </div>
+            <!-- 4 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-4" id="acc-legal-4-btn">
+              <span>¿Qué es la transformación de la función jurídica?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-4" role="region" aria-labelledby="acc-legal-4-btn">
+              <p>Es un enfoque de consultoría que ayuda a modernizar y aumentar el valor de la función legal interna, mediante mejoras en procesos, tecnología y gestión de riesgos para adaptarse a las necesidades del negocio.</p>
+            </div>
+            <!-- 5 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-5" id="acc-legal-5-btn">
+              <span>¿Cómo puede Deloitte Legal apoyarme en fusiones y adquisiciones?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-5" role="region" aria-labelledby="acc-legal-5-btn">
+              <p>Ofrecen acompañamiento integral en fusiones y adquisiciones (M&A) y derecho corporativo, garantizando que las transacciones se realicen eficazmente y evitando problemas legales que puedan surgir en el proceso.</p>
+            </div>
+            <!-- 6 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-6" id="acc-legal-6-btn">
+              <span>¿Qué aborda la "Ley de personas"?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-6" role="region" aria-labelledby="acc-legal-6-btn">
+              <p>Deloitte ayuda a las empresas a implementar estrategias legales sólidas para atraer, motivar, proteger y retener el mejor talento, respondiendo a expectativas sociales y regulaciones laborales actuales.</p>
+            </div>
+            <!-- 7 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-7" id="acc-legal-7-btn">
+              <span>¿Qué servicios incluye la asesoría legal?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-7" role="region" aria-labelledby="acc-legal-7-btn">
+              <p>Más que cumplir con normas, la asesoría de Deloitte Legal ofrece una perspectiva estratégica, combinando legal, estrategia y tecnología para resolver desafíos y mejorar la posición competitiva de su negocio.</p>
+            </div>
+            <!-- 8 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-8" id="acc-legal-8-btn">
+              <span>¿Qué son los Servicios Legales Gestionados?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-8" role="region" aria-labelledby="acc-legal-8-btn">
+              <p>Son soluciones diseñadas para ayudar a los departamentos jurídicos a lograr más con menos, aumentando eficiencia, transparencia, previsibilidad y control del gasto legal mediante gestión de procesos repetitivos y uso de tecnología especializada.</p>
+            </div>
+            <!-- 9 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-9" id="acc-legal-9-btn">
+              <span>¿Qué mejoras concretas puedo esperar con Servicios Legales Gestionados?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-9" role="region" aria-labelledby="acc-legal-9-btn">
+              <p>Incluyen la gestión del ciclo de vida de contratos, manejo de entidades corporativas y apoyo en mapeo normativo, revisión de documentos, gestión de proyectos legales y otros servicios externalizados clave.</p>
+            </div>
+            <!-- 10 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-10" id="acc-legal-10-btn">
+              <span>¿Por qué Deloitte Legal puede ser un socio para decisiones comerciales?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-10" role="region" aria-labelledby="acc-legal-10-btn">
+              <p>Porque sus expertos combinan conocimiento jurídico con entendimiento de negocio y tecnología, aportando soluciones que reducen riesgos, generan valor y facilitan la toma de decisiones estratégicas.</p>
+            </div>
+            <!-- 11 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-11" id="acc-legal-11-btn">
+              <span>¿Deloitte Legal opera en múltiples países y sectores?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-11" role="region" aria-labelledby="acc-legal-11-btn">
+              <p>Sí, Deloitte Legal está presente en más de 75 países y sus profesionales colaboran a nivel global para brindar soluciones integrales, adaptadas al contexto específico del cliente y su industria.</p>
+            </div>
+            <!-- 12 -->
+            <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-12" id="acc-legal-12-btn">
+              <span>¿Qué tipo de retos ayuda a resolver Deloitte Legal?</span><span class="chev">▶</span>
+            </button>
+            <div class="acc-a" id="acc-legal-12" role="region" aria-labelledby="acc-legal-12-btn">
+              <p>Desde cambios regulatorios complejos hasta integración de nuevas tecnologías y protección de activos digitales, Deloitte Legal trabaja para que las empresas naveguen entornos legales y comerciales en constante cambio.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ========= FIN SERVICIOS LEGALES ========= -->
+
       <!-- FAQ base -->
       <div class="grid" id="faqGrid" role="list">
         <button class="qbtn" data-answer="Es la plataforma regional que integra las capacidades, servicios y soluciones de Deloitte en Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá y República Dominicana. Nace como una decisión estratégica en septiembre de 2025 para impulsar el crecimiento y consolidar la presencia multidisciplinaria de la Firma en la región.">1. ¿Qué es el Marketplace Deloitte Centroamérica?</button>
@@ -1080,6 +1205,75 @@
 
       const visInterval = setInterval(setBtnLabels, 250);
       window.addEventListener('beforeunload', () => clearInterval(visInterval));
+    })();
+  </script>
+
+  <!-- Script independiente para el acordeón de Servicios Legales -->
+  <script>
+    (function(){
+      const card = document.getElementById('legalServices');
+      const masterBtn = document.getElementById('legalMasterToggle');
+      const body = document.getElementById('legalBody');
+      if (!card || !masterBtn || !body) return;
+
+      // Por defecto CERRADO (cambia a true si deseas que inicie abierto)
+      let open = false;
+      function sync(){
+        body.classList.toggle('open', open);
+        masterBtn.setAttribute('aria-expanded', open ? 'true':'false');
+        masterBtn.textContent = open ? '▼ Ocultar preguntas' : '▶ Ver preguntas';
+      }
+      sync();
+
+      masterBtn.addEventListener('click', () => { open = !open; sync(); });
+
+      function speakIfAvailable(text){
+        try{
+          const subtitle = document.getElementById('subtitle');
+          if (subtitle) subtitle.textContent = text;
+          if (typeof window.queueSpeak === 'function') window.queueSpeak(text);
+        }catch(_){}
+      }
+
+      // Inicial: todo cerrado
+      card.querySelectorAll('.acc-a').forEach(p => {
+        p.style.display = 'none';
+        p.classList.remove('open');
+      });
+
+      // Acordeón interno
+      card.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.acc-q');
+        if(!btn || !card.contains(btn)) return;
+
+        const panelId = btn.getAttribute('aria-controls');
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+
+        const isOpen = panel.classList.contains('open');
+        btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+
+        if (isOpen){
+          panel.classList.remove('open');
+          panel.style.display = 'none';
+        } else {
+          // Cerrar otros
+          card.querySelectorAll('.acc-a.open').forEach(p=>{
+            if (p !== panel){
+              p.classList.remove('open');
+              p.style.display = 'none';
+              const otherBtn = card.querySelector('[aria-controls="'+p.id+'"]');
+              if (otherBtn) otherBtn.setAttribute('aria-expanded','false');
+            }
+          });
+
+          panel.style.display = 'block';
+          panel.classList.add('open');
+
+          const text = (panel.textContent || '').trim();
+          if (text) speakIfAvailable(text);
+        }
+      });
     })();
   </script>
 
