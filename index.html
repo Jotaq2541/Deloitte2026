@@ -119,30 +119,6 @@
       backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
     }
 
-    /* 👔 Parche del logo sobre el saco (nuevo) */
-    .avatar-patch{
-      position:absolute;
-      /* Ubicación aproximada sobre la solapa izquierda del saco */
-      left:10%;
-      bottom:18%;
-      width:18%;
-      height:auto;
-      opacity:0.9;
-      filter: contrast(0.9) brightness(0.95) saturate(0.95);
-      mix-blend-mode:multiply;       /* se integra al tejido */
-      pointer-events:none;            /* no bloquea clics/gestos */
-      transform: rotate(-6deg);       /* ligera inclinación natural */
-      transform-origin: center;
-      image-rendering: auto;
-    }
-    /* Ajustes responsivos del parche para móviles/tablets */
-    @media (max-width: 900px){
-      .avatar-patch{ left:12%; bottom:16%; width:22%; }
-    }
-    @media (max-width: 520px){
-      .avatar-patch{ left:14%; bottom:14%; width:24%; }
-    }
-
     .muted{color:var(--muted);font-size:12px}
 
     .right{display:grid;grid-template-rows:auto auto 1fr auto; position:relative;}
@@ -340,15 +316,6 @@
                loop
                playsinline
                preload="auto"></video>
-
-        <!-- 🆕 Parche del logo sobre el saco -->
-        <img class="avatar-patch"
-             src="./Deloitte-Emblem.png"
-             alt=""
-             aria-hidden="true"
-             decoding="async"
-             loading="eager" />
-
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
@@ -1389,3 +1356,4 @@
   </script>
 </body>
 </html>
+
