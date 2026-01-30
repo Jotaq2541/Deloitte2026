@@ -119,27 +119,27 @@
       backdrop-filter:blur(4px);padding:8px;border-radius:8px;font-size:12px;max-height:38%;overflow:auto
     }
 
-    /* 👔 Parche del logo sobre la solapa derecha del saco (nuevo) */
+    /* 👔 Parche del logo en la solapa derecha del saco */
     .avatar-patch{
       position:absolute;
-      right:9.5%;          /* desplaza hacia la derecha (ajústalo si hace falta) */
-      bottom:17.5%;        /* altura sobre la solapa (ajustable) */
-      width:10.5%;         /* tamaño del parche (ajustable) */
+      right:9.2%;        /* posición horizontal (ajustable) */
+      bottom:18.5%;      /* posición vertical (ajustable) */
+      width:10.8%;       /* tamaño del logo (ajustable) */
       height:auto;
-      opacity:0.92;
-      filter: contrast(0.95) brightness(0.95) saturate(0.95);
-      mix-blend-mode:multiply;      /* se integra con el tejido del saco */
-      pointer-events:none;          /* no bloquea interacciones */
-      transform: rotate(7deg);      /* ligera inclinación natural de la solapa */
-      transform-origin: center;
-      z-index:1;                    /* por encima del video, por debajo del subtítulo */
+      opacity:0.95;
+      mix-blend-mode:multiply;            /* integración con la tela */
+      filter: brightness(0.92) contrast(0.92) saturate(0.96);
+      pointer-events:none;                /* no interfiere con clics */
+      transform: rotate(6deg);            /* leve inclinación natural */
+      transform-origin:center;
+      z-index:2;                          /* encima del video, debajo del subtítulo */
     }
-    /* Ajustes responsivos del parche para móviles/tablets */
+    /* Responsivo: afina posición/tamaño en pantallas más pequeñas */
     @media (max-width: 900px){
-      .avatar-patch{ right:11.5%; bottom:16.5%; width:12.5%; }
+      .avatar-patch{ right:10.5%; bottom:17%; width:12.6%; }
     }
     @media (max-width: 520px){
-      .avatar-patch{ right:12.5%; bottom:14.5%; width:14.5%; }
+      .avatar-patch{ right:11.5%; bottom:15%; width:15%; }
     }
 
     .muted{color:var(--muted);font-size:12px}
@@ -340,7 +340,7 @@
                playsinline
                preload="auto"></video>
 
-        <!-- 🆕 Parche del logo sobre la solapa del saco -->
+        <!-- 🆕 Parche del logo en la solapa (visible como parte del atuendo) -->
         <img src="./Deloitte-Emblem.png" alt="" class="avatar-patch" aria-hidden="true" />
 
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
@@ -1262,7 +1262,7 @@
     const css = `
       :root{ color-scheme: light !important; }
       body{ background:#f4f4f4 !important; color:#111 !important; }
-      header{ background:#ffffff !important; border-bottom-color:#1c8c3f !important; }
+      header{ background:#ffffff !-important; border-bottom-color:#1c8c3f !important; }
       .left,.right{ border-color: rgba(0,0,0,.08) !important; }
       .grid{ background:rgba(246,250,247,1) !important; }
       .card{ background:#ffffff !important; color:#111 !important; }
