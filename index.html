@@ -229,10 +229,10 @@
     }
 
     .insights{
-      display:grid; grid-template-columns:1fr 1fr; gap:12px;
+      display:grid; grid-template-columns:1fr; gap:12px;
       padding:12px 14px; background:rgba(0,0,0,.14); border-top:1px solid rgba(255,255,255,.08)
     }
-    @media (max-width:1200px){ .insights{grid-template-columns:1fr} }
+
     .card h3{ margin:0 0 8px 0; font-size:15px; color:var(--viz-text); text-shadow: 0 1px 0 rgba(0,0,0,.35); }
     .viz{ width:100%; height:260px; display:block }
     .viz text{
@@ -258,13 +258,14 @@
       display:none; white-space:nowrap;
     }
 
-    /* Modo claro (se respeta tu parche posterior también) */
+    /* Modo claro */
     @media (prefers-color-scheme: light){
       :root{
         --bg:#f4f4f4; --text:#111; --panel:#fff; --card:#fff;
         --brand:#1c8c3f; --muted:#47515a; --focus:#22b36a;
         --viz-text:#0b0e11; --viz-muted:#47515a;
         --viz-bg:#ffffff; --viz-stroke:#d7dde3;
+
         --chip-bg:#ffffff; --chip-text:#0b0e11; --chip-border:rgba(0,0,0,.16);
         --chip-bg-hover:#f2f7f4;
       }
@@ -334,14 +335,9 @@
         <div id="aiThinking" aria-live="polite">Procesando…</div>
       </div>
 
-      <!-- INSIGHTS: solo una tarjeta (Profesionales por país) -->
+      <!-- INSIGHTS (contenedor vacío; sin tarjetas) -->
       <div class="insights" aria-label="Indicadores clave">
-        <div class="card">
-          <h3>Profesionales por país (muestra)</h3>
-          <svg id="chartBars" class="viz" role="img" aria-label="Barras de profesionales por país"></svg>
-          <div class="legend" id="legendBars"></div>
-        </div>
-        <!-- (SEGUNDA TARJETA LIBRE O ELIMINADA) -->
+        <!-- Sin tarjetas -->
       </div>
 
       <!-- ========= SERVICIO DE IMPUESTOS (Acordeón doble nivel) ========= -->
@@ -766,115 +762,6 @@
       if (img.complete && !img.naturalWidth){ img.style.display='none'; fb.style.display='inline-flex'; }
     })();
 
-    /* ====== INFOGRÁFICO: Profesionales por país ====== */
-    document.addEventListener('DOMContentLoaded', () => {
-      const tip = document.getElementById('vizTip');
-      const showTip = (html, x, y) => {
-        tip.innerHTML = html; tip.style.left = (x+12)+'px'; tip.style.top=(y+12)+'px';
-        tip.style.display='block'; tip.setAttribute('aria-hidden','false');
-      };
-      const hideTip = () => { tip.style.display='none'; tip.setAttribute('aria-hidden','true'); };
-
-      const dataBars = [
-        {label:'Guatemala',       flag:'🇬🇹', val:242, color:'#1ea55a'},
-        {label:'Honduras',        flag:'🇭🇳', val:62,  color:'#24c06a'},
-        {label:'El Salvador',     flag:'🇸🇻', val:93,  color:'#1a8a4a'},
-        {label:'Nicaragua',       flag:'🇳🇮', val:28,  color:'#2bd07a'},
-        {label:'Costa Rica',      flag:'🇨🇷', val:421, color:'#22b36a'},
-        {label:'Panamá',          flag:'🇵🇦', val:229, color:'#1f9656'},
-        {label:'R. Dominicana',   flag:'🇩🇴', val:113, color:'#2aa868'}
-      ];
-      const svgB = document.getElementById('chartBars');
-      const legend = document.getElementById('legendBars');
-
-      function drawBars(){
-        if(!svgB) return;
-        const w = svgB.clientWidth || 600, h = svgB.clientHeight || 260, pad = {t:10,r:16,b:30,l:110};
-        svgB.setAttribute('viewBox', `0 0 ${w} ${h}`);
-        while(svgB.firstChild) svgB.removeChild(svgB.firstChild);
-
-        const max = Math.max(...dataBars.map(d=>d.val));
-        const rowH = (h - pad.t - pad.b) / dataBars.length;
-        const barH = rowH * 0.64, gap = rowH * 0.36;
-
-        dataBars.forEach((d,i)=>{
-          const y = pad.t + i*(barH+gap);
-          const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-
-          const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-          label.setAttribute('x', pad.l - 12);
-          label.setAttribute('y', y + barH*0.72);
-          label.setAttribute('text-anchor','end');
-          label.setAttribute('fill','var(--viz-text)');
-          label.setAttribute('font-size','12');
-
-          const tFlag = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tFlag.setAttribute('font-size','11');
-          tFlag.textContent = d.flag + ' ';
-          label.appendChild(tFlag);
-
-          const tName = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-          tName.textContent = d.label;
-          label.appendChild(tName);
-
-          g.appendChild(label);
-
-          const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
-          bar.setAttribute('x', pad.l);
-          bar.setAttribute('y', y);
-          bar.setAttribute('width', 0);
-          bar.setAttribute('height', barH);
-          bar.setAttribute('rx', 8);
-          bar.setAttribute('fill', d.color);
-          bar.style.transition = 'width 420ms ease';
-          g.appendChild(bar);
-
-          const val = document.createElementNS('http://www.w3.org/2000/svg','text');
-          val.setAttribute('x', pad.l + 6);
-          val.setAttribute('y', y + barH/2 + 4);
-          val.setAttribute('fill','var(--viz-text)');
-          val.setAttribute('font-size','12');
-          val.textContent = d.val;
-          val.style.opacity = 0;
-          g.appendChild(val);
-
-          g.addEventListener('mousemove', (e)=>{
-            const pct = Math.round(d.val/max*100);
-            showTip(`<strong>${d.flag} ${d.label}</strong><br>${d.val} profesionales (${pct}%)`, e.clientX, e.clientY);
-            bar.setAttribute('fill', '#35d07a');
-          });
-          g.addEventListener('mouseleave', ()=>{
-            hideTip(); bar.setAttribute('fill', d.color);
-          });
-
-          svgB.appendChild(g);
-
-          requestAnimationFrame(()=>{
-            const wBar = (w - pad.l - pad.r) * (d.val/max);
-            bar.setAttribute('width', wBar);
-            val.setAttribute('x', pad.l + Math.min(wBar - 28, w - pad.r - 28));
-            val.style.opacity = 0.95;
-          });
-        });
-
-        if(legend){
-          legend.innerHTML = '';
-          dataBars.forEach(d=>{
-            const span = document.createElement('span');
-            span.className = 'badge';
-            span.innerHTML = `<span class="dot" style="background:${d.color}"></span>${d.flag} ${d.label}: ${d.val}`;
-            legend.appendChild(span);
-          });
-        }
-      }
-
-      function redrawAll(){
-        drawBars();
-      }
-      redrawAll();
-      window.addEventListener('resize', redrawAll);
-    });
-
     /* ====== Q&A + TTS + Avatar ====== */
     document.addEventListener('DOMContentLoaded', () => {
       const voiceSel   = document.getElementById('voiceSel');
@@ -895,6 +782,7 @@
         return;
       }
 
+      // Música al primer clic (autoplay policy)
       document.addEventListener("click", ()=>{
         if(bg && bg.paused){
           bg.volume = 0.18;
@@ -905,6 +793,7 @@
         btnMusic.addEventListener('click', ()=>{ bg.muted = !bg.muted; btnMusic.textContent = bg.muted ? '🔇 Música' : '🔈 Música'; });
       }
 
+      // Typewriter
       let typeSeq = 0;
       function typeText(target, text, speed=22){
         typeSeq++;
@@ -920,12 +809,13 @@
         })();
       }
 
+      // Avatar hablando
       function setTalking(on){ if(avatar) avatar.classList.toggle('talking', !!on); }
-
       function playAvatarVideo(){ avatarVideo && avatarVideo.play().catch(()=>{}); }
       function pauseAvatarVideo(){ avatarVideo && avatarVideo.pause(); }
       function stopAvatarVideo(){ if(!avatarVideo) return; try{ avatarVideo.pause(); avatarVideo.currentTime = 0; }catch{} }
 
+      // TTS
       const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
       let voices = [], voicesReady = false, lastUtterance = null, queuedText = null;
 
@@ -998,6 +888,7 @@
         }
       }
 
+      // Click en preguntas del FAQ
       faqGrid.querySelectorAll('.qbtn').forEach(btn => {
         btn.onclick = () => {
           const text = btn.dataset.answer || '';
@@ -1008,14 +899,17 @@
         };
       });
 
+      // Botón Reproducir (relee la respuesta actual)
       btnSpeak.onclick = () => {
         const text = (answerBox.textContent || '').trim();
         if (text) queueSpeak(text);
       };
 
+      // Exponer helpers globales
       window.typeText = typeText;
       window.queueSpeak = queueSpeak;
 
+      // Mensaje inicial
       const bienvenida = 'Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.';
       typeText(answerBox, bienvenida);
       subtitleEl.textContent = bienvenida;
@@ -1027,8 +921,7 @@
         const body = document.getElementById('taxBody');
         if (!card || !masterBtn || !body) return;
 
-        // Por defecto CERRADO (si prefieres abierto: cambia a true)
-        let open = false;
+        let open = false; // cambia a true si lo quieres abierto por defecto
         function sync(){
           body.classList.toggle('open', open);
           masterBtn.setAttribute('aria-expanded', open ? 'true':'false');
@@ -1038,7 +931,6 @@
 
         masterBtn.addEventListener('click', () => { open = !open; sync(); });
 
-        // Acordeón interno: preguntas -> respuestas (con TTS)
         function speakIfAvailable(text){
           try{
             const subtitle = document.getElementById('subtitle');
@@ -1053,6 +945,7 @@
           p.classList.remove('open');
         });
 
+        // Toggle preguntas -> respuestas
         card.addEventListener('click', (e)=>{
           const btn = e.target.closest('.acc-q');
           if(!btn || !card.contains(btn)) return;
@@ -1068,7 +961,7 @@
             panel.classList.remove('open');
             panel.style.display = 'none';
           } else {
-            // cerrar otros
+            // cerrar otras abiertas
             card.querySelectorAll('.acc-a.open').forEach(p=>{
               if (p !== panel){
                 p.classList.remove('open');
