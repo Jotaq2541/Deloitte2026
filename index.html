@@ -280,53 +280,6 @@
     /* OVERRIDES de fluidez del AVATAR (no animar el <video>) */
     #avatar video{ will-change:auto; transform:none; transition:filter .18s ease; }
     #avatar.talking video{ animation:none !important; transform:none !important; }
-
-    /* ========== LAPEL PIN Deloitte ========== */
-    /* Variables de posicionamiento: ajusta si cambia tu encuadre */
-    #avatar{
-      --pin-left: 22%;     /* distancia desde el lado izquierdo del avatar */
-      --pin-bottom: 26%;   /* distancia desde la parte inferior del avatar */
-      --pin-size: 9%;      /* tamaño relativo al ancho del avatar */
-    }
-    #avatar .lapel-pin{
-      position:absolute;
-      left: var(--pin-left);
-      bottom: var(--pin-bottom);
-      width: var(--pin-size);
-      height: auto;
-      object-fit: contain;
-      pointer-events: none;
-      opacity: .78;
-      filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)) saturate(0.92);
-      mix-blend-mode: multiply;        /* se integra con la tela */
-      transform: rotate(-6deg);        /* leve inclinación natural */
-      transition: opacity .2s ease, transform .2s ease, filter .2s ease;
-      z-index: 2;
-    }
-    /* Al hablar, un toque de vida (apenas perceptible) */
-    #avatar.talking .lapel-pin{
-      transform: rotate(-6deg) translateY(-0.4%);
-      opacity: .85;
-    }
-    /* Si el logo tiene fondo blanco, lo suavizamos un poco */
-    @supports (filter: contrast(1)){
-      #avatar .lapel-pin{
-        filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)) saturate(0.92) contrast(0.98) brightness(0.98);
-      }
-    }
-    /* Ajustes defensivos para el parche de modo claro forzado */
-    [data-force-light="1"] ~ body #avatar .lapel-pin,
-    body #avatar .lapel-pin{
-      mix-blend-mode: multiply;
-    }
-    /* Retina y pantallas grandes: reduce un poquito para mantener sutileza */
-    @media (min-width: 1440px){
-      #avatar{ --pin-size: 8%; }
-    }
-    @media (max-width: 420px){
-      #avatar{ --pin-size: 10%; --pin-left: 24%; --pin-bottom: 24%; }
-    }
-    /* ========== FIN LAPEL PIN ========== */
   </style>
 </head>
 
@@ -363,10 +316,6 @@
                loop
                playsinline
                preload="auto"></video>
-
-        <!-- Pin de solapa Deloitte (usa la MISMA imagen existente) -->
-        <img src="./Deloitte-Emblem.png" alt="Pin Deloitte" class="lapel-pin" />
-
         <div id="subtitle" class="subtitle" aria-live="polite"></div>
       </div>
 
@@ -769,12 +718,6 @@
       </div>
       <!-- ========= FIN SERVICIOS LEGALES ========= -->
 
-      <!-- FAQ base -->
-      <div class="grid" id="faqGrid" role="list">
-        <!-- Bloque de preguntas MarketPlace eliminado a solicitud. Se conserva el contenedor vacío. -->
-      </div>
-
-      <div id="answerBox" class="answer" aria-live="polite">
         Bienvenido/a. Selecciona una pregunta para ver la respuesta y reproducirla con voz.
       </div>
 
@@ -1399,3 +1342,4 @@
   </script>
 </body>
 </html>
+
