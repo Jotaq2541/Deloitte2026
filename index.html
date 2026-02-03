@@ -354,15 +354,18 @@
     padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,.08);
   }
 
-  /* 🔤 Mejora tipográfica del titular */
-  .tax-title{
-    margin:0;
-    font-size:20px;             /* más grande y visible */
-    font-weight:700;            /* negrita estética */
-    letter-spacing:0.3px;       /* leve tracking para elegancia */
-    color:#0b0e11;
-    display:flex; align-items:center; gap:8px;
-    font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif; /* stack limpio y profesional */
+  /* 🔤 Mejora tipográfica del titular (con mayor especificidad y !important) */
+  #taxServices .tax-title{
+    margin:0 !important;
+    font-size:22px !important;          /* más grande y visible */
+    line-height:1.25 !important;         /* compacto pero legible */
+    font-weight:800 !important;          /* peso alto para impacto */
+    letter-spacing:0.2px !important;     /* leve tracking premium */
+    color:#0b0e11 !important;
+    display:flex !important; align-items:center !important; gap:8px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif !important;
+    -webkit-font-smoothing: antialiased; 
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .tax-toggle{
@@ -554,15 +557,18 @@
           padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,.08);
         }
 
-        /* 🔤 Mejora tipográfica del titular */
-        .legal-title{
-          margin:0;
-          font-size:20px;             /* más grande y visible */
-          font-weight:700;            /* negrita estética */
-          letter-spacing:0.3px;       /* leve tracking para elegancia */
-          color:#0b0e11;
-          display:flex; align-items:center; gap:8px;
-          font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif; /* stack limpio y profesional */
+        /* 🔤 Mejora tipográfica del titular (con mayor especificidad y !important) */
+        #legalServices .legal-title{
+          margin:0 !important;
+          font-size:22px !important;
+          line-height:1.25 !important;
+          font-weight:800 !important;
+          letter-spacing:0.2px !important;
+          color:#0b0e11 !important;
+          display:flex !important; align-items:center !important; gap:8px !important;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif !important;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
 
         .legal-toggle{
@@ -1305,6 +1311,7 @@
   </script>
 </body>
 </html>
+
 
 
 
