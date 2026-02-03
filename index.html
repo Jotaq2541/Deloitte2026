@@ -341,6 +341,57 @@
       </div>
 
 <!-- ========= SERVICIO DE IMPUESTOS (Acordeón simple, sin subtítulos) ========= -->
+<style>
+  /* Estilos locales del acordeón de impuestos (necesarios para colapsar/expandir) */
+  .tax-card{
+    background:#ffffff !important; color:#0b0e11 !important;
+    border:1px solid rgba(0,0,0,.08) !important; border-radius:12px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.06);
+    margin:14px; padding:14px;
+  }
+  .tax-header{
+    display:flex; gap:12px; align-items:center; justify-content:space-between;
+    padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,.08);
+  }
+  .tax-title{ margin:0; font-size:16px; color:#0b0e11; display:flex; align-items:center; gap:8px; }
+  .tax-toggle{
+    margin-left:auto; background:#ffffff; color:#0b0e11; border:1px solid rgba(0,0,0,.12);
+    border-radius:10px; padding:8px 10px; cursor:pointer;
+  }
+  .tax-toggle:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+  .tax-desc{ margin:6px 0 0 0; color:#47515a; font-size:13px; }
+
+  /* 🔑 Colapso maestro (cuerpo) */
+  #taxServices .tax-body{ display:none; margin-top:12px; }
+  #taxServices .tax-body.open{ display:block; }
+
+  /* Lista de preguntas/respuestas */
+  .accordion{ display:block; }
+  .acc-q{
+    width:100%; background:#ffffff; color:#0b0e11;
+    border:1px solid rgba(0,0,0,.12); border-radius:10px;
+    padding:12px; margin:6px 0; text-align:left; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center; font-weight:600;
+    box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 6px 14px rgba(0,0,0,.06);
+    transition: box-shadow .18s ease, border-color .18s ease, background .18s ease;
+  }
+  .acc-q:hover{
+    border-color: rgba(28,140,63,.35);
+    box-shadow: 0 0 0 1px rgba(34,179,106,.18), 0 10px 22px rgba(0,0,0,.08);
+    background:#f7faf8;
+  }
+  .acc-q .chev{ color:#1c8c3f; margin-left:12px; transition: transform .18s ease; }
+  .acc-q[aria-expanded="true"] .chev{ transform: rotate(90deg); }
+
+  /* 🔑 Colapso por pregunta */
+  #taxServices .acc-a{
+    display:none; padding:0 12px; background:#ffffff; color:#111;
+    border:1px solid rgba(0,0,0,.08); border-radius:10px; margin:-2px 0 8px 0;
+  }
+  #taxServices .acc-a.open{ display:block; padding:12px; }
+  #taxServices .acc-a p{ margin:0; }
+</style>
+
 <div id="taxServices" class="card tax-card" role="region" aria-label="Servicio de Impuestos">
   <div class="tax-header">
     <h3 class="tax-title">Servicio de Impuestos</h3>
@@ -350,7 +401,6 @@
   <p class="tax-desc">Haz clic en “Servicio de Impuestos” para desplegar las preguntas. Luego selecciona una pregunta para ver su respuesta.</p>
 
   <div id="taxBody" class="tax-body" role="region" aria-labelledby="taxMasterToggle">
-
     <div class="accordion">
 
       <!-- 1 -->
@@ -477,6 +527,7 @@
   </div>
 </div>
 <!-- ========= FIN SERVICIO DE IMPUESTOS ========= -->
+``
 
 
       <!-- ========= SERVICIOS LEGALES (Acordeón doble nivel) ========= -->
@@ -1234,6 +1285,7 @@
   </script>
 </body>
 </html>
+
 
 
 
