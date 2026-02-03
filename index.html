@@ -353,7 +353,18 @@
     display:flex; gap:12px; align-items:center; justify-content:space-between;
     padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,.08);
   }
-  .tax-title{ margin:0; font-size:16px; color:#0b0e11; display:flex; align-items:center; gap:8px; }
+
+  /* 🔤 Mejora tipográfica del titular */
+  .tax-title{
+    margin:0;
+    font-size:20px;             /* más grande y visible */
+    font-weight:700;            /* negrita estética */
+    letter-spacing:0.3px;       /* leve tracking para elegancia */
+    color:#0b0e11;
+    display:flex; align-items:center; gap:8px;
+    font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif; /* stack limpio y profesional */
+  }
+
   .tax-toggle{
     margin-left:auto; background:#ffffff; color:#0b0e11; border:1px solid rgba(0,0,0,.12);
     border-radius:10px; padding:8px 10px; cursor:pointer;
@@ -542,9 +553,18 @@
           display:flex; gap:12px; align-items:center; justify-content:space-between;
           padding-bottom:8px; border-bottom:1px solid rgba(0,0,0,.08);
         }
+
+        /* 🔤 Mejora tipográfica del titular */
         .legal-title{
-          margin:0; font-size:16px; color:#0b0e11; display:flex; align-items:center; gap:8px;
+          margin:0;
+          font-size:20px;             /* más grande y visible */
+          font-weight:700;            /* negrita estética */
+          letter-spacing:0.3px;       /* leve tracking para elegancia */
+          color:#0b0e11;
+          display:flex; align-items:center; gap:8px;
+          font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif; /* stack limpio y profesional */
         }
+
         .legal-toggle{
           margin-left:auto;
           background:#ffffff; color:#0b0e11; border:1px solid rgba(0,0,0,.12);
@@ -599,7 +619,7 @@
               <span>¿Cómo puede Deloitte Legal apoyarme en fusiones y adquisiciones?</span><span class="chev">▶</span>
             </button>
             <div class="acc-a" id="acc-legal-5" role="region" aria-labelledby="acc-legal-5-btn">
-              <p>Ofrecen acompañamiento integral en fusiones y adquisiciones (M&A) y derecho corporativo, garantizando que las transacciones se realicen eficazmente y evitando problemas legales que puedan surgir en el proceso.</p>
+              <p>Ofrecen acompañamiento integral en fusiones y adquisiciones (M&amp;A) y derecho corporativo, garantizando que las transacciones se realicen eficazmente y evitando problemas legales que puedan surgir en el proceso.</p>
             </div>
             <!-- 6 -->
             <button class="acc-q" aria-expanded="false" aria-controls="acc-legal-6" id="acc-legal-6-btn">
@@ -1285,6 +1305,7 @@
   </script>
 </body>
 </html>
+
 
 
 
