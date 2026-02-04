@@ -680,6 +680,58 @@
         </div>
       </div>
       <!-- ========= FIN SERVICIOS LEGALES ========= -->
+<!-- ========= TARJETA QR – DESCARGA DE AGENDA ========= -->
+<div id="qrAgendaCard"
+     class="card"
+     role="region"
+     aria-label="Descarga agenda del congreso"
+     style="
+       background:#ffffff; color:#0b0e11;
+       border:1px solid rgba(0,0,0,.08); border-radius:12px;
+       box-shadow:0 18px 40px rgba(0,0,0,.12);
+       margin:14px; padding:16px;
+     ">
+
+  <h3 style="margin:0 0 6px 0; font-size:18px; font-weight:800; color:#0b0e11;">
+    Descargue la agenda del congreso
+  </h3>
+
+  <p style="margin:8px 0 12px 0; color:#47515a; font-size:14px;">
+    Escanee el código QR con su teléfono o toque el botón para abrir el PDF.
+  </p>
+
+  <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+
+    <!-- QR clicable: al tocarlo en móvil abre el PDF directamente -->
+    <a href="https://raw.githubusercontent.com/Jotaq2541/Deloitte2026/main/Agenda%20Congreso.pdf"
+       target="_blank"
+       rel="noopener"
+       title="Abrir agenda en nueva pestaña"
+       style="display:inline-block; border:1px solid #e6e6e6; border-radius:10px; padding:8px; background:#fff;">
+      <img id="qrImg"
+           src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fraw.githubusercontent.com%2FJotaq2541%2FDeloitte2026%2Fmain%2FAgenda%2520Congreso.pdf"
+           alt="Código QR para descargar la agenda del congreso"
+           width="200" height="200"
+           style="display:block; border-radius:8px;" />
+    </a>
+
+    <!-- Botón alternativo (útil para usuarios de escritorio o accesibilidad) -->
+    <div>
+      <a href="https://raw.githubusercontent.com/Jotaq2541/Deloitte2026/main/Agenda%20Congreso.pdf"
+         target="_blank"
+         rel="noopener"
+         style="display:inline-block; background:#1c8c3f; color:#fff; padding:10px 14px; border-radius:10px; text-decoration:none; font-weight:700; box-shadow:0 6px 14px rgba(0,0,0,.12);">
+        ⬇️ Descargar agenda (PDF)
+      </a>
+      <div style="margin-top:8px; font-size:12px; color:#47515a;">
+        Puede tocar el QR o el botón para abrir la agenda.
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- ========= FIN TARJETA QR ========= -->
+      
 <!-- ========= TARJETA DE INFORMACIÓN / CONTACTO ========= -->
 <style>
   /* Estilos SOLO para esta tarjeta de información */
@@ -1375,6 +1427,7 @@
   </script>
 </body>
 </html>
+
 
 
 
