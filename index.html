@@ -680,7 +680,35 @@
         </div>
       </div>
       <!-- ========= FIN SERVICIOS LEGALES ========= -->
+<!-- ========= TARJETA DE INFORMACIÓN / CONTACTO ========= -->
+<style>
+  /* Estilos SOLO para esta tarjeta de información */
+  .info-card{
+    background:#ffffff !important; color:#0b0e11 !important;
+    border:1px solid rgba(0,0,0,.08) !important; border-radius:12px;
+    box-shadow:0 18px 40px rgba(0,0,0,.12); margin:14px; padding:16px;
+  }
+  .info-card h3{
+    margin:0 0 6px 0; font-size:18px; font-weight:800; color:#0b0e11;
+  }
+  .info-card p{ margin:8px 0 0 0; color:#47515a; font-size:14px; }
+  .highlight-blue{ color:#0b6efd !important; font-weight:700; text-decoration:none; }
+  .highlight-blue:hover, .highlight-blue:focus{ text-decoration:underline; }
+</style>
 
+<div id="contactInfoCard" class="card info-card" role="region" aria-label="Información de contacto Deloitte">
+  <h3>¿Necesita comunicarse con Deloitte?</h3>
+  <p>
+    Si desea comunicarse con Deloitte, escríbanos a
+    <a href="mailto:dgen_CA@deloitte.com"
+       class="highlight-blue"
+       aria-label="Escribir a dgen guion bajo CA arroba deloitte punto com">
+      dgen_CA@deloitte.com
+    </a>,
+    con gusto atenderemos sus consultas.
+  </p>
+</div>
+<!-- ========= FIN TARJETA DE INFORMACIÓN ========= -->
       <!-- FAQ base -->
       <div class="grid" id="faqGrid" role="list">
        
@@ -1124,7 +1152,43 @@
       });
     })();
   </script>
+<script>
+  // Hace que el avatar (y la tarjeta) lean el mensaje de contacto al hacer clic
+  (function(){
+    const MSG = "Si desea comunicarse con Deloitte, escríbanos a dgen_CA arroba deloitte punto com, con gusto atenderemos sus consultas.";
 
+    function speakContact(){
+      try{
+        if (typeof window.queueSpeak === "function") window.queueSpeak(MSG);
+
+        const answerBox  = document.getElementById('answerBox');
+        const subtitleEl = document.getElementById('subtitle');
+
+        if (answerBox){
+          if (typeof window.typeText === "function") window.typeText(answerBox, MSG);
+          else answerBox.textContent = MSG;
+        }
+        if (subtitleEl) subtitleEl.textContent = MSG;
+      }catch(_){}
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const avatar = document.getElementById("avatar");
+      if (avatar) avatar.addEventListener("click", speakContact);
+
+      const card = document.getElementById("contactInfoCard");
+      if (card){
+        card.style.cursor = "pointer";
+        card.setAttribute("tabindex", "0");
+        card.setAttribute("role", "button");
+        card.addEventListener("click", speakContact);
+        card.addEventListener("keydown", (ev) => {
+          if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); speakContact(); }
+        });
+      }
+    });
+  })();
+</script>
   <!-- Música corporativa (preferencia persistente) -->
   <script>
   (function(){
@@ -1311,6 +1375,7 @@
   </script>
 </body>
 </html>
+
 
 
 
